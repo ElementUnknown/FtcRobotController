@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-    @TeleOp(name="TeleopMode", group="Robot")
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+@TeleOp(name="TeleopMode", group="Robot")
 //@Disabled
 
     public class Teleopmode_2021_2022 extends LinearOpMode {
@@ -22,6 +28,9 @@ import com.qualcomm.robotcore.util.Range;
         boolean lastleftwheelspinset;
         boolean leftwheelspinset;
 
+        BNO055IMU imu;
+        Orientation angles;
+
         double wheelspinpower;
 
         private ElapsedTime runtime = new ElapsedTime();
@@ -32,6 +41,12 @@ import com.qualcomm.robotcore.util.Range;
         public void runOpMode() {
 
             robot.init(hardwareMap);
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+            imu.initialize(parameters);
 
             // Send telemetry message to signify robot waiting;
             telemetry.addData("Status", "Ready to run");    //
@@ -68,6 +83,7 @@ import com.qualcomm.robotcore.util.Range;
                 else {
                     turnpower = 0;
                 }
+
                 if (gamepad2.right_trigger > .05) {
                     rightwheelspinset = true;
                 }
@@ -191,12 +207,13 @@ import com.qualcomm.robotcore.util.Range;
                 // }
                 // else if (!gamepad2.right_bumper) {
                 //    robot.tray.setPosition(.85);
-
-
-
-
-
                 //}
+
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("Heading", angles.firstAngle);
+                telemetry.addData("Roll", angles.secondAngle);
+                telemetry.addData("Pitch", angles.thirdAngle);
+                telemetry.update();
 
             }
         }

@@ -44,14 +44,12 @@ public class Hardware20212022 {
 
         /* Public OpMode members. */
         public DcMotor Toprightmotor        = null;
-        public DcMotor  Topleftmotor        = null;
-        public DcMotor   Bottomrightmotor   = null;
+        public DcMotor Topleftmotor         = null;
+        public DcMotor Bottomrightmotor     = null;
         public DcMotor Bottomleftmotor      = null;
         public DcMotor wheelspin            = null;
         public DcMotor Arm                  = null;
-        public BNO055IMU IMU                      ;
-
-
+        public BNO055IMU imu                = null;
 
 
         /* local OpMode members. */
@@ -103,8 +101,7 @@ public class Hardware20212022 {
             wheelspin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-          /*  Orientation Angles = IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
             parameters.mode             = BNO055IMU.SensorMode.IMU;
             parameters.angleUnit        =BNO055IMU.AngleUnit.DEGREES;
