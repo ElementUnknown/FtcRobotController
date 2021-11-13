@@ -12,16 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-//@Autonomous(name = "Autonomous_Base2021_22", group = "robot")
-//@Disabled
-public class Autonomous_Base2021_22  {
+@Autonomous(name = "Autonomous_Base2021_22", group = "robot")
+@Disabled
+public class Autonomous_Base2021_22  extends LinearOpMode{
     Hardware20212022             robot = new Hardware20212022();
     private ElapsedTime     runtime = new ElapsedTime();
-    public double vertical_ticks_perinch = 43.3604336043;
+    public double vertical_ticks_perinch = 43.956043956;
     public double horizontal_ticks_perinch = 56.7375886525;
-
+    public Orientation angles;
     /*public Orientation angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);*/
     int Trueangle;
+
 
     public void Move (double power, double distanceforward, double distancelateral){
         if ( distanceforward != 0 && distancelateral == 0) {
@@ -80,12 +81,13 @@ public class Autonomous_Base2021_22  {
         }
     }
 
-   /* public void Turning (double power, int angle){
-        angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void Turning (double power, int angle){
+        angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         if (angle > 180){
             Trueangle = angle -360;
@@ -93,19 +95,37 @@ public class Autonomous_Base2021_22  {
         else if (angle <= 180){
             Trueangle = angle;
         }
-        while (angles.firstAngle < Trueangle -1 && angles.firstAngle > Trueangle + 1){
-            angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        while (angles.firstAngle < Trueangle -1 || angles.firstAngle > Trueangle + 1){
+            angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
             robot.Bottomleftmotor.setPower(power);
             robot.Bottomrightmotor.setPower(-power);
             robot.Topleftmotor.setPower(power);
             robot.Toprightmotor.setPower(-power);
 
+            telemetry.addData("Heading", angles.firstAngle);
+            telemetry.addData("Roll", angles.secondAngle);
+            telemetry.addData("Pitch", angles.thirdAngle);
+            telemetry.update();
+
         }
         robot.Bottomleftmotor.setPower(0);
         robot.Bottomrightmotor.setPower(0);
         robot.Topleftmotor.setPower(0);
         robot.Toprightmotor.setPower(0);
+    }
+
+    /*public void spinWheel (int time, double speed){
+        int Time = time*100;
+        robot.wheelspin.setPower(speed);
+        sleep(Time);
+        robot.wheelspin.setPower(0);
+    }*/
+
+    /*public void dropBlock (){
+        robot.dustpan.setPosition(0);
+        sleep(50);
+        robot.dustpan.setPosition(45);
     }*/
 
     public void waitforfinish(){
@@ -143,5 +163,8 @@ public class Autonomous_Base2021_22  {
         robot.Bottomleftmotor.setPower(0);
         robot.Topleftmotor.setPower(0);*/
 
+    @Override
+    public void runOpMode()  {
 
+    }
 }

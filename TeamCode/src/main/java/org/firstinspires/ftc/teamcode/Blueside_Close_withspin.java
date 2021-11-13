@@ -17,13 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 
-
-
 @Autonomous (name = "Blueside_Close_withspin", group = "robot")
 public class Blueside_Close_withspin extends LinearOpMode{
 
     Autonomous_Base2021_22      Auto =  new Autonomous_Base2021_22();
     private ElapsedTime     runtime = new ElapsedTime();
+
+    @Override
     public void runOpMode() {
 
         Auto.robot.init(hardwareMap);
@@ -32,10 +32,20 @@ public class Blueside_Close_withspin extends LinearOpMode{
         telemetry.update();
 
         waitForStart();
-        Auto.Move(.4, 0, 18);
-        Auto.Move(.7, 51, 0);
+        telemetry.addData("starting", "starting");
+        telemetry.update();
 
-
-
+        //Autonomous code starts here.
+        Auto.Move(.5, 2,0);
+        //Detect square here.
+        Auto.Turning(.4,270);
+        Auto.Move(.5,.5,0);
+        //Auto.dropBlock();
+        Auto.Move(.5,-.5,0);
+        Auto.Turning(.4,180);
+        Auto.Move(.5,2,0);
+        Auto.Move(.5,0,2);
+        //Auto.spinWheel(5,1);
+        Auto.Move(.5,-8,0);
     }
 }
