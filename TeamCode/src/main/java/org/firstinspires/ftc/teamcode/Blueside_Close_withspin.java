@@ -38,14 +38,14 @@ public class Blueside_Close_withspin extends LinearOpMode{
         //Autonomous code starts here.
         Auto.Move(.5, 2,0);
         //Detect square here.
-        Auto.Turning(.4,270);
+        Auto.Turning(4,270);
         Auto.Move(.5,.5,0);
         //Auto.dropBlock();
         Auto.Move(.5,-.5,0);
-        Auto.Turning(.4,180);
+        Auto.Turning(4,180);
         Auto.Move(.5,2,0);
         Auto.Move(.5,0,2);
-        //Auto.spinWheel(5,1);
+        Auto.spinWheel(5,1);
         Auto.Move(.5,-8,0);
     }
 }

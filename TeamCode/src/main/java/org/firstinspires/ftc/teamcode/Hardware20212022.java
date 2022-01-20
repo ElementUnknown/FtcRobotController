@@ -31,14 +31,14 @@ public class Hardware20212022 {
     public DcMotor Bottomrightmotor     = null;
     public DcMotor Bottomleftmotor      = null;
     public DcMotor wheelspin            = null;
-    /*public DcMotor lift                 = null;
-    public DcMotor leftintake           = null;
-    public DcMotor rightintake          = null;
-    public Servo   dustpan              = null;*/
-    public ColorSensor colorSensor      = null;
-    public BNO055IMU imu                = null;
+    public DcMotor turntable            = null;
+    public DcMotor arm                  = null;
+    //public DcMotor intake               = null;
+    //public ColorSensor colorSensor      = null;
+    //public BNO055IMU imu                = null;
 
-    public double rest = 45;
+    public double restD = .05;
+    public double restB = .85;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -58,15 +58,15 @@ public class Hardware20212022 {
         Topleftmotor            = hwMap.get(DcMotor.class, "Topleftmotor");
         Toprightmotor           = hwMap.get(DcMotor.class, "Toprightmotor");
         Bottomleftmotor         = hwMap.get(DcMotor.class, "Bottomleftmotor");
-        Bottomrightmotor        = hwMap.get(DcMotor.class,"Bottomrightmotor");
+        Bottomrightmotor        = hwMap.get(DcMotor.class, "Bottomrightmotor");
         wheelspin               = hwMap.get(DcMotor.class, "wheelspin");
-        /*lift                    = hwMap.get(DcMotor.class, "lift");
-        leftintake              = hwMap.get(DcMotor.class, "leftintake");
-        rightintake             = hwMap.get(DcMotor.class, "rightintake");
-        colorSensor             = hwMap.get(ColorSensor.class, "colorSensor");*/
+        turntable               = hwMap.get(DcMotor.class, "turntable");
+        arm                     = hwMap.get(DcMotor.class, "arm");
+        //intake                  = hwMap.get(DcMotor.class, "intake");
+        //colorSensor             = hwMap.get(ColorSensor.class, "colorSensor");
 
-        Topleftmotor.setDirection(DcMotor.Direction.REVERSE);
         Bottomleftmotor.setDirection(DcMotor.Direction.REVERSE);
+        Toprightmotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         Toprightmotor.setPower(0);
@@ -74,10 +74,9 @@ public class Hardware20212022 {
         Bottomrightmotor.setPower(0);
         Bottomleftmotor.setPower(0);
         wheelspin.setPower(0);
-        /*lift.setPower(0);
-        leftintake.setPower(0);
-        rightintake.setPower(0);*/
-
+        turntable.setPower(0);
+        arm.setPower(0);
+        //intake.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -86,22 +85,20 @@ public class Hardware20212022 {
         Bottomrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Bottomleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelspin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        /*lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);*/
+        turntable.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Toprightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Topleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Bottomrightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Bottomleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelspin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        /*lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftintake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightintake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
+        turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        /*dustpan = hwMap.get(Servo.class, "dustpan");
-        dustpan.setPosition(rest);*/
 
         /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -116,6 +113,6 @@ public class Hardware20212022 {
 
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);*/
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);J*/
     }
 }

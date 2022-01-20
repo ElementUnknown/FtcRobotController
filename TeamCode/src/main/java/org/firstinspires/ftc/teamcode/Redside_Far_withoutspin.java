@@ -24,8 +24,16 @@ public class Redside_Far_withoutspin extends LinearOpMode {
         telemetry.update();
 
         //Autonomous code starts here.
-        Auto.Move(.5, 1,0);
-        //Auto.dropBlock();
-        Auto.Move(.5,0,4);
+        Auto.Move(.5,60,0);
+        Auto.Turning(1600,-.5);
+        Auto.Move(.5,12,0);
+        /*Auto.moveElevator(500,.5);
+        Auto.dropBlock();
+        Auto.moveElevator(500,.5);*/
+        Auto.Move(.5,-12,0);
+        Auto.Turning(3200,-.5);
+        Auto.Move(.5,30,0);
+        Auto.Turning(1600,-.5);
+        Auto.Move(.5,60,0);
     }
 }

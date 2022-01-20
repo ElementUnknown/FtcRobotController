@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Autonomous_Base2021_22;
 
 
 
-@Autonomous (name = "Redside_Close_withspin", group = "robot")
+@Autonomous (name = "Auto", group = "robot")
 public class Redside_Close_withspin extends LinearOpMode {
     Autonomous_Base2021_22  Auto = new Autonomous_Base2021_22();
 
@@ -42,16 +42,14 @@ public class Redside_Close_withspin extends LinearOpMode {
         telemetry.update();
 
         //Autonomous code starts here.
-        Auto.Move(.5, 2,0);
-        //Detect square here.
-        Auto.Turning(.4,90);
-        Auto.Move(.5,.5,0);
-        //Auto.dropBlock();
-        Auto.Move(.5,-.5,0);
-        Auto.Turning(.4,180);
-        Auto.Move(.5,2,0);
-        Auto.Move(.5,0,2);
-        //Auto.spinWheel(5,1);
-        Auto.Move(.5,-8,0);
+        Auto.Move(.5, 18,0);
+        /*Auto.bucket();
+        sleep(500);
+        Auto.moveElevator(2600,-.75);
+        Auto.dropBlock();
+        sleep(500);
+        Auto.Move(.5, -1, 0);
+        sleep(500);
+        Auto.moveElevator(2600,0.75);*/
     }
 }

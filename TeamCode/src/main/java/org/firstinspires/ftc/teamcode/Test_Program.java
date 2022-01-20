@@ -1,18 +1,28 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 @Autonomous (name = "AHHHHHHHHHHHHHHH", group = "robot")
 public class Test_Program extends LinearOpMode{
 
-    Hardware20212022             robot = new Hardware20212022();
+    Autonomous_Base2021_22  Auto = new Autonomous_Base2021_22();
+    //Hardware20212022             robot = new Hardware20212022();
+    //BNO055IMU imu;
+   // Orientation angles;
 
     @Override
     public void runOpMode() {
 
-        robot.init(hardwareMap);
+        Auto.robot.init(hardwareMap);
+        //robot.init(hardwareMap);
 
         telemetry.addData("Status","Ready to run");
         telemetry.update();
@@ -22,32 +32,37 @@ public class Test_Program extends LinearOpMode{
         telemetry.update();
 
         //Autonomous code starts here.
-        robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Bottomrightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.Bottomleftmotor.setTargetPosition(1000);
-        robot.Bottomrightmotor.setTargetPosition(-1000);
-        robot.Topleftmotor.setTargetPosition(-1000);
-        robot.Toprightmotor.setTargetPosition(1000);
+        //Gyro Sensor
+        //angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        robot.Bottomleftmotor.setPower(.3);
-        robot.Bottomrightmotor.setPower(.3);
-        robot.Topleftmotor.setPower(.3);
-        robot.Toprightmotor.setPower(.3);
+        Auto.robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Auto.robot.Bottomrightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Auto.robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Auto.robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Auto.robot.Bottomleftmotor.setTargetPosition(1000);
+        Auto.robot.Bottomrightmotor.setTargetPosition(1000);
+        Auto.robot.Topleftmotor.setTargetPosition(1000);
+        Auto.robot.Toprightmotor.setTargetPosition(1000);
 
-        while (robot.Bottomleftmotor.isBusy() && robot.Bottomrightmotor.isBusy() && robot.Topleftmotor.isBusy() && robot.Toprightmotor.isBusy()){
+        Auto.robot.Bottomleftmotor.setPower(.3);
+        Auto.robot.Bottomrightmotor.setPower(.3);
+        Auto.robot.Topleftmotor.setPower(.3);
+
+        Auto.robot.Toprightmotor.setPower(.3);
+
+        Auto.robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Auto.robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Auto.robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Auto.robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (Auto.robot.Bottomleftmotor.isBusy() && Auto.robot.Bottomrightmotor.isBusy() && Auto.robot.Topleftmotor.isBusy() && Auto.robot.Toprightmotor.isBusy()){
         }
 
-        robot.Bottomrightmotor.setPower(0);
-        robot.Toprightmotor.setPower(0);
-        robot.Bottomleftmotor.setPower(0);
-        robot.Topleftmotor.setPower(0);
+        Auto.robot.Bottomrightmotor.setPower(0);
+        Auto.robot.Toprightmotor.setPower(0);
+        Auto.robot.Bottomleftmotor.setPower(0);
+        Auto.robot.Topleftmotor.setPower(0);
     }
 }

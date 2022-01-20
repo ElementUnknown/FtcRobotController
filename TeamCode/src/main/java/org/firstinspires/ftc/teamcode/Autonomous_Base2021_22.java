@@ -19,8 +19,8 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 43.956043956;
     public double horizontal_ticks_perinch = 56.7375886525;
-    public Orientation angles;
-    /*public Orientation angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);*/
+    //public Orientation angles;
+    //public Orientation angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);*/
     int Trueangle;
 
 
@@ -59,15 +59,15 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
             robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Bottomleftmotor.setTargetPosition(Target_ticks);
-            robot.Bottomrightmotor.setTargetPosition(-Target_ticks);
+            robot.Bottomleftmotor.setTargetPosition((int)(Target_ticks));
+            robot.Bottomrightmotor.setTargetPosition((int)(-Target_ticks));
             robot.Topleftmotor.setTargetPosition(-Target_ticks);
             robot.Toprightmotor.setTargetPosition(Target_ticks);
 
-            robot.Bottomleftmotor.setPower(-power);
-            robot.Bottomrightmotor.setPower(power);
-            robot.Topleftmotor.setPower(power);
-            robot.Toprightmotor.setPower(-power);
+            robot.Bottomleftmotor.setPower(power);
+            robot.Bottomrightmotor.setPower(-power);
+            robot.Topleftmotor.setPower(-power);
+            robot.Toprightmotor.setPower(power);
 
             robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -81,52 +81,52 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
         }
     }
 
-    public void Turning (double power, int angle){
-        angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void Turning (int time, double speed){
         robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        if (angle > 180){
-            Trueangle = angle -360;
-        }
-        else if (angle <= 180){
-            Trueangle = angle;
-        }
-        while (angles.firstAngle < Trueangle -1 || angles.firstAngle > Trueangle + 1){
-            angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-            robot.Bottomleftmotor.setPower(power);
-            robot.Bottomrightmotor.setPower(-power);
-            robot.Topleftmotor.setPower(power);
-            robot.Toprightmotor.setPower(-power);
-
-            telemetry.addData("Heading", angles.firstAngle);
-            telemetry.addData("Roll", angles.secondAngle);
-            telemetry.addData("Pitch", angles.thirdAngle);
-            telemetry.update();
-
-        }
-        robot.Bottomleftmotor.setPower(0);
+        robot.Bottomleftmotor.setPower(-speed);
+        robot.Bottomrightmotor.setPower(speed);
+        robot.Topleftmotor.setPower(-speed);
+        robot.Toprightmotor.setPower(speed);
+        sleep(time);
         robot.Bottomrightmotor.setPower(0);
-        robot.Topleftmotor.setPower(0);
         robot.Toprightmotor.setPower(0);
+        robot.Bottomleftmotor.setPower(0);
+        robot.Topleftmotor.setPower(0);
     }
 
-    /*public void spinWheel (int time, double speed){
-        int Time = time*100;
+    public void spinWheel (int time, double speed){
         robot.wheelspin.setPower(speed);
-        sleep(Time);
+        sleep(time);
         robot.wheelspin.setPower(0);
+    }
+
+    public void rotateTurntable (int time, double speed){
+        robot.turntable.setPower(speed);
+        sleep(time);
+        robot.turntable.setPower(0);
+    }
+
+    /*public void pickUpBlock () {
+        robot.intake.setPower(-.5);
+        sleep(100);
+        robot.intake.setPower(0);
+    }
+
+    public void dropBlock () {
+        robot.intake.setPower(.5);
+        sleep(100);
+        robot.intake.setPower(0);
     }*/
 
-    /*public void dropBlock (){
-        robot.dustpan.setPosition(0);
-        sleep(50);
-        robot.dustpan.setPosition(45);
-    }*/
+    public void controlarm (int time, double speed) {
+        robot.arm.setPower(speed);
+        sleep(time);
+        robot.arm.setPower(0);
+    }
 
     public void waitforfinish(){
         while (robot.Bottomleftmotor.isBusy() && robot.Bottomrightmotor.isBusy() && robot.Topleftmotor.isBusy() && robot.Toprightmotor.isBusy()){
