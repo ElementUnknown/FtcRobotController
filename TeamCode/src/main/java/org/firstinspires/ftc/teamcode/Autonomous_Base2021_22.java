@@ -110,9 +110,9 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
         robot.turntable.setPower(0);
     }
 
-    /*public void pickUpBlock () {
+    public void pickUpBlock () {
         robot.intake.setPower(-.5);
-        sleep(100);
+        sleep(75);
         robot.intake.setPower(0);
     }
 
@@ -120,7 +120,7 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
         robot.intake.setPower(.5);
         sleep(100);
         robot.intake.setPower(0);
-    }*/
+    }
 
     public void controlarm (int time, double speed) {
         robot.arm.setPower(speed);

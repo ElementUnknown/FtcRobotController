@@ -33,10 +33,14 @@ public class Test_Program extends LinearOpMode{
 
         //Autonomous code starts here.
 
+        Auto.pickUpBlock();
+        sleep(1000);
+        Auto.dropBlock();
+
         //Gyro Sensor
         //angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        Auto.robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*Auto.robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Auto.robot.Bottomrightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Auto.robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Auto.robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,6 +67,6 @@ public class Test_Program extends LinearOpMode{
         Auto.robot.Bottomrightmotor.setPower(0);
         Auto.robot.Toprightmotor.setPower(0);
         Auto.robot.Bottomleftmotor.setPower(0);
-        Auto.robot.Topleftmotor.setPower(0);
+        Auto.robot.Topleftmotor.setPower(0);*/
     }
 }

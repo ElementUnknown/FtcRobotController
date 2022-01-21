@@ -33,7 +33,7 @@ public class Hardware20212022 {
     public DcMotor wheelspin            = null;
     public DcMotor turntable            = null;
     public DcMotor arm                  = null;
-    //public DcMotor intake               = null;
+    public DcMotor intake               = null;
     //public ColorSensor colorSensor      = null;
     //public BNO055IMU imu                = null;
 
@@ -62,11 +62,11 @@ public class Hardware20212022 {
         wheelspin               = hwMap.get(DcMotor.class, "wheelspin");
         turntable               = hwMap.get(DcMotor.class, "turntable");
         arm                     = hwMap.get(DcMotor.class, "arm");
-        //intake                  = hwMap.get(DcMotor.class, "intake");
+        intake                  = hwMap.get(DcMotor.class, "intake");
         //colorSensor             = hwMap.get(ColorSensor.class, "colorSensor");
 
         Bottomleftmotor.setDirection(DcMotor.Direction.REVERSE);
-        Toprightmotor.setDirection(DcMotor.Direction.REVERSE);
+        Bottomrightmotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         Toprightmotor.setPower(0);
@@ -76,7 +76,7 @@ public class Hardware20212022 {
         wheelspin.setPower(0);
         turntable.setPower(0);
         arm.setPower(0);
-        //intake.setPower(0);
+        intake.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -87,7 +87,7 @@ public class Hardware20212022 {
         wheelspin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turntable.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Toprightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Topleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -96,7 +96,7 @@ public class Hardware20212022 {
         wheelspin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
 

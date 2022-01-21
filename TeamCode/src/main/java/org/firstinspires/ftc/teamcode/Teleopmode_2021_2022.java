@@ -117,15 +117,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
                 robot.Bottomrightmotor.setPower(wheelspeeds[2]);
                 robot.Bottomleftmotor.setPower(wheelspeeds[3]);
             } else if (gamepad1.right_trigger > .05 && gamepad1.left_trigger == 0) {
-                robot.Toprightmotor.setPower(rightturnpower);
-                robot.Topleftmotor.setPower(-rightturnpower);
-                robot.Bottomrightmotor.setPower(rightturnpower);
-                robot.Bottomleftmotor.setPower(-rightturnpower);
+                robot.Toprightmotor.setPower(-rightturnpower);
+                robot.Topleftmotor.setPower(rightturnpower);
+                robot.Bottomrightmotor.setPower(-rightturnpower);
+                robot.Bottomleftmotor.setPower(rightturnpower);
             } else if (gamepad1.left_trigger > .05 && gamepad1.right_trigger == 0) {
-                robot.Toprightmotor.setPower(-leftturnpower);
-                robot.Topleftmotor.setPower(leftturnpower);
-                robot.Bottomrightmotor.setPower(-leftturnpower);
-                robot.Bottomleftmotor.setPower(leftturnpower);
+                robot.Toprightmotor.setPower(leftturnpower);
+                robot.Topleftmotor.setPower(-leftturnpower);
+                robot.Bottomrightmotor.setPower(leftturnpower);
+                robot.Bottomleftmotor.setPower(-leftturnpower);
             } else {
                 robot.Topleftmotor.setPower(0);
                 robot.Toprightmotor.setPower(0);
@@ -153,11 +153,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
                 robot.arm.setPower(0);
             }
 
-            /*if (gamepad2.b = true) {
-                robot.wheelspin.setPower(1);
-            } else {
-                robot.wheelspin.setPower(0);
-            }*/
+            if (gamepad2.y) {
+                robot.intake.setPower(-.5);
+            }
+            else if (gamepad2.x) {
+                robot.intake.setPower(.5);
+            }
+            else {
+                robot.intake.setPower(0);
+            }
 
                 //Gyro Sensor
                 /*angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
