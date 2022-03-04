@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,10 +20,10 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 43.956043956;
     public double horizontal_ticks_perinch = 56.7375886525;
-    //public Orientation angles;
-    //public Orientation angles = robot.IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);*/
-    int Trueangle;
-
+    double currentHeading;
+    BNO055IMU imu;
+    Orientation angles;
+    boolean turn[] = new boolean[3];
 
     public void Move (double power, double distanceforward, double distancelateral){
         if ( distanceforward != 0 && distancelateral == 0) {
@@ -131,6 +132,26 @@ public class Autonomous_Base2021_22  extends LinearOpMode{
     public void waitforfinish(){
         while (robot.Bottomleftmotor.isBusy() && robot.Bottomrightmotor.isBusy() && robot.Topleftmotor.isBusy() && robot.Toprightmotor.isBusy()){
 
+        }
+    }
+
+    public void gyroTurn(int turnNumber, int turnWindow1, int turnWindow2) {
+        turn[turnNumber] = false;
+        while (turn[turnNumber] == false) {
+            robot.Toprightmotor.setPower(-.3);
+            robot.Bottomrightmotor.setPower(-.3);
+            robot.Topleftmotor.setPower(.3);
+            robot.Bottomleftmotor.setPower(.3);
+            if (currentHeading > turnWindow1 && currentHeading < turnWindow2) {
+                turn[turnNumber] = true;
+            }
+            else {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                this.imu.getPosition();
+                currentHeading = angles.firstAngle;
+                telemetry.addData("Heading", angles.firstAngle);
+                telemetry.update();
+            }
         }
     }
 

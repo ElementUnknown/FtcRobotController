@@ -77,6 +77,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
             lx = gamepad1.left_stick_x;
             ly = gamepad1.left_stick_y;
 
+            telemetry.addData("Y Value", ly);
+            telemetry.update();
+
             if (gamepad2.right_trigger > .1 ){
                 robot.wheelspin.setPower(.6);
             }

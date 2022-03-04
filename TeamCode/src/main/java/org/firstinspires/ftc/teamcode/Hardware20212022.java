@@ -35,7 +35,7 @@ public class Hardware20212022 {
     public DcMotor arm                  = null;
     public DcMotor intake               = null;
     //public ColorSensor colorSensor      = null;
-    //public BNO055IMU imu                = null;
+    public BNO055IMU imu                = null;
 
     public double restD = .05;
     public double restB = .85;
@@ -89,10 +89,10 @@ public class Hardware20212022 {
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Toprightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Topleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Bottomrightmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Bottomleftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Bottomleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelspin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
