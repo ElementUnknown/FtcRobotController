@@ -26,79 +26,79 @@ public class Autonomous_Base extends LinearOpMode{
     public void Move (double power, double distanceforward, double distancelateral){
         if ( distanceforward != 0 && distancelateral == 0) {
             int Target_ticks = (int) (vertical_ticks_perinch * distanceforward);
-            robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Bottomrightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Bottomleftmotor.setTargetPosition(-Target_ticks);
-            robot.Bottomrightmotor.setTargetPosition(-Target_ticks);
-            robot.Topleftmotor.setTargetPosition(-Target_ticks);
-            robot.Toprightmotor.setTargetPosition(-Target_ticks);
+            robot.Motor1.setTargetPosition(-Target_ticks);
+            robot.Motor2.setTargetPosition(-Target_ticks);
+            robot.Motor3.setTargetPosition(-Target_ticks);
+            robot.Motor4.setTargetPosition(-Target_ticks);
 
-            robot.Bottomleftmotor.setPower(-power);
-            robot.Bottomrightmotor.setPower(-power);
-            robot.Topleftmotor.setPower(-power);
-            robot.Toprightmotor.setPower(-power);
+            robot.Motor1.setPower(-power);
+            robot.Motor2.setPower(-power);
+            robot.Motor3.setPower(-power);
+            robot.Motor4.setPower(-power);
 
-            robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             waitforfinish();
-            robot.Bottomrightmotor.setPower(0);
-            robot.Toprightmotor.setPower(0);
-            robot.Bottomleftmotor.setPower(0);
-            robot.Topleftmotor.setPower(0);
+            robot.Motor1.setPower(0);
+            robot.Motor2.setPower(0);
+            robot.Motor3.setPower(0);
+            robot.Motor4.setPower(0);
         }
         if(distanceforward == 0 && distancelateral != 0);{
             int Target_ticks = (int) (horizontal_ticks_perinch * distancelateral);
-            robot.Bottomleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Bottomrightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Topleftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Toprightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Bottomleftmotor.setTargetPosition((int)(Target_ticks));
-            robot.Bottomrightmotor.setTargetPosition((int)(-Target_ticks));
-            robot.Topleftmotor.setTargetPosition(-Target_ticks);
-            robot.Toprightmotor.setTargetPosition(Target_ticks);
+            robot.Motor1.setTargetPosition(Target_ticks);
+            robot.Motor2.setTargetPosition(-Target_ticks);
+            robot.Motor3.setTargetPosition((int)(Target_ticks));
+            robot.Motor4.setTargetPosition((int)(-Target_ticks));
 
-            robot.Bottomleftmotor.setPower(power);
-            robot.Bottomrightmotor.setPower(-power);
-            robot.Topleftmotor.setPower(-power);
-            robot.Toprightmotor.setPower(power);
+            robot.Motor1.setPower(power);
+            robot.Motor2.setPower(-power);
+            robot.Motor3.setPower(power);
+            robot.Motor4.setPower(-power);
 
-            robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             waitforfinish();
-            robot.Bottomrightmotor.setPower(0);
-            robot.Toprightmotor.setPower(0);
-            robot.Bottomleftmotor.setPower(0);
-            robot.Topleftmotor.setPower(0);
+            robot.Motor1.setPower(0);
+            robot.Motor2.setPower(0);
+            robot.Motor3.setPower(0);
+            robot.Motor4.setPower(0);
         }
     }
 
     public void Turning (int time, double speed){
-        robot.Bottomleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.Bottomleftmotor.setPower(-speed);fff
-        robot.Bottomrightmotor.setPower(speed);
-        robot.Topleftmotor.setPower(-speed);
-        robot.Toprightmotor.setPower(speed);
+        robot.Motor3.setPower(-speed);
+        robot.Motor4.setPower(speed);
+        robot.Motor2.setPower(-speed);
+        robot.Motor1.setPower(speed);
         sleep(time);
-        robot.Bottomrightmotor.setPower(0);
-        robot.Toprightmotor.setPower(0);
-        robot.Bottomleftmotor.setPower(0);
-        robot.Topleftmotor.setPower(0);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
     }
 
     public void waitforfinish(){
-        while (robot.Bottomleftmotor.isBusy() && robot.Bottomrightmotor.isBusy() && robot.Topleftmotor.isBusy() && robot.Toprightmotor.isBusy()){
+        while (robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()){
 
         }
     }
@@ -106,21 +106,36 @@ public class Autonomous_Base extends LinearOpMode{
     /*public void gyroTurn(int turnNumber, in t turnWindow1, int turnWindow2) {
         turn[turnNumber] = false;
         while (turn[turnNumber] == false) {
-            robot.Toprightmotor.setPower(-.3);
-            robot.Bottomrightmotor.setPower(-.3);
-            robot.Topleftmotor.setPower(.3);
-            robot.Bottomleftmotor.setPower(.3);
+            robot.Motor1.setPower(-.3);
+            robot.Motor4.setPower(-.3);
+            robot.Motor2.setPower(.3);
+            robot.Motor3.setPower(.3);
             if (currentHeading > turnWindow1 && currentHeading < turnWindow2) {
                 turn[turnNumber] = true;
-            }
-            else {
+            } else {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 this.imu.getPosition();
                 currentHeading = angles.firstAngle;
                 telemetry.addData("Heading", angles.firstAngle);
                 telemetry.update();
             }
-        }*/
+        }
+    }*/
+
+    public void raiseArm(int time, double speed) {
+        robot.LiftarmL.setPower(speed);
+        robot.LiftarmR.setPower(speed);
+        sleep(time);
+        robot.LiftarmR.setPower(0);
+        robot.LiftarmR.setPower(0);
+    }
+
+    public void lowerArm(int time, double speed) {
+        robot.LiftarmL.setPower(-speed);
+        robot.LiftarmR.setPower(-speed);
+        sleep(time);
+        robot.LiftarmR.setPower(0);
+        robot.LiftarmR.setPower(0);
     }
 
     @Override

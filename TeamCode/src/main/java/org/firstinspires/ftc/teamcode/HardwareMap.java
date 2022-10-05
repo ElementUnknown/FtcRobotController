@@ -2,21 +2,25 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 
 public class HardwareMap {
 
     /* Public OpMode members. */
-    public DcMotor Toprightmotor        = null;
-    public DcMotor Topleftmotor         = null;
-    public DcMotor Bottomrightmotor     = null;
-    public DcMotor Bottomleftmotor      = null;
+    public DcMotor Motor1       = null;
+    public DcMotor Motor2       = null;
+    public DcMotor Motor3       = null;
+    public DcMotor Motor4       = null;
+    public DcMotor LiftarmL     = null;
+    public DcMotor LiftarmR     = null;
+    public Servo   Claw         = null;
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
 
     /* local OpMode members. */
-    com.qualcomm.robotcore.hardware.HardwareMap hwMap           =  null;
+    com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
@@ -30,30 +34,42 @@ public class HardwareMap {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        Topleftmotor            = hwMap.get(DcMotor.class, "Topleftmotor");
-        Toprightmotor           = hwMap.get(DcMotor.class, "Toprightmotor");
-        Bottomleftmotor         = hwMap.get(DcMotor.class, "Bottomleftmotor");
-        Bottomrightmotor        = hwMap.get(DcMotor.class, "Bottomrightmotor");
-        colorSensor             = hwMap.get(ModernRoboticsI2cColorSensor.class, "colorSensor");
+        Motor1          = hwMap.get(DcMotor.class, "Motor1");
+        Motor2          = hwMap.get(DcMotor.class, "Motor2");
+        Motor3          = hwMap.get(DcMotor.class, "Motor3");
+        Motor4          = hwMap.get(DcMotor.class, "Motor4");
+        LiftarmL        = hwMap.get(DcMotor.class, "LiftarmL");
+        LiftarmR        = hwMap.get(DcMotor.class, "LiftarmR");
+        colorSensor     = hwMap.get(ModernRoboticsI2cColorSensor.class, "colorSensor");
 
-        Bottomleftmotor.setDirection(DcMotor.Direction.REVERSE);
-        Bottomrightmotor.setDirection(DcMotor.Direction.REVERSE);
+        Motor3.setDirection(DcMotor.Direction.REVERSE);
+        Motor4.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
-        Toprightmotor.setPower(0);
-        Topleftmotor.setPower(0);
-        Bottomrightmotor.setPower(0);
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
+        LiftarmL.setPower(0);
+        LiftarmR.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        Toprightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Topleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Bottomrightmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Bottomleftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LiftarmL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LiftarmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Toprightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Topleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Bottomrightmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Bottomleftmotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LiftarmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LiftarmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Claw = hwMap.get(Servo.class, "Claw");
+        Claw.setPosition(0);
     }
 }
