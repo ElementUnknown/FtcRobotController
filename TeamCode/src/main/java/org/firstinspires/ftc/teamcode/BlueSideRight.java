@@ -31,10 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -56,10 +53,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Auto Drive By Time", group="Robot")
-public class ColorSensorTest extends LinearOpMode {
+public class BlueSideRight extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
-    String color;
 
     @Override
     public void runOpMode() {
@@ -73,21 +69,14 @@ public class ColorSensorTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        if (color != "red") {
-            robot.colorSensor.enableLed(true);
-
-            while(opModeIsActive()){
-                telemetry.addData("Color Number", robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));
-                telemetry.update();
-            }
-        }
-        else if (color == "red") {
-            robot.colorSensor.enableLed(false);
-
-            while(opModeIsActive()) {
-                telemetry.addLine("Color red found.");
-                telemetry.update();
-            }
-        }
+        horizontalMove(700,.5);
+        horizontalMove(0,.5);
+        verticalMove(0,.5);
+        verticalMove(0,.5);
+        //releaseClaw();
+        verticalMove(0,.5);
+        verticalMove(0,.5);
+        horizontalMove(0,.5);
+        horizontalMove(0,.5);
     }
 }

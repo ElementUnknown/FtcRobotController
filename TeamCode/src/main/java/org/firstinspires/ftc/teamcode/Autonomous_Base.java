@@ -80,6 +80,30 @@ public class Autonomous_Base extends LinearOpMode{
         }
     }
 
+    public void verticalMove (int time, double speed) {
+        robot.Motor1.setPower(speed);
+        robot.Motor2.setPower(speed);
+        robot.Motor3.setPower(speed);
+        robot.Motor4.setPower(speed);
+        sleep(time);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+    }
+
+    public void horizontalMove (int time, double speed) {
+        robot.Motor1.setPower(-speed);
+        robot.Motor2.setPower(-speed);
+        robot.Motor3.setPower(speed);
+        robot.Motor4.setPower(speed);
+        sleep(time);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+    }
+
     public void Turning (int time, double speed){
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -136,6 +160,30 @@ public class Autonomous_Base extends LinearOpMode{
         sleep(time);
         robot.LiftarmR.setPower(0);
         robot.LiftarmR.setPower(0);
+    }
+
+    public void releaseClaw() {
+
+    }
+
+    public void closeClaw() {
+
+    }
+
+    public void raiseCLaw (int time, double speed) {
+        robot.LiftarmR.setPower(speed);
+        robot.LiftarmL.setPower(speed);
+        sleep(time);
+        robot.LiftarmR.setPower(0);
+        robot.LiftarmL.setPower(0);
+    }
+
+    public void lowerClaw (int time, double speed) {
+        robot.LiftarmR.setPower(-speed);
+        robot.LiftarmL.setPower(-speed);
+        sleep(time);
+        robot.LiftarmR.setPower(0);
+        robot.LiftarmL.setPower(0);
     }
 
     @Override
