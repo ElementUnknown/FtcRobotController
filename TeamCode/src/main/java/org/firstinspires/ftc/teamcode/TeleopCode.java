@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This particular OpMode executes a POV Game style Teleop for a direct drive robot
@@ -48,7 +49,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Robot: Teleop POV", group="Robot")
+@TeleOp(name="Teleop_22_23", group="Robot")
 public class TeleopCode extends LinearOpMode {
 
     HardwareMap robot = new HardwareMap();
@@ -56,10 +57,21 @@ public class TeleopCode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        double horizontalSpeed;
-        double verticalSpeed;
-        double turnSpeed;
+        double wheelspeed[] = new double[12];
 
+        double lx;
+        double lxRuntimeMod;
+        double lxModifier;
+        double ly;
+        double lyRuntimeMod;
+        double lyModifier;
+        double rx;
+        double ly2;
+        boolean gamepadCheck;
+        String lastButton = "None";
+        ElapsedTime runtimely = new ElapsedTime();
+        ElapsedTime runtimelx = new ElapsedTime();
+        robot.init(hardwareMap);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -69,41 +81,129 @@ public class TeleopCode extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-            verticalSpeed = gamepad1.left_stick_y;
-            horizontalSpeed = gamepad1.left_stick_x;
-            turnSpeed = gamepad1.right_stick_x;
 
-            if (verticalSpeed > -.2 && verticalSpeed < .2) {
-                verticalSpeed = 0;
+
+            ly = gamepad1.left_stick_y*.7;
+            lx = -gamepad1.left_stick_x*.7;
+            rx = gamepad1.right_stick_x;
+            ly2 = gamepad2.left_stick_y*.5;
+
+            if (gamepad2.x) {
+                lastButton = "X";
+            }
+            else if (gamepad2.y) {
+                lastButton = "Y";
+            }
+            else if (gamepad2.a) {
+                lastButton = "A";
+            }
+            else if (gamepad2.b) {
+                lastButton = "B";
             }
 
-            if (horizontalSpeed < .2 && horizontalSpeed > -.2) {
-                horizontalSpeed = 0;
+            if (ly > -.2 && ly < .2) {
+                runtimely.reset();
+            }
+            lyRuntimeMod = Double.max(runtimely.seconds()*1.3, .3);
+            lyModifier = Double.min(lyRuntimeMod,1);
+
+            if (lx > -.2 && lx < .2) {
+                runtimelx.reset();
+            }
+            lxRuntimeMod = Double.max(runtimelx.seconds()*1.3, .3);
+            lxModifier = Double.min(lxRuntimeMod,1);
+
+            if (rx > -.2 && rx < .2) {
+                rx = 0;
             }
 
-            if (verticalSpeed != 0 && horizontalSpeed == 0 && turnSpeed == 0) {
-                robot.Motor1.setPower(verticalSpeed);
-                robot.Motor2.setPower(verticalSpeed);
-                robot.Motor3.setPower(verticalSpeed);
-                robot.Motor4.setPower(verticalSpeed);
+            if (ly2 > -.2 && ly2 < .2) {
+                ly2 = 0;
             }
-            else if (verticalSpeed == 0 && horizontalSpeed != 0 && turnSpeed == 0) {
-                robot.Motor1.setPower(-horizontalSpeed);
-                robot.Motor2.setPower(-horizontalSpeed);
-                robot.Motor3.setPower(horizontalSpeed);
-                robot.Motor4.setPower(horizontalSpeed);
-            }
-            else if (verticalSpeed == 0 && horizontalSpeed == 0 && turnSpeed != 0) {
-                robot.Motor1.setPower(turnSpeed);
-                robot.Motor2.setPower(-turnSpeed);
-                robot.Motor3.setPower(turnSpeed);
-                robot.Motor4.setPower(-turnSpeed);
+
+            if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
+                gamepadCheck = true;
             }
             else {
-                robot.Motor1.setPower(0);
-                robot.Motor2.setPower(0);
-                robot.Motor3.setPower(0);
-                robot.Motor4.setPower(0);
+                gamepadCheck = false;
+            }
+
+            if (gamepad1.dpad_up) {
+                wheelspeed[8] = -1;
+                wheelspeed[9] = -1;
+                wheelspeed[10] = -1;
+                wheelspeed[11] = -1;
+            }
+            else if (gamepad1.dpad_down) {
+                wheelspeed[8] = 1;
+                wheelspeed[9] = 1;
+                wheelspeed[10] = 1;
+                wheelspeed[11] = 1;
+            }
+            else if (gamepad1.dpad_right) {
+                wheelspeed[8] = 1;
+                wheelspeed[9] = -1;
+                wheelspeed[10] = -1;
+                wheelspeed[11] = 1;
+            }
+            else if (gamepad1.dpad_left) {
+                wheelspeed[8] = -1;
+                wheelspeed[9] = 1;
+                wheelspeed[10] = 1;
+                wheelspeed[11] = -1;
+            }
+
+            wheelspeed[0] = (ly*lyModifier - lx*lxModifier);
+            wheelspeed[1] = (ly*lyModifier + lx*lxModifier);
+            wheelspeed[2] = (ly*lyModifier + lx*lxModifier);
+            wheelspeed[3] = (ly*lyModifier - lx*lxModifier);
+            wheelspeed[4] = rx*.5 + wheelspeed[0];
+            wheelspeed[5] = -rx*.5 + wheelspeed[1];
+            wheelspeed[6] = rx*.5 + wheelspeed[2];
+            wheelspeed[7] = -rx*.5 + wheelspeed[3];
+
+            if (rx == 0 && !gamepadCheck) {
+                robot.Motor1.setPower(wheelspeed[0]);
+                robot.Motor2.setPower(wheelspeed[1]);
+                robot.Motor3.setPower(wheelspeed[2]);
+                robot.Motor4.setPower(wheelspeed[3]);
+            }
+            else if (gamepadCheck) {
+                robot.Motor1.setPower(wheelspeed[8]);
+                robot.Motor2.setPower(wheelspeed[9]);
+                robot.Motor3.setPower(wheelspeed[10]);
+                robot.Motor4.setPower(wheelspeed[11]);
+            }
+            else {
+                robot.Motor1.setPower(wheelspeed[4]);
+                robot.Motor2.setPower(wheelspeed[5]);
+                robot.Motor3.setPower(wheelspeed[6]);
+                robot.Motor4.setPower(wheelspeed[7]);
+            }
+
+            robot.liftArmL.setPower(ly2);
+            robot.liftArmR.setPower(ly2);
+
+            if (gamepad2.a) {
+                robot.Claw.setPosition(.8);
+            }
+
+            if (gamepad2.b) {
+                robot.Claw.setPosition(.45);
+            }
+
+            if (gamepad2.x && lastButton.equals("X")) {
+                robot.Claw.setPosition(.8);
+            }
+            else if (!gamepad2.x && lastButton.equals("X")) {
+                robot.Claw.setPosition(.45);
+            }
+
+            if (gamepad2.y && lastButton.equals("Y")) {
+                robot.Claw.setPosition(.45);
+            }
+            else if (!gamepad2.y && lastButton.equals("Y")) {
+                robot.Claw.setPosition(.8);
             }
         }
     }

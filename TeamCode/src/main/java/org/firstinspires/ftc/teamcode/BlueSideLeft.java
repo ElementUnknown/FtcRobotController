@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -52,7 +53,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Time", group="Robot")
+@Autonomous(name="Blueside_left", group="Robot")
 public class BlueSideLeft extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
@@ -69,12 +70,48 @@ public class BlueSideLeft extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Move(.5,0,-6);
-        Move(.5,52,0);
-        Move(-.5,0,3);
-        //releaseClaw();
-        Move(.5,0,-3);
-        Move(.5,6,0);
+        robot.Claw.setPosition(.4);
 
+        robot.liftArmL.setPower(-.5);
+        sleep(4500);
+        robot.liftArmL.setPower(0);
+
+        robot.Motor1.setPower(-.25);
+        robot.Motor2.setPower(-.25);
+        robot.Motor3.setPower(-.25);
+        robot.Motor4.setPower(-.25);
+        sleep(800);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+
+        robot.Claw.setPosition(.8);
+
+        robot.Motor1.setPower(.25);
+        robot.Motor2.setPower(.25);
+        robot.Motor3.setPower(.25);
+        robot.Motor4.setPower(.25);
+        sleep(800);
+
+        robot.Motor1.setPower(-.25);
+        robot.Motor2.setPower(.25);
+        robot.Motor3.setPower(-.25);
+        robot.Motor4.setPower(.25);
+        sleep(1000);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+
+        robot.Motor1.setPower(-.5);
+        robot.Motor2.setPower(-.5);
+        robot.Motor3.setPower(-.5);
+        robot.Motor4.setPower(-.5);
+        sleep(1200);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
     }
 }

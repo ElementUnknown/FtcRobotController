@@ -11,19 +11,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name = "Autonomous_Base2021_22", group = "robot")
-@Disabled
+
 public class Autonomous_Base extends LinearOpMode{
     HardwareMap             robot = new HardwareMap();
     private ElapsedTime     runtime = new ElapsedTime();
-    public double vertical_ticks_perinch = 43.956043956;
-    public double horizontal_ticks_perinch = 56.7375886525;
+    public double vertical_ticks_perinch = 44.0771349;
+    public double horizontal_ticks_perinch = 50.7936507;
     double currentHeading;
     //BNO055IMU imu;
     //Orientation angles;
     boolean turn[] = new boolean[3];
 
+
     public void Move (double power, double distanceforward, double distancelateral){
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if ( distanceforward != 0 && distancelateral == 0) {
             int Target_ticks = (int) (vertical_ticks_perinch * distanceforward);
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,9 +98,9 @@ public class Autonomous_Base extends LinearOpMode{
 
     public void horizontalMove (int time, double speed) {
         robot.Motor1.setPower(-speed);
-        robot.Motor2.setPower(-speed);
+        robot.Motor2.setPower(speed);
         robot.Motor3.setPower(speed);
-        robot.Motor4.setPower(speed);
+        robot.Motor4.setPower(-speed);
         sleep(time);
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
@@ -110,10 +114,10 @@ public class Autonomous_Base extends LinearOpMode{
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        robot.Motor1.setPower(-speed);
+        robot.Motor2.setPower(speed);
         robot.Motor3.setPower(-speed);
         robot.Motor4.setPower(speed);
-        robot.Motor2.setPower(-speed);
-        robot.Motor1.setPower(speed);
         sleep(time);
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
@@ -146,48 +150,26 @@ public class Autonomous_Base extends LinearOpMode{
         }
     }*/
 
-    public void raiseArm(int time, double speed) {
-        robot.LiftarmL.setPower(speed);
-        robot.LiftarmR.setPower(speed);
+   public void MoveArm(int time, double speed) {
+        robot.liftArmL.setPower(speed);
+        robot.liftArmR.setPower(speed);
         sleep(time);
-        robot.LiftarmR.setPower(0);
-        robot.LiftarmR.setPower(0);
-    }
+        robot.liftArmL.setPower(0);
+        robot.liftArmR.setPower(0);
+   }
 
-    public void lowerArm(int time, double speed) {
-        robot.LiftarmL.setPower(-speed);
-        robot.LiftarmR.setPower(-speed);
-        sleep(time);
-        robot.LiftarmR.setPower(0);
-        robot.LiftarmR.setPower(0);
-    }
 
-    public void releaseClaw() {
 
-    }
+   public void releaseClaw() {
+       robot.Claw.setPosition(.8);
+   }
 
-    public void closeClaw() {
+   public void closeClaw() {
+        robot.Claw.setPosition(.4);
+   }
 
-    }
+   @Override
+   public void runOpMode()  {
 
-    public void raiseCLaw (int time, double speed) {
-        robot.LiftarmR.setPower(speed);
-        robot.LiftarmL.setPower(speed);
-        sleep(time);
-        robot.LiftarmR.setPower(0);
-        robot.LiftarmL.setPower(0);
-    }
-
-    public void lowerClaw (int time, double speed) {
-        robot.LiftarmR.setPower(-speed);
-        robot.LiftarmL.setPower(-speed);
-        sleep(time);
-        robot.LiftarmR.setPower(0);
-        robot.LiftarmL.setPower(0);
-    }
-
-    @Override
-    public void runOpMode()  {
-
-    }
+   }
 }

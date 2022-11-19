@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -52,15 +54,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Time", group="Robot")
-public class RedSideRight extends Autonomous_Base {
+@Autonomous(name="Redside_right", group="Robot")
 
-    HardwareMap robot = new HardwareMap();
+public class RedSideRight extends Autonomous_Base {
 
     @Override
     public void runOpMode() {
 
-        robot.init(hardwareMap);
+        super.robot.init(super.hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -69,11 +70,37 @@ public class RedSideRight extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Move(.5,0,-6);
-        Move(.5,52,0);
-        Move(-.5,0,3);
+       /* verticalMove(0,.5);
         //releaseClaw();
-        Move(.5,0,-3);
-        Move(.5,6,0);
+        verticalMove(100,-.5); */
+
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.Motor1.setTargetPosition(-2000);
+        robot.Motor2.setTargetPosition(2000);
+        robot.Motor3.setTargetPosition(2000);
+        robot.Motor4.setTargetPosition(-2000);
+
+        robot.Motor1.setPower(.4);
+        robot.Motor2.setPower(.4);
+        robot.Motor3.setPower(.4);
+        robot.Motor4.setPower(.4);
+
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        waitforfinish();
+
+
     }
 }

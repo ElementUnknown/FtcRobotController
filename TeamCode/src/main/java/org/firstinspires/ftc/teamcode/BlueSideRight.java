@@ -52,15 +52,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Time", group="Robot")
+@Autonomous(name="Blueside_right", group="Robot")
 public class BlueSideRight extends Autonomous_Base {
 
-    HardwareMap robot = new HardwareMap();
+    Autonomous_Base Auto = new Autonomous_Base();
 
     @Override
     public void runOpMode() {
 
-        robot.init(hardwareMap);
+        Auto.robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -69,14 +69,15 @@ public class BlueSideRight extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        horizontalMove(700,.5);
-        horizontalMove(0,.5);
-        verticalMove(0,.5);
-        verticalMove(0,.5);
-        //releaseClaw();
-        verticalMove(0,.5);
-        verticalMove(0,.5);
-        horizontalMove(0,.5);
-        horizontalMove(0,.5);
+        robot.Claw.setPosition(.4);
+        robot.Motor1.setPower(-.5);
+        robot.Motor2.setPower(-.5);
+        robot.Motor3.setPower(-.5);
+        robot.Motor4.setPower(-.5);
+        sleep(1200);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
     }
 }

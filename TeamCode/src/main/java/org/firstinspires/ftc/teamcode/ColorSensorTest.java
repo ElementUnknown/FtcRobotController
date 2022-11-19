@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Time", group="Robot")
+@Autonomous(name="ColorSensor_Test", group="Robot")
 public class ColorSensorTest extends LinearOpMode {
 
     HardwareMap robot = new HardwareMap();
@@ -73,7 +73,7 @@ public class ColorSensorTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        if (color != "red") {
+        if (!color.equals("red")) {
             robot.colorSensor.enableLed(true);
 
             while(opModeIsActive()){
@@ -81,7 +81,7 @@ public class ColorSensorTest extends LinearOpMode {
                 telemetry.update();
             }
         }
-        else if (color == "red") {
+        else {
             robot.colorSensor.enableLed(false);
 
             while(opModeIsActive()) {

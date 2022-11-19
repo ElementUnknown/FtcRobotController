@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -52,10 +53,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Time", group="Robot")
+@Autonomous(name="Redside_left", group="Robot")
+@Disabled
 public class RedSideLeft extends Autonomous_Base {
 
-    HardwareMap robot = new HardwareMap();
+    Autonomous_Base Auto= new Autonomous_Base();
 
     @Override
     public void runOpMode() {
@@ -69,14 +71,11 @@ public class RedSideLeft extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        horizontalMove(0,.5);
-        horizontalMove(0,.5);
-        verticalMove(0,.5);
-        verticalMove(0,.5);
+        verticalMove(1000,.5);
         //releaseClaw();
-        verticalMove(0,.5);
-        verticalMove(0,.5);
-        horizontalMove(0,.5);
-        horizontalMove(0,.5);
+        verticalMove(50,-.5);
+
+        Auto.Move(-5, 16,5);
+
     }
 }
