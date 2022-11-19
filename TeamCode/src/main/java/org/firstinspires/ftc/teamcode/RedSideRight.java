@@ -73,33 +73,16 @@ public class RedSideRight extends Autonomous_Base {
        /* verticalMove(0,.5);
         //releaseClaw();
         verticalMove(100,-.5); */
+        Move(.5,20,0);
+        Move(.25,0,12);
+        closeClaw();
+      //  Move(.75,0,6);
+      //  Move(.25,-6,-6);
+        MoveArm(4000,.5);
+        releaseClaw();
+        Move(.25,0,-12);
+        Move(.5,-20,0);
 
-        robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        robot.Motor1.setTargetPosition(-2000);
-        robot.Motor2.setTargetPosition(2000);
-        robot.Motor3.setTargetPosition(2000);
-        robot.Motor4.setTargetPosition(-2000);
-
-        robot.Motor1.setPower(.4);
-        robot.Motor2.setPower(.4);
-        robot.Motor3.setPower(.4);
-        robot.Motor4.setPower(.4);
-
-        robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        waitforfinish();
 
 
     }

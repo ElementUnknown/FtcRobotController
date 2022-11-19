@@ -62,8 +62,8 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Motor1.setTargetPosition(Target_ticks);
-            robot.Motor2.setTargetPosition(-Target_ticks);
+            robot.Motor1.setTargetPosition((int)(-Target_ticks));
+            robot.Motor2.setTargetPosition((int)(Target_ticks));
             robot.Motor3.setTargetPosition((int)(Target_ticks));
             robot.Motor4.setTargetPosition((int)(-Target_ticks));
 
@@ -161,7 +161,7 @@ public class Autonomous_Base extends LinearOpMode{
 
 
    public void releaseClaw() {
-       robot.Claw.setPosition(.8);
+       robot.Claw.setPosition(.83);
    }
 
    public void closeClaw() {

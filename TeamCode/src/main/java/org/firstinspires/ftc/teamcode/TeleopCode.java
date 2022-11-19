@@ -57,6 +57,7 @@ public class TeleopCode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+
         double wheelspeed[] = new double[12];
 
         double lx;
@@ -72,6 +73,10 @@ public class TeleopCode extends LinearOpMode {
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
         robot.init(hardwareMap);
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -86,7 +91,7 @@ public class TeleopCode extends LinearOpMode {
             ly = gamepad1.left_stick_y*.7;
             lx = -gamepad1.left_stick_x*.7;
             rx = gamepad1.right_stick_x;
-            ly2 = gamepad2.left_stick_y*.5;
+            ly2 = gamepad2.left_stick_y*-1;
 
             if (gamepad2.x) {
                 lastButton = "X";

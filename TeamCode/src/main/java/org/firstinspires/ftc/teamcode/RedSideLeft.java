@@ -54,15 +54,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 
 @Autonomous(name="Redside_left", group="Robot")
-@Disabled
+
 public class RedSideLeft extends Autonomous_Base {
 
-    Autonomous_Base Auto= new Autonomous_Base();
 
     @Override
     public void runOpMode() {
 
-        robot.init(hardwareMap);
+        super.robot.init(super.hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -70,12 +69,18 @@ public class RedSideLeft extends Autonomous_Base {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        closeClaw();
+        sleep(500);
+        Move(.3,27,0);
+        Move(.5,0,-11);
+        MoveArm(2750,1);
+        Move(.25,3,0);
+        MoveArm(1500, -.5);
+        releaseClaw();
+        sleep(500);
+        Move(.25,-4,0);
+        Move(.5, 0, 11);
 
-        verticalMove(1000,.5);
-        //releaseClaw();
-        verticalMove(50,-.5);
-
-        Auto.Move(-5, 16,5);
 
     }
 }
