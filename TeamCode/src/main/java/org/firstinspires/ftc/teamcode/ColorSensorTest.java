@@ -59,7 +59,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ColorSensorTest extends LinearOpMode {
 
     HardwareMap robot = new HardwareMap();
-    String color;
+    String color = "none";
 
     @Override
     public void runOpMode() {
@@ -73,7 +73,7 @@ public class ColorSensorTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        if (!color.equals("red")) {
+        if (!color.equals("red") && !color.equals("orange")) {
             robot.colorSensor.enableLed(true);
 
             while(opModeIsActive()){
@@ -81,11 +81,19 @@ public class ColorSensorTest extends LinearOpMode {
                 telemetry.update();
             }
         }
+        else if (color.equals("red")) {
+            robot.colorSensor.enableLed(false);
+
+            while(opModeIsActive()) {
+                telemetry.addLine("Red found.");
+                telemetry.update();
+            }
+        }
         else {
             robot.colorSensor.enableLed(false);
 
             while(opModeIsActive()) {
-                telemetry.addLine("Color red found.");
+                telemetry.addLine("Orange found.");
                 telemetry.update();
             }
         }
