@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,6 +18,8 @@ public class Autonomous_Base extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 44.0771349;
     public double horizontal_ticks_perinch = 50.7936507;
+    public int color = 0;
+    public int checkNum = 0;
     double currentHeading;
     //BNO055IMU imu;
     //Orientation angles;
@@ -158,7 +161,12 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmR.setPower(0);
    }
 
-
+   public void checkColor() {
+       while (color != 6 && color != 9 && color != 10 && checkNum < 4) {
+           color = robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER);
+           checkNum++;
+       }
+   }
 
    public void releaseClaw() {
        robot.Claw.setPosition(.83);

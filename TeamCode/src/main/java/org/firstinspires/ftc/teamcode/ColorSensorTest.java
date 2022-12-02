@@ -73,6 +73,8 @@ public class ColorSensorTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+
+
         while(opModeIsActive()){
             if (color != 6 && color != 9 && color != 10) {
                 telemetry.addData("Color Number", robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER));

@@ -69,7 +69,23 @@ public class RedSideLeft extends Autonomous_Base {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        closeClaw();
+
+        checkColor();
+
+        if (color == 6) {
+            Move(.5,-11,0);
+        }
+        else if (color == 9) {
+            Move(.5,0,11);
+        }
+        else if (color == 10) {
+            Move(.5,0,-11);
+        }
+        else {
+            MoveArm(5,1);
+        }
+
+        /*closeClaw();
         sleep(500);
         Move(.3,27,0);
         Move(.5,0,-11);
@@ -79,8 +95,6 @@ public class RedSideLeft extends Autonomous_Base {
         releaseClaw();
         sleep(500);
         Move(.25,-4,0);
-        Move(.5, 0, 11);
-
-
+        Move(.5, 0, 11);*/
     }
 }
