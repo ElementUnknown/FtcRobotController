@@ -133,7 +133,11 @@ public class Autonomous_Base extends LinearOpMode{
 
         }
     }
+    public void waitforarmfinish(){
+        while (robot.liftArmL.isBusy() && robot.liftArmR.isBusy()){
 
+        }
+    }
     /*public void gyroTurn(int turnNumber, in t turnWindow1, int turnWindow2) {
         turn[turnNumber] = false;
         while (turn[turnNumber] == false) {

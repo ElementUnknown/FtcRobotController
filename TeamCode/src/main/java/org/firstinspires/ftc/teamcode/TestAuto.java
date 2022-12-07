@@ -29,10 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -53,15 +51,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Redside_left", group="Robot")
+@Autonomous(name="TestAuto", group="Robot")
+public class TestAuto extends Autonomous_Base {
 
-public class RedSideLeft extends Autonomous_Base {
-
+    HardwareMap robot = new HardwareMap();
 
     @Override
     public void runOpMode() {
 
-        super.robot.init(super.hardwareMap);
+        robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -70,50 +68,16 @@ public class RedSideLeft extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Move(.5,0,36);
-        MoveArm(4500,.5);
-        Move(.25,5,0);
-        MoveArm(2000,-.5);
-        releaseClaw();
-        Move(.5,-5,0);
-        Move(.5,0,12);
-        Move(.5,12,0);
-        closeClaw();
-        MoveArm(2000,.5);
-        Move(.5,-48,0);
-        Move(.5,0,-12);
-        MoveArm(1500,.5);
-        Move(.5,5,0);
-        MoveArm(2000,.5);
-        releaseClaw();
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmL.setTargetPosition(500);
+        robot.liftArmR.setTargetPosition(500);
+        robot.liftArmL.setPower(1);
+        robot.liftArmR.setPower(1);
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (robot.liftArmL.isBusy() && robot.liftArmR.isBusy()){
 
-        //hi my name is bob bob says hi this is bob when a car comes by
-
-        checkColor();
-
-        if (color == 6) {
-            Move(.5,-11,0);
         }
-        else if (color == 9) {
-            Move(.5,0,11);
-        }
-        else if (color == 10) {
-            Move(.5,0,-11);
-        }
-        else {
-            MoveArm(5,1);
-        }
-
-        /*closeClaw();
-        sleep(500);
-        Move(.3,27,0);
-        Move(.5,0,-11);
-        MoveArm(2750,1);
-        Move(.25,3,0);
-        MoveArm(1500, -.5);
-        releaseClaw();
-        sleep(500);
-        Move(.25,-4,0);
-        Move(.5, 0, 11);*/
     }
 }
