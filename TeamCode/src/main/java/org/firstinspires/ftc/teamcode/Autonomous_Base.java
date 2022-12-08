@@ -65,15 +65,15 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Motor1.setTargetPosition((int)(-Target_ticks));
-            robot.Motor2.setTargetPosition((int)(Target_ticks));
-            robot.Motor3.setTargetPosition((int)(Target_ticks));
-            robot.Motor4.setTargetPosition((int)(-Target_ticks));
+            robot.Motor1.setTargetPosition((int)(Target_ticks));
+            robot.Motor2.setTargetPosition((int)(-Target_ticks));
+            robot.Motor3.setTargetPosition((int)(-Target_ticks));
+            robot.Motor4.setTargetPosition((int)(Target_ticks));
 
             robot.Motor1.setPower(power);
             robot.Motor2.setPower(-power);
-            robot.Motor3.setPower(power);
-            robot.Motor4.setPower(-power);
+            robot.Motor3.setPower(-power);
+            robot.Motor4.setPower(power);
 
             robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -138,6 +138,84 @@ public class Autonomous_Base extends LinearOpMode{
 
         }
     }
+
+    public void Lowgoal(){
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(1);
+        robot.liftArmR.setPower(1);
+
+        robot.liftArmL.setTargetPosition(500);
+        robot.liftArmR.setTargetPosition(500);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+    public void Goalreadjust(){
+
+        int LiftL = robot.liftArmL.getCurrentPosition();
+        int LiftR = robot.liftArmR.getCurrentPosition();
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(.75);
+        robot.liftArmR.setPower(.75);
+
+        robot.liftArmL.setTargetPosition(LiftL-200);
+        robot.liftArmR.setTargetPosition(LiftR-200);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+    public void Medgoal(){
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(1);
+        robot.liftArmR.setPower(1);
+
+        robot.liftArmL.setTargetPosition(710);
+        robot.liftArmR.setTargetPosition(710);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+    public void Highgoal(){
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(1);
+        robot.liftArmR.setPower(1);
+
+        robot.liftArmL.setTargetPosition(1100);
+        robot.liftArmR.setTargetPosition(1100);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+    public void Grabconeheight(){
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(.5);
+        robot.liftArmR.setPower(.5);
+
+        robot.liftArmL.setTargetPosition(175);
+        robot.liftArmR.setTargetPosition(175);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
     /*public void gyroTurn(int turnNumber, in t turnWindow1, int turnWindow2) {
         turn[turnNumber] = false;
         while (turn[turnNumber] == false) {
@@ -158,6 +236,8 @@ public class Autonomous_Base extends LinearOpMode{
     }*/
 
    public void MoveArm(int time, double speed) {
+       robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmL.setPower(speed);
         robot.liftArmR.setPower(speed);
         sleep(time);
@@ -174,10 +254,12 @@ public class Autonomous_Base extends LinearOpMode{
 
    public void releaseClaw() {
        robot.Claw.setPosition(.83);
+       sleep(500);
    }
 
    public void closeClaw() {
         robot.Claw.setPosition(.4);
+        sleep(500);
    }
 
    @Override

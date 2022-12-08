@@ -16,6 +16,7 @@ public class HardwareMap {
     public DcMotor liftArmL     = null;
     public DcMotor liftArmR     = null;
     public Servo   Claw         = null;
+    public Servo   PivotClaw    = null;
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
 
@@ -71,5 +72,7 @@ public class HardwareMap {
 
         Claw = hwMap.get(Servo.class, "Claw");
         Claw.setPosition(.83);
+        PivotClaw = hwMap.get(Servo.class, "PivotClaw");
+        PivotClaw.setPosition(.5);
     }
 }

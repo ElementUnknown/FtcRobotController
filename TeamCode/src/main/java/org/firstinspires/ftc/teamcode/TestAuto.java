@@ -59,7 +59,7 @@ public class TestAuto extends Autonomous_Base {
     @Override
     public void runOpMode() {
 
-        robot.init(hardwareMap);
+        super.robot.init(super.hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -68,7 +68,9 @@ public class TestAuto extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+/** initial tests for lift encoders **/
+        /*robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmL.setTargetPosition(500);
         robot.liftArmR.setTargetPosition(500);
@@ -77,7 +79,41 @@ public class TestAuto extends Autonomous_Base {
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while (robot.liftArmL.isBusy() && robot.liftArmR.isBusy()){
+        }*/
+        /** More encoder tests and setup**/
+        /*closeClaw();
+        Highgoal();
+        Move(.5,3,0);
+        waitforarmfinish();
+        Move(.5,3,0);
+        Goalreadjust();
+        waitforarmfinish();
+        releaseClaw();*/
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        }
+        super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        closeClaw();
+        Lowgoal();
+        Move(.75,0,38);
+        sleep(1000);
+        waitforarmfinish();
+        Move(.5,4,0);
+        sleep(500);
+        Goalreadjust();
+        waitforarmfinish();
+        releaseClaw();
+        Move(.5,-5,0);
+        Move(.5,0,12);
+        Grabconeheight();
+        waitforarmfinish();
+        Move(.5,28,0);
+        closeClaw();
+        MoveArm(400, 1);
+        Move(.5,-10,0);
+
+
+
     }
 }
