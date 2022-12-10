@@ -33,6 +33,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -70,17 +71,32 @@ public class RedSideLeft extends Autonomous_Base {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        Move(.5,0,36);
-        MoveArm(4500,.5);
-        Move(.25,5,0);
-        MoveArm(2000,-.5);
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        closeClaw();
+        Lowgoal(0,0);
+        Move(.75,0,38);
+        sleep(1000);
+        waitforarmfinish();
+        Move(.5,4,0);
+        sleep(500);
+        Goalreadjust();
+        waitforarmfinish();
         releaseClaw();
         Move(.5,-5,0);
         Move(.5,0,12);
-        Move(.5,12,0);
+        Grabconeheight();
+        waitforarmfinish();
+        Move(.5,28,0);
         closeClaw();
-        MoveArm(2000,.5);
-        Move(.5,-48,0);
+        MoveArm(400, 1);
+        Move(.5,-10,0);
+
+        //////
+
         Move(.5,0,-12);
         MoveArm(1500,.5);
         Move(.5,5,0);

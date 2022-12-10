@@ -20,6 +20,9 @@ public class HardwareMap {
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
 
+    public int ArmTicksR;
+    public int ArmTicksL;
+
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();

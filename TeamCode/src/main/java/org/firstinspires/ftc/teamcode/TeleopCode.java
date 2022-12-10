@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Teleop_22_23", group="Robot")
-public class TeleopCode extends LinearOpMode {
+public class TeleopCode extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
 
@@ -68,15 +68,21 @@ public class TeleopCode extends LinearOpMode {
         double lyModifier;
         double rx;
         double ly2;
+        double rx2;
+        double pivotAngle = .5;
         boolean gamepadCheck;
+        int LTicks = 0;
+        int RTicks = 0;
         String lastButton = "None";
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
-        robot.init(hardwareMap);
-        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.init(super.hardwareMap);
+        super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -92,6 +98,7 @@ public class TeleopCode extends LinearOpMode {
             lx = -gamepad1.left_stick_x*.7;
             rx = gamepad1.right_stick_x;
             ly2 = gamepad2.left_stick_y*-1;
+            rx2 = gamepad2.right_stick_x;
 
             if (gamepad2.x) {
                 lastButton = "X";
@@ -168,47 +175,85 @@ public class TeleopCode extends LinearOpMode {
             wheelspeed[7] = -rx*.5 + wheelspeed[3];
 
             if (rx == 0 && !gamepadCheck) {
-                robot.Motor1.setPower(wheelspeed[0]);
-                robot.Motor2.setPower(wheelspeed[1]);
-                robot.Motor3.setPower(wheelspeed[2]);
-                robot.Motor4.setPower(wheelspeed[3]);
+                super.robot.Motor1.setPower(wheelspeed[0]);
+                super.robot.Motor2.setPower(wheelspeed[1]);
+                super.robot.Motor3.setPower(wheelspeed[2]);
+                super.robot.Motor4.setPower(wheelspeed[3]);
             }
             else if (gamepadCheck) {
-                robot.Motor1.setPower(wheelspeed[8]);
-                robot.Motor2.setPower(wheelspeed[9]);
-                robot.Motor3.setPower(wheelspeed[10]);
-                robot.Motor4.setPower(wheelspeed[11]);
+                super.robot.Motor1.setPower(wheelspeed[8]);
+                super.robot.Motor2.setPower(wheelspeed[9]);
+                super.robot.Motor3.setPower(wheelspeed[10]);
+                super.robot.Motor4.setPower(wheelspeed[11]);
             }
             else {
-                robot.Motor1.setPower(wheelspeed[4]);
-                robot.Motor2.setPower(wheelspeed[5]);
-                robot.Motor3.setPower(wheelspeed[6]);
-                robot.Motor4.setPower(wheelspeed[7]);
+                super.robot.Motor1.setPower(wheelspeed[4]);
+                super.robot.Motor2.setPower(wheelspeed[5]);
+                super.robot.Motor3.setPower(wheelspeed[6]);
+                super.robot.Motor4.setPower(wheelspeed[7]);
             }
 
-            robot.liftArmL.setPower(ly2);
-            robot.liftArmR.setPower(ly2);
+            if(!gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up) {
 
+                LTicks = super.robot.liftArmL.getCurrentPosition();
+                RTicks = super.robot.liftArmR.getCurrentPosition();
+
+                super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                super.robot.liftArmL.setPower(ly2);
+                super.robot.liftArmR.setPower(ly2);
+            }
             if (gamepad2.a) {
-                robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.8);
             }
 
             if (gamepad2.b) {
-                robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.45);
             }
 
             if (gamepad2.x && lastButton.equals("X")) {
-                robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.8);
             }
             else if (!gamepad2.x && lastButton.equals("X")) {
-                robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.45);
             }
 
             if (gamepad2.y && lastButton.equals("Y")) {
-                robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.45);
             }
             else if (!gamepad2.y && lastButton.equals("Y")) {
-                robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.8);
+            }
+
+            if (rx2 > .2) {
+                if (pivotAngle < .75) {
+                    pivotAngle += .05;
+                }
+                super.robot.PivotClaw.setPosition(pivotAngle);
+            }
+            else if (rx2 < -.2) {
+                if (pivotAngle > .25) {
+                    pivotAngle -= .05;
+                }
+                super.robot.PivotClaw.setPosition(pivotAngle);
+            }
+            else {
+                pivotAngle = .5;
+                super.robot.PivotClaw.setPosition(.5);
+            }
+
+            if (gamepad2.dpad_left) {
+                Lowgoal(RTicks,LTicks);
+            }
+            else if (gamepad2.dpad_up) {
+                Medgoal(RTicks,LTicks);
+            }
+            else if (gamepad2.dpad_right) {
+                Highgoal(RTicks,LTicks);
             }
         }
     }

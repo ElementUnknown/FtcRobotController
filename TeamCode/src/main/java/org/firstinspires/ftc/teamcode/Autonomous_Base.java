@@ -139,7 +139,7 @@ public class Autonomous_Base extends LinearOpMode{
         }
     }
 
-    public void Lowgoal(){
+    public void Lowgoal(int TicksR, int TicksL){
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -171,7 +171,7 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-    public void Medgoal(){
+    public void Medgoal(int TicksR, int TicksL){
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -186,7 +186,7 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-    public void Highgoal(){
+    public void Highgoal(int TicksR, int TicksL){
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

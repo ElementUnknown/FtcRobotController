@@ -95,7 +95,7 @@ public class TestAuto extends Autonomous_Base {
         super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         closeClaw();
-        Lowgoal();
+        Lowgoal(0,0);
         Move(.75,0,38);
         sleep(1000);
         waitforarmfinish();
