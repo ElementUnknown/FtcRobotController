@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -55,6 +56,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class TestAuto extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
+    private int color = 0;
+    private int checkNum = 0;
 
     @Override
     public void runOpMode() {
@@ -96,23 +99,59 @@ public class TestAuto extends Autonomous_Base {
         super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         closeClaw();
         Lowgoal(0,0);
-        Move(.75,0,38);
+        Move(.3,0,18);
+        sleep(500);
+        while (color != 6 && color != 9 && color != 10 && checkNum < 5) {
+            color = super.robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER);
+            checkNum++;
+            sleep(250);
+        }
+        telemetry.addData("Color Number", color);
+        telemetry.update();
+        Move(.3,0,21);
         sleep(1000);
         waitforarmfinish();
-        Move(.5,4,0);
+        Move(.3,3.5,0);
         sleep(500);
         Goalreadjust();
         waitforarmfinish();
         releaseClaw();
-        Move(.5,-5,0);
-        Move(.5,0,12);
+        Move(.3,-2,0);
+        Move(.3,0,12);
         Grabconeheight();
         waitforarmfinish();
-        Move(.5,28,0);
+        Move(.3,22.5,0);
         closeClaw();
+        Move(.3,-.5,0);
+        sleep(100);
         MoveArm(400, 1);
-        Move(.5,-10,0);
-
+        Move(.5,-48.5,0);
+        Move(.3,0,-12);
+        Medgoal(0,0);
+        waitforarmfinish();
+        Move(.3,3,0);
+        Lowgoal(0,0);
+        waitforarmfinish();
+        releaseClaw();
+        Move(.3,-4,0);
+        telemetry.addData("Color Number", color);
+        telemetry.update();
+        if (color == 9) {
+            Move(.3,0,12);
+            Move(.3,24,0);
+            ArmGround(0,0);
+            waitforarmfinish();
+        }
+        else if (color == 6) {
+            ArmGround(0,0);
+            waitforarmfinish();
+        }
+        else {
+            Move(.3,0,12);
+            Move(.3, 48,0);
+            ArmGround(0,0);
+            waitforarmfinish();
+        }
 
 
     }

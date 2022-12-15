@@ -20,8 +20,6 @@ public class HardwareMap {
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
 
-    public int ArmTicksR;
-    public int ArmTicksL;
 
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
@@ -70,8 +68,8 @@ public class HardwareMap {
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Claw = hwMap.get(Servo.class, "Claw");
         Claw.setPosition(.83);

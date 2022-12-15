@@ -18,8 +18,8 @@ public class Autonomous_Base extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 44.0771349;
     public double horizontal_ticks_perinch = 50.7936507;
-    public int color = 0;
-    public int checkNum = 0;
+    private int color = 0;
+    private int checkNum = 0;
     double currentHeading;
     //BNO055IMU imu;
     //Orientation angles;
@@ -138,7 +138,20 @@ public class Autonomous_Base extends LinearOpMode{
 
         }
     }
+    public void ArmGround (int TicksR, int TicksL){
 
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(1);
+        robot.liftArmR.setPower(1);
+
+        robot.liftArmL.setTargetPosition(0 - TicksL);
+        robot.liftArmR.setTargetPosition(0 - TicksR);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
     public void Lowgoal(int TicksR, int TicksL){
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -147,8 +160,8 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setPower(1);
         robot.liftArmR.setPower(1);
 
-        robot.liftArmL.setTargetPosition(500);
-        robot.liftArmR.setTargetPosition(500);
+        robot.liftArmL.setTargetPosition(500 - TicksL);
+        robot.liftArmR.setTargetPosition(500 - TicksR);
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -179,8 +192,8 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setPower(1);
         robot.liftArmR.setPower(1);
 
-        robot.liftArmL.setTargetPosition(710);
-        robot.liftArmR.setTargetPosition(710);
+        robot.liftArmL.setTargetPosition(760 -TicksL);
+        robot.liftArmR.setTargetPosition(760 - TicksR);
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -194,8 +207,8 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setPower(1);
         robot.liftArmR.setPower(1);
 
-        robot.liftArmL.setTargetPosition(1100);
-        robot.liftArmR.setTargetPosition(1100);
+        robot.liftArmL.setTargetPosition(1100 - TicksL);
+        robot.liftArmR.setTargetPosition(1100 - TicksR);
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -209,8 +222,8 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setPower(.5);
         robot.liftArmR.setPower(.5);
 
-        robot.liftArmL.setTargetPosition(175);
-        robot.liftArmR.setTargetPosition(175);
+        robot.liftArmL.setTargetPosition(185);
+        robot.liftArmR.setTargetPosition(185);
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -246,9 +259,10 @@ public class Autonomous_Base extends LinearOpMode{
    }
 
    public void checkColor() {
-       while (color != 6 && color != 9 && color != 10 && checkNum < 4) {
+       while (color != 6 && color != 9 && color != 10 && checkNum < 5) {
            color = robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER);
            checkNum++;
+           sleep(250);
        }
    }
 

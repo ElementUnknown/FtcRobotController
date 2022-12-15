@@ -174,7 +174,7 @@ public class TeleopCode extends Autonomous_Base {
             wheelspeed[6] = rx*.5 + wheelspeed[2];
             wheelspeed[7] = -rx*.5 + wheelspeed[3];
 
-            if (rx == 0 && !gamepadCheck) {
+            if (rx == 0 && !gamepadCheck && (lx != 0 || ly != 0)) {
                 super.robot.Motor1.setPower(wheelspeed[0]);
                 super.robot.Motor2.setPower(wheelspeed[1]);
                 super.robot.Motor3.setPower(wheelspeed[2]);
@@ -186,14 +186,20 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor3.setPower(wheelspeed[10]);
                 super.robot.Motor4.setPower(wheelspeed[11]);
             }
-            else {
+            else if (ly == 0 && lx == 0 && rx != 0){
                 super.robot.Motor1.setPower(wheelspeed[4]);
                 super.robot.Motor2.setPower(wheelspeed[5]);
                 super.robot.Motor3.setPower(wheelspeed[6]);
                 super.robot.Motor4.setPower(wheelspeed[7]);
             }
+            else {
+                super.robot.Motor1.setPower(0);
+                super.robot.Motor2.setPower(0);
+                super.robot.Motor3.setPower(0);
+                super.robot.Motor4.setPower(0);
+            }
 
-            if(!gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.dpad_up) {
+            if(!gamepad2.dpad_left || !gamepad2.dpad_right || !gamepad2.dpad_up || !gamepad2.dpad_down) {
 
                 LTicks = super.robot.liftArmL.getCurrentPosition();
                 RTicks = super.robot.liftArmR.getCurrentPosition();
@@ -229,31 +235,24 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Claw.setPosition(.8);
             }
 
-            if (rx2 > .2) {
-                if (pivotAngle < .75) {
-                    pivotAngle += .05;
-                }
-                super.robot.PivotClaw.setPosition(pivotAngle);
+            if (rx2 > .2 || rx2 < -.2) {
+                super.robot.PivotClaw.setPosition(.25*rx2+.5);
             }
-            else if (rx2 < -.2) {
-                if (pivotAngle > .25) {
-                    pivotAngle -= .05;
-                }
-                super.robot.PivotClaw.setPosition(pivotAngle);
-            }
-            else {
-                pivotAngle = .5;
+            else if (rx2 < .2 && rx2 >-.2){
                 super.robot.PivotClaw.setPosition(.5);
             }
 
             if (gamepad2.dpad_left) {
-                Lowgoal(RTicks,LTicks);
+                Medgoal(RTicks, LTicks);
             }
             else if (gamepad2.dpad_up) {
-                Medgoal(RTicks,LTicks);
+                Highgoal(RTicks, LTicks);
             }
             else if (gamepad2.dpad_right) {
-                Highgoal(RTicks,LTicks);
+                Lowgoal(RTicks, LTicks);
+            }
+            else if (gamepad2.dpad_down){
+                ArmGround(RTicks, LTicks);
             }
         }
     }

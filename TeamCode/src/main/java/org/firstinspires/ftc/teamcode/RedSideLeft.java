@@ -107,7 +107,7 @@ public class RedSideLeft extends Autonomous_Base {
 
         checkColor();
 
-        if (color == 6) {
+       /* if (color == 6) {
             Move(.5,-11,0);
         }
         else if (color == 9) {
@@ -118,7 +118,7 @@ public class RedSideLeft extends Autonomous_Base {
         }
         else {
             MoveArm(5,1);
-        }
+        }*/
 
         /*closeClaw();
         sleep(500);
