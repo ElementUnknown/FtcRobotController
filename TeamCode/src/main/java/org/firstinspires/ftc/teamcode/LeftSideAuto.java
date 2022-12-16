@@ -52,8 +52,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="TestAuto", group="Robot")
-public class TestAuto extends Autonomous_Base {
+@Autonomous(name="LeftSideAuto", group="Robot")
+public class LeftSideAuto extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
     private int color = 0;
