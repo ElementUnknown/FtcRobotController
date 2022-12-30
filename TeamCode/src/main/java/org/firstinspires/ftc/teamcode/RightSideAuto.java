@@ -90,7 +90,7 @@ public class RightSideAuto extends Autonomous_Base {
         Move(.3,0,-21);
         sleep(1000);
         waitforarmfinish();
-        Move(.3,3.5,0);
+        Move(.3,2.5,0);
         sleep(500);
         Goalreadjust();
         waitforarmfinish();
@@ -115,7 +115,7 @@ public class RightSideAuto extends Autonomous_Base {
         Move(.3,-4,0);
         telemetry.addData("Color Number", color);
         telemetry.update();
-        if (color == 9) {
+        if (color == 9 || color == 8) {
             Move(.3,0,-12);
             Move(.3,24,0);
             ArmGround(0,0);

@@ -18,11 +18,11 @@ public class Autonomous_Base extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 44.0771349;
     public double horizontal_ticks_perinch = 50.7936507;
+    public double intoffset = 0;
     private int color = 0;
     private int checkNum = 0;
-    double currentHeading;
-    //BNO055IMU imu;
-    //Orientation angles;
+
+
     boolean turn[] = new boolean[3];
 
 
@@ -229,25 +229,45 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-    /*public void gyroTurn(int turnNumber, in t turnWindow1, int turnWindow2) {
-        turn[turnNumber] = false;
-        while (turn[turnNumber] == false) {
-            robot.Motor1.setPower(-.3);
-            robot.Motor4.setPower(-.3);
-            robot.Motor2.setPower(.3);
-            robot.Motor3.setPower(.3);
-            if (currentHeading > turnWindow1 && currentHeading < turnWindow2) {
-                turn[turnNumber] = true;
-            } else {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                this.imu.getPosition();
-                currentHeading = angles.firstAngle;
-                telemetry.addData("Heading", angles.firstAngle);
-                telemetry.update();
-            }
-        }
-    }*/
+   public void TurnByGyro(double target,double speed, double buffer, double multplierquotiant){//quotiant is the degree from the target with which you want to begin decelaeration
+        double TurnSpeed = 0; // if quotiant is too small, the angle may not be met, so the loop may get stuck
+        double currentHeading;
+        boolean continueangleloop = false;
+        double truetarget;
+        double offset = 0;
+        double angledistance = 0;
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        currentHeading = getHeading();
+        offset = currentHeading;
+        truetarget = (-target + offset);
+        while(truetarget > 180)             truetarget    = truetarget    - 360;
+        while(truetarget < -180)            truetarget    = truetarget    + 360;
+        angledistance = currentHeading - truetarget;
+        if (angledistance > 180)            angledistance = angledistance - 360;
+        if (angledistance < -180)           angledistance = angledistance + 360;
+        if (Math.abs(angledistance) >= buffer)    continueangleloop = true;
+        while (opModeIsActive() && continueangleloop){
+            currentHeading = getHeading();
+            angledistance = currentHeading - truetarget;
+            if (angledistance > 180)            angledistance = angledistance - 360;
+            if (angledistance < -180)           angledistance = angledistance + 360;
+            TurnSpeed= angledistance / multplierquotiant;
+            if (TurnSpeed > 1)                  TurnSpeed     = 1;
+            if (TurnSpeed < -1)                  TurnSpeed     = -1;
 
+            robot.Motor1.setPower(speed*TurnSpeed);
+            robot.Motor2.setPower(-speed*TurnSpeed);
+            robot.Motor3.setPower(speed*TurnSpeed);
+            robot.Motor4.setPower(-speed*TurnSpeed);
+            if (Math.abs(angledistance) > buffer)      continueangleloop = true;
+            else                                        continueangleloop = false;
+            telemetry.addData("", String.valueOf(currentHeading));
+            telemetry.update();
+        }
+   }
    public void MoveArm(int time, double speed) {
        robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -275,6 +295,10 @@ public class Autonomous_Base extends LinearOpMode{
         robot.Claw.setPosition(.4);
         sleep(500);
    }
+   public double getHeading() {
+        robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return robot.angles.firstAngle;
+    }
 
    @Override
    public void runOpMode()  {

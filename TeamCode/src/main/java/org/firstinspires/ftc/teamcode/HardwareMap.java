@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 public class HardwareMap {
 
     /* Public OpMode members. */
@@ -19,7 +24,8 @@ public class HardwareMap {
     public Servo   PivotClaw    = null;
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
-
+    public BNO055IMU       imu;
+    public Orientation angles;
 
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
@@ -43,6 +49,12 @@ public class HardwareMap {
         liftArmL        = hwMap.get(DcMotor.class, "liftArmL");
         liftArmR        = hwMap.get(DcMotor.class, "LiftArmR");
         colorSensor     = hwMap.get(ModernRoboticsI2cColorSensor.class, "colorSensor");
+        //initialize IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         Motor1.setDirection(DcMotor.Direction.REVERSE);
         Motor3.setDirection(DcMotor.Direction.REVERSE);

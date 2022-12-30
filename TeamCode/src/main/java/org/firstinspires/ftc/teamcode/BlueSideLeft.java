@@ -29,10 +29,17 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -60,58 +67,43 @@ public class BlueSideLeft extends Autonomous_Base {
 
     @Override
     public void runOpMode() {
-
-        robot.init(hardwareMap);
-
+        super.robot.init(super.hardwareMap);
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
-
+        super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        robot.Claw.setPosition(.4);
-
-        robot.liftArmL.setPower(-.5);
-        sleep(4500);
-        robot.liftArmL.setPower(0);
-
-        robot.Motor1.setPower(-.25);
-        robot.Motor2.setPower(-.25);
-        robot.Motor3.setPower(-.25);
-        robot.Motor4.setPower(-.25);
-        sleep(800);
-        robot.Motor1.setPower(0);
-        robot.Motor2.setPower(0);
-        robot.Motor3.setPower(0);
-        robot.Motor4.setPower(0);
-
-        robot.Claw.setPosition(.8);
-
-        robot.Motor1.setPower(.25);
-        robot.Motor2.setPower(.25);
-        robot.Motor3.setPower(.25);
-        robot.Motor4.setPower(.25);
-        sleep(800);
-
-        robot.Motor1.setPower(-.25);
-        robot.Motor2.setPower(.25);
-        robot.Motor3.setPower(-.25);
-        robot.Motor4.setPower(.25);
+        intoffset = getHeading();
+        /*double Target = 90;
+        double trueTarget = Target + getHeading();
+        double intialposition = getHeading();
+        int multiplier;
+        double initialDistance = intialposition - trueTarget;
+        if (initialDistance < 0){
+            initialDistance= initialDistance + 180;
+        }
+        if ((trueTarget - intialposition) >=  180){
+            multiplier = 1;
+        }
+        else {
+            multiplier = -1;
+        }
+        while(opModeIsActive()){
+            super.robot.angles = super.robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double distance = trueTarget - getHeading();
+            telemetry.addData("",String.valueOf(getHeading()));
+            telemetry.update();
+        }*/
+        TurnByGyro(180,.3,1,5);
         sleep(1000);
-        robot.Motor1.setPower(0);
-        robot.Motor2.setPower(0);
-        robot.Motor3.setPower(0);
-        robot.Motor4.setPower(0);
-
-        robot.Motor1.setPower(-.5);
-        robot.Motor2.setPower(-.5);
-        robot.Motor3.setPower(-.5);
-        robot.Motor4.setPower(-.5);
-        sleep(1200);
-        robot.Motor1.setPower(0);
-        robot.Motor2.setPower(0);
-        robot.Motor3.setPower(0);
-        robot.Motor4.setPower(0);
+        TurnByGyro(-90,.5,1,10);
+        sleep(500);
+        TurnByGyro(45,.3,1,5);
+        sleep(100);
+        TurnByGyro(-135,.4,1,8);
     }
 }

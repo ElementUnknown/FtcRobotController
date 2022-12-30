@@ -71,8 +71,8 @@ public class TeleopCode extends Autonomous_Base {
         double rx2;
         double pivotAngle = .5;
         boolean gamepadCheck;
-        int LTicks = 0;
-        int RTicks = 0;
+        double multiplier = 0;
+        double liftpower = 0;
         String lastButton = "None";
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
@@ -81,8 +81,8 @@ public class TeleopCode extends Autonomous_Base {
         super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -94,7 +94,7 @@ public class TeleopCode extends Autonomous_Base {
             // This way it's also easy to just drive straight, or just turn.
 
 
-            ly = gamepad1.left_stick_y*.7;
+            ly = gamepad1.left_stick_y*1;
             lx = -gamepad1.left_stick_x*.7;
             rx = gamepad1.right_stick_x;
             ly2 = gamepad2.left_stick_y*-1;
@@ -174,7 +174,7 @@ public class TeleopCode extends Autonomous_Base {
             wheelspeed[6] = rx*.5 + wheelspeed[2];
             wheelspeed[7] = -rx*.5 + wheelspeed[3];
 
-            if (rx == 0 && !gamepadCheck && (lx != 0 || ly != 0)) {
+            if (!gamepadCheck && (lx != 0 || ly != 0)) {
                 super.robot.Motor1.setPower(wheelspeed[0]);
                 super.robot.Motor2.setPower(wheelspeed[1]);
                 super.robot.Motor3.setPower(wheelspeed[2]);
@@ -199,19 +199,13 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor4.setPower(0);
             }
 
-            if(!gamepad2.dpad_left || !gamepad2.dpad_right || !gamepad2.dpad_up || !gamepad2.dpad_down) {
-
-                LTicks = super.robot.liftArmL.getCurrentPosition();
-                RTicks = super.robot.liftArmR.getCurrentPosition();
-
-                super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+            if(ly2 != 0) {
                 super.robot.liftArmL.setPower(ly2);
                 super.robot.liftArmR.setPower(ly2);
+            }
+            if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
+                super.robot.liftArmR.setPower(0);
+                super.robot.liftArmL.setPower(0);
             }
             if (gamepad2.a) {
                 super.robot.Claw.setPosition(.8);
@@ -242,17 +236,54 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.PivotClaw.setPosition(.5);
             }
 
-            if (gamepad2.dpad_left) {
-                Medgoal(RTicks, LTicks);
+            if (gamepad2.dpad_left && ly2 == 0) {
+                multiplier = (double)(760 - super.robot.liftArmR.getCurrentPosition()) / 200;
+                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                if (liftpower > 1){
+                    liftpower =1;
+                }
+                if (liftpower < -1){
+                    liftpower = -1;
+                }
+                super.robot.liftArmR.setPower(liftpower);
+                super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_up) {
-                Highgoal(RTicks, LTicks);
+            else if (gamepad2.dpad_up && ly2 == 0) {
+                multiplier = (double)(1100 - super.robot.liftArmR.getCurrentPosition()) / 200;
+                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                if (liftpower > 1){
+                    liftpower =1;
+                }
+                if (liftpower < -1){
+                    liftpower = -1;
+                }
+                super.robot.liftArmR.setPower(liftpower);
+                super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_right) {
-                Lowgoal(RTicks, LTicks);
+            else if (gamepad2.dpad_right && ly2 == 0) {
+                multiplier = (double)(500 - super.robot.liftArmR.getCurrentPosition()) / 200;
+                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                if (liftpower > 1){
+                    liftpower =1;
+                }
+                if (liftpower < -1){
+                    liftpower = -1;
+                }
+                super.robot.liftArmR.setPower(liftpower);
+                super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_down){
-                ArmGround(RTicks, LTicks);
+            else if (gamepad2.dpad_down && ly2 == 0){
+                multiplier = (double)(1 - super.robot.liftArmR.getCurrentPosition()) / 200;
+                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                if (liftpower > 1){
+                    liftpower =1;
+
+                }
+                if (liftpower < -1){
+                    liftpower = -1;
+                }
+                super.robot.liftArmR.setPower(liftpower);
+                super.robot.liftArmL.setPower(liftpower);
             }
         }
     }
