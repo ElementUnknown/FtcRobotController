@@ -26,7 +26,7 @@ public class HardwareMap {
     public ModernRoboticsI2cColorSensor colorSensor = null;
     public BNO055IMU       imu;
     public Orientation angles;
-
+    public double initAngle;
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
@@ -87,5 +87,6 @@ public class HardwareMap {
         Claw.setPosition(.83);
         PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         PivotClaw.setPosition(.5);
+        initAngle = angles.firstAngle;
     }
 }

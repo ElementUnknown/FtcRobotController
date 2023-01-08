@@ -174,7 +174,7 @@ public class TeleopCode extends Autonomous_Base {
             wheelspeed[6] = rx*.5 + wheelspeed[2];
             wheelspeed[7] = -rx*.5 + wheelspeed[3];
 
-            if (!gamepadCheck && (lx != 0 || ly != 0)) {
+            if (!gamepadCheck && (lx != 0 || ly != 0) && rx == 0) {
                 super.robot.Motor1.setPower(wheelspeed[0]);
                 super.robot.Motor2.setPower(wheelspeed[1]);
                 super.robot.Motor3.setPower(wheelspeed[2]);
@@ -186,7 +186,13 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor3.setPower(wheelspeed[10]);
                 super.robot.Motor4.setPower(wheelspeed[11]);
             }
-            else if (ly == 0 && lx == 0 && rx != 0){
+            else if (ly != 0 && lx != 0 && rx != 0){
+                super.robot.Motor1.setPower(wheelspeed[4]);
+                super.robot.Motor2.setPower(wheelspeed[5]);
+                super.robot.Motor3.setPower(wheelspeed[6]);
+                super.robot.Motor4.setPower(wheelspeed[7]);
+            }
+            else if (ly == 0 && lx == 0 && rx !=0 ){
                 super.robot.Motor1.setPower(wheelspeed[4]);
                 super.robot.Motor2.setPower(wheelspeed[5]);
                 super.robot.Motor3.setPower(wheelspeed[6]);
@@ -238,7 +244,7 @@ public class TeleopCode extends Autonomous_Base {
 
             if (gamepad2.dpad_left && ly2 == 0) {
                 multiplier = (double)(760 - super.robot.liftArmR.getCurrentPosition()) / 200;
-                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
                 }
@@ -250,7 +256,7 @@ public class TeleopCode extends Autonomous_Base {
             }
             else if (gamepad2.dpad_up && ly2 == 0) {
                 multiplier = (double)(1100 - super.robot.liftArmR.getCurrentPosition()) / 200;
-                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
                 }
@@ -262,7 +268,7 @@ public class TeleopCode extends Autonomous_Base {
             }
             else if (gamepad2.dpad_right && ly2 == 0) {
                 multiplier = (double)(500 - super.robot.liftArmR.getCurrentPosition()) / 200;
-                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
                 }
@@ -274,7 +280,7 @@ public class TeleopCode extends Autonomous_Base {
             }
             else if (gamepad2.dpad_down && ly2 == 0){
                 multiplier = (double)(1 - super.robot.liftArmR.getCurrentPosition()) / 200;
-                liftpower = multiplier; //5 is the constant multipication variable, this determines the acceleration at start and stop
+                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
 

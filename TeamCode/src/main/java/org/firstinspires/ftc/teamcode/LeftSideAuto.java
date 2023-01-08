@@ -116,6 +116,8 @@ public class LeftSideAuto extends Autonomous_Base {
         Goalreadjust();
         waitforarmfinish();
         releaseClaw();
+        raisearmoffgoal();
+        waitforarmfinish();
         Move(.3,-2,0);
         Move(.3,0,12);
         Grabconeheight();
@@ -132,7 +134,10 @@ public class LeftSideAuto extends Autonomous_Base {
         Move(.3,3,0);
         Lowgoal(0,0);
         waitforarmfinish();
+        Goalreadjust();
         releaseClaw();
+        raisearmoffgoal();
+        waitforarmfinish();
         Move(.3,-4,0);
         telemetry.addData("Color Number", color);
         telemetry.update();

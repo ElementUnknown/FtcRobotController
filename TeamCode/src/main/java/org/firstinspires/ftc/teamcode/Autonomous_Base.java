@@ -26,7 +26,9 @@ public class Autonomous_Base extends LinearOpMode{
     boolean turn[] = new boolean[3];
 
 
-    public void Move (double power, double distanceforward, double distancelateral){
+    public void Move (double power, double distanceforward, double distancelateral /*, FinalTurnSpeed*/){
+        double InitHeading = robot.angles.firstAngle;
+        double AngleDistance = 0;
         robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -58,7 +60,7 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor3.setPower(0);
             robot.Motor4.setPower(0);
         }
-        if(distanceforward == 0 && distancelateral != 0);{
+        else if(distanceforward == 0 && distancelateral != 0){
             int Target_ticks = (int) (horizontal_ticks_perinch * distancelateral);
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,8 +73,8 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor4.setTargetPosition((int)(Target_ticks));
 
             robot.Motor1.setPower(power);
-            robot.Motor2.setPower(-power);
-            robot.Motor3.setPower(-power);
+            robot.Motor2.setPower(power);
+            robot.Motor3.setPower(power);
             robot.Motor4.setPower(power);
 
             robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -85,6 +87,40 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor3.setPower(0);
             robot.Motor4.setPower(0);
         }
+        //diagnol movement statment (if it works it can replace the entire statment of movement
+        else if(distanceforward != 0 && distancelateral != 0){
+            int Target_ticks_Vertical = (int) (vertical_ticks_perinch * distanceforward);
+            int Target_tick_Horizontal = (int) (horizontal_ticks_perinch * distancelateral);
+            robot.Motor1.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
+            robot.Motor2.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
+            robot.Motor3.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
+            robot.Motor4.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
+
+            robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            robot.Motor1.setPower(Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
+            robot.Motor2.setPower(Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
+            robot.Motor3.setPower(Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
+            robot.Motor4.setPower(Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
+
+            robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            waitforfinish();
+            robot.Motor1.setPower(0);
+            robot.Motor2.setPower(0);
+            robot.Motor3.setPower(0);
+            robot.Motor4.setPower(0);
+        }
+        // Final Correction values for Gyro Turn
+        /*AngleDistance = getHeading() - InitHeading;
+        if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
+        if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
+        TurnByGyro(AngleDistance, .4,.5,8);*/
     }
 
     public void verticalMove (int time, double speed) {
@@ -129,12 +165,30 @@ public class Autonomous_Base extends LinearOpMode{
     }
 
     public void waitforfinish(){
-        while (robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()){
+        while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()){
 
         }
     }
+    public void StraightWait(double InitHeading){ //To be Tested 
+        while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()){
+            double AngleDistance = 0;
+            AngleDistance = getHeading() - InitHeading;
+            double Motor1Power = robot.Motor1.getPower();
+            double Motor2Power = robot.Motor2.getPower();
+            double Motor3Power = robot.Motor3.getPower();
+            double Motor4Power = robot.Motor4.getPower();
+            if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
+            if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
+            if (AngleDistance != 0){
+                robot.Motor1.setPower( Motor1Power + (AngleDistance / 45 ));
+                robot.Motor2.setPower( Motor2Power - (AngleDistance / 45 ));
+                robot.Motor3.setPower( Motor3Power + (AngleDistance / 45 ));
+                robot.Motor4.setPower( Motor4Power - (AngleDistance / 45 ));
+            }
+        }
+    }
     public void waitforarmfinish(){
-        while (robot.liftArmL.isBusy() && robot.liftArmR.isBusy()){
+        while (robot.liftArmL.isBusy() || robot.liftArmR.isBusy()){
 
         }
     }
@@ -177,8 +231,25 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setPower(.75);
         robot.liftArmR.setPower(.75);
 
-        robot.liftArmL.setTargetPosition(LiftL-200);
-        robot.liftArmR.setTargetPosition(LiftR-200);
+        robot.liftArmL.setTargetPosition(LiftL-150);
+        robot.liftArmR.setTargetPosition(LiftR-150);
+
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+    public void raisearmoffgoal(){
+
+        int LiftL = robot.liftArmL.getCurrentPosition();
+        int LiftR = robot.liftArmR.getCurrentPosition();
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.liftArmL.setPower(.75);
+        robot.liftArmR.setPower(.75);
+
+        robot.liftArmL.setTargetPosition(LiftL+150);
+        robot.liftArmR.setTargetPosition(LiftR+150);
 
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -229,7 +300,7 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-   public void TurnByGyro(double target,double speed, double buffer, double multplierquotiant){//quotiant is the degree from the target with which you want to begin decelaeration
+   public void TurnByGyro(double target, double speed, double buffer, double multplierquotiant){//quotiant is the degree from the target with which you want to begin decelaeration
         double TurnSpeed = 0; // if quotiant is too small, the angle may not be met, so the loop may get stuck
         double currentHeading;
         boolean continueangleloop = false;
@@ -241,7 +312,7 @@ public class Autonomous_Base extends LinearOpMode{
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         currentHeading = getHeading();
-        offset = currentHeading;
+        offset = getHeading();
         truetarget = (-target + offset);
         while(truetarget > 180)             truetarget    = truetarget    - 360;
         while(truetarget < -180)            truetarget    = truetarget    + 360;
@@ -297,7 +368,10 @@ public class Autonomous_Base extends LinearOpMode{
    }
    public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return robot.angles.firstAngle;
+        double heading = robot.angles.firstAngle;
+       while(heading > 180)             heading    = heading  - 360;
+       while(heading < -180)            heading    = heading    + 360;
+       return heading;
     }
 
    @Override

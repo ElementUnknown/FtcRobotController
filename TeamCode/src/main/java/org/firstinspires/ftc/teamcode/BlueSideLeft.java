@@ -104,6 +104,6 @@ public class BlueSideLeft extends Autonomous_Base {
         sleep(500);
         TurnByGyro(45,.3,1,5);
         sleep(100);
-        TurnByGyro(-135,.4,1,8);
+        TurnByGyro(0,.4,1,8);
     }
 }
