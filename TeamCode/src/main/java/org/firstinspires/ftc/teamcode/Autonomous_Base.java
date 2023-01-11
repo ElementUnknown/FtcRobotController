@@ -169,7 +169,7 @@ public class Autonomous_Base extends LinearOpMode{
 
         }
     }
-    public void StraightWait(double InitHeading){ //To be Tested 
+    public void StraightWait(double InitHeading){ //To be Tested
         while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()){
             double AngleDistance = 0;
             AngleDistance = getHeading() - InitHeading;
