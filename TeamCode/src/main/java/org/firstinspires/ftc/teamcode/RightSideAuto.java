@@ -90,24 +90,21 @@ public class RightSideAuto extends Autonomous_Base {
         Move(.3,0,-21);
         sleep(1000);
         waitforarmfinish();
-        Move(.3,2.5,0);
+        Move(.3,0,0);
         sleep(500);
         Goalreadjust();
         waitforarmfinish();
         releaseClaw();
-        raisearmoffgoal();
-        waitforarmfinish();
         Move(.3,-2,0);
-        Move(.3,0,-12);
+        Move(.3,0,-12.5);
+        //Move(.3,0,0);
         Grabconeheight();
         waitforarmfinish();
-        Move(.3,22.5,0);
+        Move(.3,22,0);
         closeClaw();
-        Move(.3,-.5,0);
-        sleep(100);
         MoveArm(400, 1);
-        Move(.5,-48.5,0);
-        Move(.3,0,12);
+        Move(.5,-47.5,0);
+        Move(.3,0,13.5);
         Medgoal(0,0);
         waitforarmfinish();
         Move(.3,3,0);
@@ -115,24 +112,23 @@ public class RightSideAuto extends Autonomous_Base {
         waitforarmfinish();
         Goalreadjust();
         releaseClaw();
-        raisearmoffgoal();
         waitforarmfinish();
         Move(.3,-4,0);
         telemetry.addData("Color Number", color);
         telemetry.update();
         if (color == 9 || color == 8) {
+            ArmGround(0,0);
             Move(.3,0,-12);
             Move(.3,24,0);
-            ArmGround(0,0);
             waitforarmfinish();
         }
         else if (color == 6) {
             ArmGround(0,0);
+            Move(.3,0,-12);
+            Move(.3, 48,0);
             waitforarmfinish();
         }
         else {
-            Move(.3,0,-12);
-            Move(.3, 48,0);
             ArmGround(0,0);
             waitforarmfinish();
         }

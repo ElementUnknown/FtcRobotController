@@ -21,7 +21,7 @@ public class HardwareMap {
     public DcMotor liftArmL     = null;
     public DcMotor liftArmR     = null;
     public Servo   Claw         = null;
-    public Servo   PivotClaw    = null;
+   // public Servo   PivotClaw    = null;
 
     public ModernRoboticsI2cColorSensor colorSensor = null;
     public BNO055IMU       imu;
@@ -84,9 +84,9 @@ public class HardwareMap {
         liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Claw = hwMap.get(Servo.class, "Claw");
-        Claw.setPosition(.83);
-        PivotClaw = hwMap.get(Servo.class, "PivotClaw");
-        PivotClaw.setPosition(.5);
+        Claw.setPosition(.5);
+        //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
+        //PivotClaw.setPosition(.5);
         initAngle = angles.firstAngle;
     }
 }

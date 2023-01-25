@@ -99,7 +99,7 @@ public class LeftSideAuto extends Autonomous_Base {
         super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         closeClaw();
         Lowgoal(0,0);
-        Move(.3,0,18);
+        Move(.4,0,18);
         sleep(500);
         while (color != 6 && color != 9 && color != 10 && checkNum < 5) {
             color = super.robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER);
@@ -108,42 +108,37 @@ public class LeftSideAuto extends Autonomous_Base {
         }
         telemetry.addData("Color Number", color);
         telemetry.update();
-        Move(.3,0,21);
-        sleep(1000);
+        Move(.5,0,21);
         waitforarmfinish();
         Move(.3,3.5,0);
         sleep(500);
         Goalreadjust();
         waitforarmfinish();
         releaseClaw();
-        raisearmoffgoal();
-        waitforarmfinish();
-        Move(.3,-2,0);
-        Move(.3,0,12);
+
+        Move(.4,-2,0);
         Grabconeheight();
+        Move(.3,0,14);
         waitforarmfinish();
-        Move(.3,22.5,0);
+        Move(.3,0,-2);
+        Move(.3,23.5,0);
         closeClaw();
-        Move(.3,-.5,0);
-        sleep(100);
+        sleep(50);
         MoveArm(400, 1);
         Move(.5,-48.5,0);
-        Move(.3,0,-12);
+        Move(.3,0,-12.5);
         Medgoal(0,0);
         waitforarmfinish();
-        Move(.3,3,0);
+        Move(.3,2.5,0);
         Lowgoal(0,0);
         waitforarmfinish();
-        Goalreadjust();
         releaseClaw();
-        raisearmoffgoal();
-        waitforarmfinish();
         Move(.3,-4,0);
         telemetry.addData("Color Number", color);
         telemetry.update();
-        if (color == 9) {
-            Move(.3,0,12);
-            Move(.3,24,0);
+        if (color == 9 || color == 8) {
+            Move(.3,0,12.5);
+            Move(.3,25,0);
             ArmGround(0,0);
             waitforarmfinish();
         }

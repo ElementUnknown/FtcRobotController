@@ -27,13 +27,13 @@ public class Autonomous_Base extends LinearOpMode{
 
 
     public void Move (double power, double distanceforward, double distancelateral /*, FinalTurnSpeed*/){
-        double InitHeading = robot.angles.firstAngle;
+        double InitHeading = getHeading();
         double AngleDistance = 0;
         robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if ( distanceforward != 0 && distancelateral == 0) {
+        /*if ( distanceforward != 0 && distancelateral == 0) {
             int Target_ticks = (int) (vertical_ticks_perinch * distanceforward);
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,8 +59,8 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor2.setPower(0);
             robot.Motor3.setPower(0);
             robot.Motor4.setPower(0);
-        }
-        else if(distanceforward == 0 && distancelateral != 0){
+        }*/
+        /*else if(distanceforward == 0 && distancelateral != 0){
             int Target_ticks = (int) (horizontal_ticks_perinch * distancelateral);
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -86,20 +86,19 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor2.setPower(0);
             robot.Motor3.setPower(0);
             robot.Motor4.setPower(0);
-        }
+        }*/
         //diagnol movement statment (if it works it can replace the entire statment of movement
-        else if(distanceforward != 0 && distancelateral != 0){
-            int Target_ticks_Vertical = (int) (vertical_ticks_perinch * distanceforward);
-            int Target_tick_Horizontal = (int) (horizontal_ticks_perinch * distancelateral);
-            robot.Motor1.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
-            robot.Motor2.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
-            robot.Motor3.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
-            robot.Motor4.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
-
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            int Target_ticks_Vertical = (int) -(vertical_ticks_perinch * distanceforward);
+            int Target_tick_Horizontal = (int) -(horizontal_ticks_perinch * distancelateral);
+            robot.Motor1.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
+            robot.Motor2.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
+            robot.Motor3.setTargetPosition((int)(Target_ticks_Vertical + Target_tick_Horizontal));
+            robot.Motor4.setTargetPosition((int)(Target_ticks_Vertical - Target_tick_Horizontal));
 
             robot.Motor1.setPower(Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
             robot.Motor2.setPower(Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
@@ -110,17 +109,16 @@ public class Autonomous_Base extends LinearOpMode{
             robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            waitforfinish();
+            StraightWait(InitHeading);
             robot.Motor1.setPower(0);
             robot.Motor2.setPower(0);
             robot.Motor3.setPower(0);
             robot.Motor4.setPower(0);
-        }
         // Final Correction values for Gyro Turn
         /*AngleDistance = getHeading() - InitHeading;
         if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
         if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
-        TurnByGyro(AngleDistance, .4,.5,8);*/
+        TurnByGyro(AngleDistance, .3,2,5);*/
     }
 
     public void verticalMove (int time, double speed) {
@@ -165,28 +163,66 @@ public class Autonomous_Base extends LinearOpMode{
     }
 
     public void waitforfinish(){
-        while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()){
+
+        boolean continueloop = true;
+        while (robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()){
 
         }
     }
     public void StraightWait(double InitHeading){ //To be Tested
-        while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()){
-            double AngleDistance = 0;
-            AngleDistance = getHeading() - InitHeading;
-            double Motor1Power = robot.Motor1.getPower();
-            double Motor2Power = robot.Motor2.getPower();
-            double Motor3Power = robot.Motor3.getPower();
-            double Motor4Power = robot.Motor4.getPower();
+        double Motor1PowerPrime = robot.Motor1.getPower();
+        double Motor2PowerPrime = robot.Motor2.getPower();
+        double Motor3PowerPrime = robot.Motor3.getPower();
+        double Motor4PowerPrime = robot.Motor4.getPower();
+        double Motor1Power = 0;
+        double Motor2Power = 0;
+        double Motor3Power = 0;
+        double Motor4Power = 0;
+        double AngleDistance = 0;
+        boolean continueloop = true;
+        double TickDistance;
+        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop){
+            AngleDistance = -getHeading() + InitHeading;
+
             if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
-            if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
+            if (AngleDistance <= -180)           AngleDistance = AngleDistance + 360;
             if (AngleDistance != 0){
-                robot.Motor1.setPower( Motor1Power + (AngleDistance / 45 ));
-                robot.Motor2.setPower( Motor2Power - (AngleDistance / 45 ));
-                robot.Motor3.setPower( Motor3Power + (AngleDistance / 45 ));
-                robot.Motor4.setPower( Motor4Power - (AngleDistance / 45 ));
+
+                Motor1Power = Motor1PowerPrime - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 360 ));
+                Motor2Power = Motor2PowerPrime + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 360 ));
+                Motor3Power = Motor3PowerPrime - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 360 ));
+                Motor4Power = Motor4PowerPrime + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 360 ));
+
+
+                robot.Motor1.setPower(Motor1Power);
+                robot.Motor2.setPower(Motor2Power);
+                robot.Motor3.setPower(Motor3Power);
+                robot.Motor4.setPower(Motor4Power);
+
+                telemetry.addData("M1",String.valueOf(robot.Motor1.getPower()));
+                telemetry.addData("M2",String.valueOf(robot.Motor2.getPower()));
+                telemetry.addData("M3",String.valueOf(robot.Motor3.getPower()));
+                telemetry.addData("M4",String.valueOf(robot.Motor4.getPower()));
+                telemetry.update();
             }
+            TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
+            if (Math.abs(TickDistance) > 200)      continueloop = true;
+
+            else if (Math.abs(TickDistance) < 200) continueloop = false;
+
+            telemetry.addData("",String.valueOf(InitHeading));
+            telemetry.update();
         }
+        robot.Motor1.setPower(Motor1Power);
+        robot.Motor2.setPower(Motor2Power);
+        robot.Motor3.setPower(Motor3Power);
+        robot.Motor4.setPower(Motor4Power);
+        waitforfinish();
     }
+    /*robot.Motor1.setPower( Motor1Power - (AngleDistance / 360 ));
+                robot.Motor2.setPower( Motor2Power + (AngleDistance / 360 ));
+                robot.Motor3.setPower( Motor3Power - (AngleDistance / 360 ));
+                robot.Motor4.setPower( Motor4Power + (AngleDistance / 360 ));*/
     public void waitforarmfinish(){
         while (robot.liftArmL.isBusy() || robot.liftArmR.isBusy()){
 
@@ -290,8 +326,8 @@ public class Autonomous_Base extends LinearOpMode{
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.liftArmL.setPower(.5);
-        robot.liftArmR.setPower(.5);
+        robot.liftArmL.setPower(.6);
+        robot.liftArmR.setPower(.6);
 
         robot.liftArmL.setTargetPosition(185);
         robot.liftArmR.setTargetPosition(185);
@@ -358,12 +394,12 @@ public class Autonomous_Base extends LinearOpMode{
    }
 
    public void releaseClaw() {
-       robot.Claw.setPosition(.83);
+       robot.Claw.setPosition(.5);
        sleep(500);
    }
 
    public void closeClaw() {
-        robot.Claw.setPosition(.4);
+        robot.Claw.setPosition(.0);
         sleep(500);
    }
    public double getHeading() {
@@ -372,6 +408,46 @@ public class Autonomous_Base extends LinearOpMode{
        while(heading > 180)             heading    = heading  - 360;
        while(heading < -180)            heading    = heading    + 360;
        return heading;
+    }
+    public void EmergencyCorrectionForward(){
+        telemetry.addData("FORWARD TILT CORRECTION", "");
+        telemetry.update();
+        robot.liftArmL.setPower(-1);
+        robot.liftArmR.setPower(-1);
+        robot.Motor1.setPower(.75);
+        robot.Motor2.setPower(.75);
+        robot.Motor3.setPower(.75);
+        robot.Motor4.setPower(.75);
+        sleep(350);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+        sleep(500);
+        robot.liftArmL.setPower(0);
+        robot.liftArmR.setPower(0);
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void EmergencyCorrectionBackwards(){
+        telemetry.addData("BACKWARD TILT CORRECTION","");
+        telemetry.update();
+        robot.liftArmL.setPower(-1);
+        robot.liftArmR.setPower(-1);
+        robot.Motor1.setPower(-.75);
+        robot.Motor2.setPower(-.75);
+        robot.Motor3.setPower(-.75);
+        robot.Motor4.setPower(-.75);
+        sleep(350);
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+        sleep(500);
+        robot.liftArmL.setPower(0);
+        robot.liftArmR.setPower(0);
+        robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
    @Override

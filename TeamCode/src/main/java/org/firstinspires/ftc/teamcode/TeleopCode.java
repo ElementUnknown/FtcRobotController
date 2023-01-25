@@ -37,6 +37,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 /**
  * This particular OpMode executes a POV Game style Teleop for a direct drive robot
  * The code is structured as a LinearOpMode
@@ -69,13 +73,17 @@ public class TeleopCode extends Autonomous_Base {
         double rx;
         double ly2;
         double rx2;
-        double pivotAngle = .5;
+        double angleDistance = 0;
+        double initHeading = 0;
         boolean gamepadCheck;
         double multiplier = 0;
         double liftpower = 0;
+        boolean leftStickIsActive = false;
+        boolean rightstickisactive = false;
         String lastButton = "None";
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
+        ElapsedTime TILT = new ElapsedTime();
         super.robot.init(super.hardwareMap);
         super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -164,15 +172,35 @@ public class TeleopCode extends Autonomous_Base {
                 wheelspeed[10] = 1;
                 wheelspeed[11] = -1;
             }
+            if (rx != 0) rightstickisactive = true;
+            else rightstickisactive = false;
+            if (lx != 0 || ly != 0) {
+                leftStickIsActive = true;
+            }
+            else {
+                leftStickIsActive = false;
+            }
 
-            wheelspeed[0] = (ly*lyModifier - lx*lxModifier);
-            wheelspeed[1] = (ly*lyModifier + lx*lxModifier);
-            wheelspeed[2] = (ly*lyModifier + lx*lxModifier);
-            wheelspeed[3] = (ly*lyModifier - lx*lxModifier);
-            wheelspeed[4] = rx*.5 + wheelspeed[0];
-            wheelspeed[5] = -rx*.5 + wheelspeed[1];
-            wheelspeed[6] = rx*.5 + wheelspeed[2];
-            wheelspeed[7] = -rx*.5 + wheelspeed[3];
+            if (!leftStickIsActive || rightstickisactive) {
+                initHeading = getHeading();
+            }
+
+            angleDistance = -getHeading() + initHeading;
+            if (angleDistance > 180) {
+                angleDistance = angleDistance - 360;
+            }
+            if (angleDistance < -180) {
+                angleDistance = angleDistance + 360;
+            }
+
+            wheelspeed[0] = (ly*lyModifier - lx*lxModifier - (angleDistance / 90 ));
+            wheelspeed[1] = (ly*lyModifier + lx*lxModifier + (angleDistance / 90 ));
+            wheelspeed[2] = (ly*lyModifier + lx*lxModifier - (angleDistance / 90 ));
+            wheelspeed[3] = (ly*lyModifier - lx*lxModifier + (angleDistance / 90 ));
+            wheelspeed[4] =  rx*.5 + (ly*lyModifier - lx*lxModifier);
+            wheelspeed[5] = -rx*.5 + (ly*lyModifier + lx*lxModifier);
+            wheelspeed[6] =  rx*.5 + (ly*lyModifier - lx*lxModifier);
+            wheelspeed[7] = -rx*.5 + (ly*lyModifier + lx*lxModifier);
 
             if (!gamepadCheck && (lx != 0 || ly != 0) && rx == 0) {
                 super.robot.Motor1.setPower(wheelspeed[0]);
@@ -186,13 +214,7 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor3.setPower(wheelspeed[10]);
                 super.robot.Motor4.setPower(wheelspeed[11]);
             }
-            else if (ly != 0 && lx != 0 && rx != 0){
-                super.robot.Motor1.setPower(wheelspeed[4]);
-                super.robot.Motor2.setPower(wheelspeed[5]);
-                super.robot.Motor3.setPower(wheelspeed[6]);
-                super.robot.Motor4.setPower(wheelspeed[7]);
-            }
-            else if (ly == 0 && lx == 0 && rx !=0 ){
+            else if (rx != 0){
                 super.robot.Motor1.setPower(wheelspeed[4]);
                 super.robot.Motor2.setPower(wheelspeed[5]);
                 super.robot.Motor3.setPower(wheelspeed[6]);
@@ -214,33 +236,33 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmL.setPower(0);
             }
             if (gamepad2.a) {
-                super.robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.35);
             }
 
             if (gamepad2.b) {
-                super.robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.0);
             }
 
             if (gamepad2.x && lastButton.equals("X")) {
-                super.robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.35);
             }
             else if (!gamepad2.x && lastButton.equals("X")) {
-                super.robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.0);
             }
 
             if (gamepad2.y && lastButton.equals("Y")) {
-                super.robot.Claw.setPosition(.45);
+                super.robot.Claw.setPosition(.0);
             }
             else if (!gamepad2.y && lastButton.equals("Y")) {
-                super.robot.Claw.setPosition(.8);
+                super.robot.Claw.setPosition(.35);
             }
 
-            if (rx2 > .2 || rx2 < -.2) {
+           /* if (rx2 > .2 || rx2 < -.2) {
                 super.robot.PivotClaw.setPosition(.25*rx2+.5);
             }
             else if (rx2 < .2 && rx2 >-.2){
                 super.robot.PivotClaw.setPosition(.5);
-            }
+            }*/
 
             if (gamepad2.dpad_left && ly2 == 0) {
                 multiplier = (double)(760 - super.robot.liftArmR.getCurrentPosition()) / 200;
@@ -255,7 +277,7 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmL.setPower(liftpower);
             }
             else if (gamepad2.dpad_up && ly2 == 0) {
-                multiplier = (double)(1100 - super.robot.liftArmR.getCurrentPosition()) / 200;
+                multiplier = (double)(1175 - super.robot.liftArmR.getCurrentPosition()) / 200;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
@@ -291,6 +313,16 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmR.setPower(liftpower);
                 super.robot.liftArmL.setPower(liftpower);
             }
+            super.robot.angles = super.robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            if (super.robot.angles.secondAngle > 10 && TILT.milliseconds() > 150 && super.robot.liftArmL.getCurrentPosition() > 1000){
+                EmergencyCorrectionForward();
+            }
+            if (super.robot.angles.secondAngle < -10 && TILT.milliseconds() > 150 && super.robot.liftArmL.getCurrentPosition() > 1000){
+                EmergencyCorrectionBackwards();
+            }
+            if (Math.abs(super.robot.angles.secondAngle) < 15 ) TILT.reset();
+            telemetry.addData("", super.robot.angles.secondAngle);
+            telemetry.update();
         }
     }
 }

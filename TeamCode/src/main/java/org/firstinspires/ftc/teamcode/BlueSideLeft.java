@@ -98,12 +98,12 @@ public class BlueSideLeft extends Autonomous_Base {
             telemetry.addData("",String.valueOf(getHeading()));
             telemetry.update();
         }*/
-        TurnByGyro(180,.3,1,5);
-        sleep(1000);
-        TurnByGyro(-90,.5,1,10);
-        sleep(500);
-        TurnByGyro(45,.3,1,5);
-        sleep(100);
-        TurnByGyro(0,.4,1,8);
+
+        Move(.4,36,12);
+        TurnByGyro(180,.3, 1,4);
+        Move(.4,64,0);
+
+
+
     }
 }
