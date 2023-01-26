@@ -33,61 +33,9 @@ public class Autonomous_Base extends LinearOpMode{
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        /*if ( distanceforward != 0 && distancelateral == 0) {
-            int Target_ticks = (int) (vertical_ticks_perinch * distanceforward);
-            robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            robot.Motor1.setTargetPosition(-Target_ticks);
-            robot.Motor2.setTargetPosition(-Target_ticks);
-            robot.Motor3.setTargetPosition(-Target_ticks);
-            robot.Motor4.setTargetPosition(-Target_ticks);
-
-            robot.Motor1.setPower(-power);
-            robot.Motor2.setPower(-power);
-            robot.Motor3.setPower(-power);
-            robot.Motor4.setPower(-power);
-
-            robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            waitforfinish();
-            robot.Motor1.setPower(0);
-            robot.Motor2.setPower(0);
-            robot.Motor3.setPower(0);
-            robot.Motor4.setPower(0);
-        }*/
-        /*else if(distanceforward == 0 && distancelateral != 0){
-            int Target_ticks = (int) (horizontal_ticks_perinch * distancelateral);
-            robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            robot.Motor1.setTargetPosition((int)(Target_ticks));
-            robot.Motor2.setTargetPosition((int)(-Target_ticks));
-            robot.Motor3.setTargetPosition((int)(-Target_ticks));
-            robot.Motor4.setTargetPosition((int)(Target_ticks));
-
-            robot.Motor1.setPower(power);
-            robot.Motor2.setPower(power);
-            robot.Motor3.setPower(power);
-            robot.Motor4.setPower(power);
-
-            robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            waitforfinish();
-            robot.Motor1.setPower(0);
-            robot.Motor2.setPower(0);
-            robot.Motor3.setPower(0);
-            robot.Motor4.setPower(0);
-        }*/
         //diagnol movement statment (if it works it can replace the entire statment of movement
+        //it worked
             robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -119,6 +67,96 @@ public class Autonomous_Base extends LinearOpMode{
         if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
         if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
         TurnByGyro(AngleDistance, .3,2,5);*/
+    }
+    public void PIDMove (double INCHForward, double INCHRight, double speed, double angle, double angleinc){
+        double Offset = getHeading();
+        double KP = 0;
+        double KD = 0;
+        double KI = 0;
+        double KGP= 0;
+        double KGD = 0;
+        double KGI = 0 ;
+        double TickIncPerSec = 100;
+
+        int TimedTicksForward = 0;
+        int TimedTicksRight = 0;
+        double TimedAngle = 0;
+
+        int TicksForward = (int) (INCHForward * vertical_ticks_perinch);
+        int TicksRight = (int) (INCHRight * horizontal_ticks_perinch);
+
+        robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor2.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor3.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor4.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+
+        int M1Error = 0;
+        int M2Error = 0;
+        int M3Error = 0;
+        int M4Error = 0;
+        double GyroError = 0;
+
+        int PreviousM1error = 0;
+        int PreviousM2error = 0;
+        int PreviousM3error = 0;
+        int PreviousM4error = 0;
+        double PreviousAngleError = 0;
+
+        double DM1;
+        double DM2;
+        double DM3;
+        double DM4;
+        double DG;
+
+        double IM1 = 0;
+        double IM2 = 0;
+        double IM3 = 0;
+        double IM4 = 0;
+        double IG = 0;
+
+        ElapsedTime TicksTime = new ElapsedTime();
+        ElapsedTime DITime = new ElapsedTime();
+
+        angle = -angle + Offset;
+
+        double GyroCorrection;
+        while (true) {
+            TimedTicksForward = (int) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * TickIncPerSec, Math.abs(TicksForward))));
+            TimedTicksRight = (int) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * TickIncPerSec, Math.abs(TicksRight))));
+            TimedAngle = (Math.signum(angle) * (Math.min(TicksTime.seconds() * angleinc, Math.abs(angle))));
+
+            M1Error = (TimedTicksForward - TimedTicksRight) - robot.Motor1.getCurrentPosition();
+            M2Error = (TimedTicksForward + TimedTicksRight) - robot.Motor2.getCurrentPosition();
+            M3Error = (TimedTicksForward + TimedTicksRight) - robot.Motor3.getCurrentPosition();
+            M4Error = (TimedTicksForward - TimedTicksRight) - robot.Motor4.getCurrentPosition();
+            GyroError = TimedAngle - getHeading();
+
+            DM1 = (M1Error - PreviousM1error) / DITime.seconds();
+            DM2 = (M2Error - PreviousM2error) / DITime.seconds();
+            DM3 = (M3Error - PreviousM3error) / DITime.seconds();
+            DM4 = (M4Error - PreviousM4error) / DITime.seconds();
+            DG = (GyroError - PreviousAngleError) / DITime.seconds();
+
+            IM1 = IM1 + M1Error * DITime.seconds();
+            IM2 = IM2 + M2Error * DITime.seconds();
+            IM3 = IM3 + M3Error * DITime.seconds();
+            IM4 = IM4 + M4Error * DITime.seconds();
+            IG = IG + GyroError * DITime.seconds();
+
+            GyroCorrection = ((GyroError * KGP) + (DG * KGD) + (IG * KGI));
+
+            robot.Motor1.setPower((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
+            robot.Motor1.setPower((speed * ((M2Error * KP) + (DM2 * KD) + (IM2 * KI))) + (GyroCorrection));
+            robot.Motor1.setPower((speed * ((M3Error * KP) + (DM3 * KD) + (IM3 * KI))) - (GyroCorrection));
+            robot.Motor1.setPower((speed * ((M4Error * KP) + (DM4 * KD) + (IM4 * KI))) + (GyroCorrection));
+
+            DITime.reset();
+            PreviousM1error = M1Error;
+            PreviousM2error = M2Error;
+            PreviousM3error = M3Error;
+            PreviousM4error = M4Error;
+            PreviousAngleError = GyroError;
+        }
     }
 
     public void verticalMove (int time, double speed) {
@@ -343,6 +381,17 @@ public class Autonomous_Base extends LinearOpMode{
         double truetarget;
         double offset = 0;
         double angledistance = 0;
+        int KI = 0;
+        int KP = 0;
+        int KD = 0;
+        double AngleInc = 90;
+        double LastGyroError = 0;
+        double P = 0;
+        double I = 0;
+        double D = 0;
+        double TimeTarget = 0;
+        ElapsedTime NotReset = new ElapsedTime();
+        ElapsedTime Reset = new ElapsedTime();
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -358,21 +407,27 @@ public class Autonomous_Base extends LinearOpMode{
         if (Math.abs(angledistance) >= buffer)    continueangleloop = true;
         while (opModeIsActive() && continueangleloop){
             currentHeading = getHeading();
-            angledistance = currentHeading - truetarget;
+            TimeTarget = Math.signum(truetarget) * Math.min(AngleInc * NotReset.seconds(), Math.abs(truetarget));
+            angledistance = currentHeading - TimeTarget;
+
             if (angledistance > 180)            angledistance = angledistance - 360;
             if (angledistance < -180)           angledistance = angledistance + 360;
-            TurnSpeed= angledistance / multplierquotiant;
-            if (TurnSpeed > 1)                  TurnSpeed     = 1;
-            if (TurnSpeed < -1)                  TurnSpeed     = -1;
 
-            robot.Motor1.setPower(speed*TurnSpeed);
-            robot.Motor2.setPower(-speed*TurnSpeed);
-            robot.Motor3.setPower(speed*TurnSpeed);
-            robot.Motor4.setPower(-speed*TurnSpeed);
-            if (Math.abs(angledistance) > buffer)      continueangleloop = true;
+            P = angledistance * KP;
+            D = (angledistance - LastGyroError) / Reset.seconds();
+            I = I + (angledistance * Reset.seconds());
+
+            LastGyroError = angledistance;
+
+            robot.Motor1.setPower(speed * ((P) + (I * KI) + (D * KD)));
+            robot.Motor2.setPower(-speed * ((P) + (I * KI) + (D * KD)));
+            robot.Motor3.setPower(speed * ((P) + (I * KI) + (D * KD)));
+            robot.Motor4.setPower(-speed* ((P) + (I * KI) + (D * KD)));
+            if (Math.abs(angledistance) >= buffer)      continueangleloop = true;
             else                                        continueangleloop = false;
             telemetry.addData("", String.valueOf(currentHeading));
             telemetry.update();
+            Reset.reset();
         }
    }
    public void MoveArm(int time, double speed) {
