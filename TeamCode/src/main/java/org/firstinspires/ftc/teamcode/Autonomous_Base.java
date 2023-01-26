@@ -70,6 +70,7 @@ public class Autonomous_Base extends LinearOpMode{
     }
     public void PIDMove (double INCHForward, double INCHRight, double speed, double angle, double angleinc){
         double Offset = getHeading();
+        boolean Runloop = true;
         double KP = 0;
         double KD = 0;
         double KI = 0;
@@ -118,11 +119,12 @@ public class Autonomous_Base extends LinearOpMode{
         ElapsedTime DITime = new ElapsedTime();
 
         angle = -angle + Offset;
-
+        if (angle > 180) angle = angle - 360;
+        if (angle < -180) angle = angle + 360;
         double GyroCorrection;
-        while (true) {
-            TimedTicksForward = (int) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * TickIncPerSec, Math.abs(TicksForward))));
-            TimedTicksRight = (int) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * TickIncPerSec, Math.abs(TicksRight))));
+        while (Runloop) {
+            TimedTicksForward = (int) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * Math.abs(TicksForward), Math.abs(TicksForward))));
+            TimedTicksRight = (int) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * Math.abs(TicksRight), Math.abs(TicksRight))));
             TimedAngle = (Math.signum(angle) * (Math.min(TicksTime.seconds() * angleinc, Math.abs(angle))));
 
             M1Error = (TimedTicksForward - TimedTicksRight) - robot.Motor1.getCurrentPosition();
@@ -130,6 +132,9 @@ public class Autonomous_Base extends LinearOpMode{
             M3Error = (TimedTicksForward + TimedTicksRight) - robot.Motor3.getCurrentPosition();
             M4Error = (TimedTicksForward - TimedTicksRight) - robot.Motor4.getCurrentPosition();
             GyroError = TimedAngle - getHeading();
+
+            if (GyroError > 180) GyroError = GyroError - 360;
+            if (GyroError < -180) GyroError = GyroError + 360;
 
             DM1 = (M1Error - PreviousM1error) / DITime.seconds();
             DM2 = (M2Error - PreviousM2error) / DITime.seconds();
@@ -156,6 +161,9 @@ public class Autonomous_Base extends LinearOpMode{
             PreviousM3error = M3Error;
             PreviousM4error = M4Error;
             PreviousAngleError = GyroError;
+
+            if ( (Math.abs(M1Error) < 5) && (Math.abs(M2Error) < 5) && (Math.abs(M3Error) < 5) && (Math.abs(M4Error) < 5) && (Math.abs(GyroError) < 1)) Runloop = false;
+
         }
     }
 
