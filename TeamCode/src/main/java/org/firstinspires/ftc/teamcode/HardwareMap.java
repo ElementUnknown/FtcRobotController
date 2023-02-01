@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
@@ -27,6 +28,7 @@ public class HardwareMap {
     public BNO055IMU       imu;
     public Orientation angles;
     public double initAngle;
+    public OpticalDistanceSensor ods;
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
@@ -55,6 +57,7 @@ public class HardwareMap {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        ods = hwMap.get(OpticalDistanceSensor.class, "ods");
 
         Motor1.setDirection(DcMotor.Direction.REVERSE);
         Motor3.setDirection(DcMotor.Direction.REVERSE);
