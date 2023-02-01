@@ -72,8 +72,8 @@ public class Autonomous_Base extends LinearOpMode{
         double Offset = getHeading();
         boolean Runloop = true;
         double KP = .002;
-        double KD = .004;
-        double KI = .0005;
+        double KD = .00025;
+        double KI = .001;
         double KGP= .2;
         double KGD = 0;
         double KGI = 0 ;
@@ -181,10 +181,10 @@ public class Autonomous_Base extends LinearOpMode{
             TrueMax = Math.max(Math.max(Math.abs(TotalPowerM3), Math.abs(TotalPowerM4)), Math.max(Math.abs(TotalPowerM1), Math.abs(TotalPowerM2)));
 
             if (Math.abs(TrueMax) > 1){
-                TotalPowerM1 = TotalPowerM1 / TrueMax;
-                TotalPowerM2 = TotalPowerM2 / TrueMax;
-                TotalPowerM3 = TotalPowerM3 / TrueMax;
-                TotalPowerM4 = TotalPowerM4 / TrueMax;
+                TotalPowerM1 = TotalPowerM1 / Math.abs(TrueMax);
+                TotalPowerM2 = TotalPowerM2 / Math.abs(TrueMax);
+                TotalPowerM3 = TotalPowerM3 / Math.abs(TrueMax);
+                TotalPowerM4 = TotalPowerM4 / Math.abs(TrueMax);
 
             }
             robot.Motor1.setPower(TotalPowerM1);
