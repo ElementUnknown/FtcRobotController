@@ -99,9 +99,8 @@ public class BlueSideLeft extends Autonomous_Base {
             telemetry.update();
         }*/
 
-        Move(.4,36,12);
-        TurnByGyro(180,.3, 1,4);
-        Move(.4,64,0);
+        PIDMove(12,0,.5,0,0);
+        sleep(1000);
 
 
 
