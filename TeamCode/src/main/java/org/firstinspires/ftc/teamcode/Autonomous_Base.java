@@ -71,19 +71,19 @@ public class Autonomous_Base extends LinearOpMode{
     public void PIDMove (double INCHForward, double INCHRight, double speed, double angle, double angleinc){
         double Offset = getHeading();
         boolean Runloop = true;
-        double KP = .002;
-        double KD = .00025;
-        double KI = .001;
+        double KP = .0003;
+        double KD = .003;
+        double KI = .0004;
         double KGP= .2;
         double KGD = 0;
         double KGI = 0 ;
 
-        int TimedTicksForward = 0;
-        int TimedTicksRight = 0;
+        float TimedTicksForward = 0;
+        float TimedTicksRight = 0;
         double TimedAngle = 0;
 
-        int TicksForward = (int) (INCHForward * vertical_ticks_perinch);
-        int TicksRight = (int) (INCHRight * horizontal_ticks_perinch);
+        int TicksForward = (int) (-INCHForward * vertical_ticks_perinch);
+        int TicksRight = (int) (-INCHRight * horizontal_ticks_perinch);
 
         robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         robot.Motor2.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
@@ -94,16 +94,16 @@ public class Autonomous_Base extends LinearOpMode{
         robot.Motor3.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
         robot.Motor4.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
-        int M1Error = 0;
-        int M2Error = 0;
-        int M3Error = 0;
-        int M4Error = 0;
+        float M1Error = 0;
+        float M2Error = 0;
+        float M3Error = 0;
+        float M4Error = 0;
         double GyroError = 0;
 
-        int PreviousM1error = 0;
-        int PreviousM2error = 0;
-        int PreviousM3error = 0;
-        int PreviousM4error = 0;
+        float PreviousM1error = 0;
+        float PreviousM2error = 0;
+        float PreviousM3error = 0;
+        float PreviousM4error = 0;
         double PreviousAngleError = 0;
 
         double DM1;
@@ -123,6 +123,7 @@ public class Autonomous_Base extends LinearOpMode{
         double TotalPowerM3 = 0;
         double TotalPowerM4 = 0;
 
+        int loop = 0;
         ElapsedTime TicksTime = new ElapsedTime();
         ElapsedTime DITime = new ElapsedTime();
 
@@ -131,52 +132,56 @@ public class Autonomous_Base extends LinearOpMode{
         if (angle < -180) angle = angle + 360;
         double GyroCorrection = 0;
         double TrueMax = 0;
+        double Time = 0;
         while (Runloop && opModeIsActive()) {
-            TimedTicksForward = (int) -(Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * Math.abs(TicksForward), Math.abs(TicksForward))));
-            TimedTicksRight = (int) -(Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * Math.abs(TicksRight), Math.abs(TicksRight))));
+            Time = DITime.milliseconds();
+            TimedTicksForward = (float) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * Math.abs(TicksForward) * 1.5, Math.abs(TicksForward))));
+            TimedTicksRight = (float) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * Math.abs(TicksRight) * 1.5, Math.abs(TicksRight))));
             TimedAngle = (Math.signum(angle) * (Math.min(TicksTime.seconds() * angleinc, Math.abs(angle))));
+
+            if(Math.abs(TimedTicksForward) < 6 ) TimedTicksForward = 10 * Math.signum((TimedTicksForward));
 
             M1Error = (TimedTicksForward - TimedTicksRight) - robot.Motor1.getCurrentPosition();
             M2Error = (TimedTicksForward + TimedTicksRight) - robot.Motor2.getCurrentPosition();
             M3Error = (TimedTicksForward + TimedTicksRight) - robot.Motor3.getCurrentPosition();
             M4Error = (TimedTicksForward - TimedTicksRight) - robot.Motor4.getCurrentPosition();
             GyroError = TimedAngle + getHeading();
-
-
+            GyroError = 0;
 
             if (GyroError > 180) GyroError = GyroError - 360;
             if (GyroError < -180) GyroError = GyroError + 360;
 
-            DM1 = (M1Error - PreviousM1error) / DITime.seconds();
-            DM2 = (M2Error - PreviousM2error) / DITime.seconds();
-            DM3 = (M3Error - PreviousM3error) / DITime.seconds();
-            DM4 = (M4Error - PreviousM4error) / DITime.seconds();
-            DG = (GyroError - PreviousAngleError) / DITime.seconds();
+            DM1 = (M1Error - PreviousM1error) / Time;
+            DM2 = (M2Error - PreviousM2error) / Time;
+            DM3 = (M3Error - PreviousM3error) / Time;
+            DM4 = (M4Error - PreviousM4error) / Time;
+            DG = (GyroError - PreviousAngleError) / Time;
 
-            IM1 = IM1 + (M1Error * DITime.seconds());
-            IM2 = IM2 + (M2Error * DITime.seconds());
-            IM3 = IM3 + (M3Error * DITime.seconds());
-            IM4 = IM4 + (M4Error * DITime.seconds());
-            IG = IG + (GyroError * DITime.seconds());
+            IM1 = IM1 + (M1Error * Time);
+            IM2 = IM2 + (M2Error * Time);
+            IM3 = IM3 + (M3Error * Time);
+            IM4 = IM4 + (M4Error * Time);
+            IG = IG + (GyroError * Time);
 
             //GyroCorrection = ((GyroError * KGP) + (DG * KGD) + (IG * KGI));
             telemetry.addData("M1Error", String.valueOf(M1Error));
             telemetry.addData("M3Error", String.valueOf(M2Error));
             telemetry.addData("M3Error", String.valueOf(M3Error));
             telemetry.addData("M4Error", String.valueOf(M4Error));
-            telemetry.addData("Speed", String.valueOf(speed));
+            telemetry.addData("Target", String.valueOf(TimedTicksForward));
             telemetry.addData("D", String.valueOf(DM1));
             telemetry.addData("I", String.valueOf(IM1));
             telemetry.addData("KP", String.valueOf(KP));
             telemetry.addData("KD", String.valueOf(KD));
             telemetry.addData("KI", String.valueOf(KI));
             telemetry.addData("Total", String.valueOf(TotalPowerM1));
+            telemetry.addData("Max", String.valueOf(TrueMax));
             telemetry.update();
 
             TotalPowerM1 = ((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
-            TotalPowerM2 = ((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
-            TotalPowerM3 = ((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
-            TotalPowerM4 = ((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
+            TotalPowerM2 = ((speed * ((M2Error * KP) + (DM2 * KD) + (IM2 * KI))) - (GyroCorrection));
+            TotalPowerM3 = ((speed * ((M3Error * KP) + (DM3 * KD) + (IM3 * KI))) - (GyroCorrection));
+            TotalPowerM4 = ((speed * ((M4Error * KP) + (DM4 * KD) + (IM4 * KI))) - (GyroCorrection));
 
             TrueMax = Math.max(Math.max(Math.abs(TotalPowerM3), Math.abs(TotalPowerM4)), Math.max(Math.abs(TotalPowerM1), Math.abs(TotalPowerM2)));
 
@@ -199,13 +204,17 @@ public class Autonomous_Base extends LinearOpMode{
             PreviousM4error = M4Error;
             PreviousAngleError = GyroError;
 
-            if ( (Math.abs(M1Error) < 5) && (Math.abs(M2Error) < 5) && (Math.abs(M3Error) < 5) && (Math.abs(M4Error) < 5) && (Math.abs(GyroError) < 1)) Runloop = false;
-
+            if ( (Math.abs(M1Error) < 10) && (Math.abs(M2Error) < 10) && (Math.abs(M3Error) < 10) && (Math.abs(M4Error) < 10) && (Math.abs(GyroError) < 1)) Runloop = false;
+            loop += 1;
         }
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
         robot.Motor3.setPower(0);
         robot.Motor4.setPower(0);
+        telemetry.addData("loop", String.valueOf(loop));
+        telemetry.addData( "Time" , String.valueOf(TicksTime.seconds()));
+        telemetry.update();
+        sleep((5000));
     }
 
     public void verticalMove (int time, double speed) {

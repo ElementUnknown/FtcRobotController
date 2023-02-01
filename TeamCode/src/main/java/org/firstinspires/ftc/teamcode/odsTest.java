@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "odsTest", group = "Robot")
+@Disabled
 public class odsTest extends Autonomous_Base {
 
   HardwareMap robot = new HardwareMap();
@@ -61,9 +62,6 @@ public class odsTest extends Autonomous_Base {
     while (opModeIsActive()) {
 
       // send the info back to driver station using telemetry function.
-      telemetry.addData("Raw",    super.robot.ods.getRawLightDetected());
-      telemetry.addData("Normal", super.robot.ods.getLightDetected());
-
       telemetry.update();
     }
   }

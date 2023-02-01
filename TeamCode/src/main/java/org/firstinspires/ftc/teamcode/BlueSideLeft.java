@@ -99,7 +99,7 @@ public class BlueSideLeft extends Autonomous_Base {
             telemetry.update();
         }*/
 
-        PIDMove(12,0,.5,0,0);
+        PIDMove(48,0,.6,0,0);
         sleep(1000);
 
 
