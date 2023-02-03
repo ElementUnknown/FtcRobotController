@@ -71,8 +71,8 @@ public class Autonomous_Base extends LinearOpMode{
     public void PIDMove (double INCHForward, double INCHRight, double speed, double angle, double angleinc){
         double Offset = getHeading();
         boolean Runloop = true;
-        double KP = .0003;
-        double KD = .003;
+        double KP = .003;
+        double KD = .0002;
         double KI = .0004;
         double KGP= .2;
         double KGD = 0;
