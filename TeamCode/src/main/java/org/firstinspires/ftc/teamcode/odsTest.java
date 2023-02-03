@@ -66,7 +66,7 @@ public class odsTest extends Autonomous_Base {
 
       // send the info back to driver station using telemetry function.
 
-      telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.CM));
+      telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.INCH));
 
       telemetry.update();
     }
