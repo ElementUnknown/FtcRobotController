@@ -33,6 +33,15 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
+
 /**
  * This file illustrates the concept of driving a path based on time.
  * The code is structured as a LinearOpMode
@@ -59,6 +68,23 @@ public class LeftSideAuto extends Autonomous_Base {
     private int color = 0;
     private int checkNum = 0;
 
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    static final double FEET_PER_METER = 3.28084;
+    double fx = 1419.6926;
+    double fy = 1419.6926;
+    double cx = 624.4230;
+    double cy = 317.1988;
+    double tagsize = 0.042;
+    int numFramesWithoutDetection = 0;
+    final float DECIMATION_HIGH = 3;
+    final float DECIMATION_LOW = 2;
+    final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
+    final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
+    int apriltagNum;
+
+    double lastDistance;
+
     @Override
     public void runOpMode() {
 
@@ -68,11 +94,31 @@ public class LeftSideAuto extends Autonomous_Base {
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        telemetry.setMsTransmissionInterval(50);
 
-/** initial tests for lift encoders **/
+        /** initial tests for lift encoders **/
         /*robot.liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.liftArmL.setTargetPosition(500);
@@ -98,8 +144,48 @@ public class LeftSideAuto extends Autonomous_Base {
         super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         closeClaw();
+
+        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
+        if(detections != null)
+        {
+            // If we don't see any tags
+            if(detections.size() == 0)
+            {
+                numFramesWithoutDetection++;
+
+                // If we haven't seen a tag for a few frames, lower the decimation
+                // so we can hopefully pick one up if we're e.g. far back
+                if(numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION)
+                {
+                    aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
+                }
+            }
+            // We do see tags!
+            else
+            {
+                numFramesWithoutDetection = 0;
+
+                // If the target is within 1 meter, turn on high decimation to
+                // increase the frame rate
+                if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
+                {
+                    aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
+                }
+
+                for(AprilTagDetection detection : detections)
+                {
+                    telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+                    apriltagNum = detection.id;
+                }
+            }
+            telemetry.update();
+        }
+
         Lowgoal(0,0);
-        Move(.4,0,18);
+        odsStop(.4);
+        lastDistance = super.robot.ods.getDistance(DistanceUnit.INCH);
+
+        /*Move(.4,0,18);
         sleep(500);
         while (color != 6 && color != 9 && color != 10 && checkNum < 5) {
             color = super.robot.colorSensor.readUnsignedByte(ModernRoboticsI2cColorSensor.Register.COLOR_NUMBER);
@@ -108,14 +194,14 @@ public class LeftSideAuto extends Autonomous_Base {
         }
         telemetry.addData("Color Number", color);
         telemetry.update();
-        Move(.5,0,21);
+        Move(.5,0,21);*/
+
         waitforarmfinish();
-        Move(.3,3.5,0);
+        Move(.3,lastDistance,0);
         sleep(500);
         Goalreadjust();
         waitforarmfinish();
         releaseClaw();
-
         Move(.4,-2,0);
         Grabconeheight();
         Move(.3,0,14);
@@ -134,7 +220,8 @@ public class LeftSideAuto extends Autonomous_Base {
         waitforarmfinish();
         releaseClaw();
         Move(.3,-4,0);
-        telemetry.addData("Color Number", color);
+
+        /*telemetry.addData("Color Number", color);
         telemetry.update();
         if (color == 9 || color == 8) {
             Move(.3,0,12.5);
@@ -151,8 +238,23 @@ public class LeftSideAuto extends Autonomous_Base {
             Move(.3, 48,0);
             ArmGround(0,0);
             waitforarmfinish();
+        }*/
+
+        if (apriltagNum == 1) {
+            Move(.3,0,12.5);
+            Move(.3,25,0);
+            ArmGround(0,0);
+            waitforarmfinish();
         }
-
-
+        else if (apriltagNum == 2) {
+            ArmGround(0,0);
+            waitforarmfinish();
+        }
+        else if (apriltagNum == 3) {
+            Move(.3,0,12);
+            Move(.3, 48,0);
+            ArmGround(0,0);
+            waitforarmfinish();
+        }
     }
 }

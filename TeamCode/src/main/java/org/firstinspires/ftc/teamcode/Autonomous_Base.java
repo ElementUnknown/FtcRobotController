@@ -574,12 +574,12 @@ public class Autonomous_Base extends LinearOpMode{
 
    }
 
-   public void odsStop(int speed) {
-       while(robot.ods.getDistance(DistanceUnit.CM) > 10) {
-           robot.Motor1.setPower(-speed);
-           robot.Motor2.setPower(speed);
-           robot.Motor3.setPower(speed);
-           robot.Motor4.setPower(-speed);
+   public void odsStop(double power) {
+       while(robot.ods.getDistance(DistanceUnit.CM) > 25) {
+           robot.Motor1.setPower(-power);
+           robot.Motor2.setPower(power);
+           robot.Motor3.setPower(power);
+           robot.Motor4.setPower(-power);
        }
        robot.Motor1.setPower(0);
        robot.Motor2.setPower(0);
