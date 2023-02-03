@@ -72,8 +72,8 @@ public class Autonomous_Base extends LinearOpMode{
     public void PIDMove (double INCHForward, double INCHRight, double speed, double angle, double angleinc){
         double Offset = getHeading();
         boolean Runloop = true;
-        double KP = .003;
-        double KD = .0002;
+        double KP = .0015;
+        double KD = .00045;
         double KI = .0004;
         double KGP= .2;
         double KGD = 0;
@@ -136,8 +136,8 @@ public class Autonomous_Base extends LinearOpMode{
         double Time = 0;
         while (Runloop && opModeIsActive()) {
             Time = DITime.milliseconds();
-            TimedTicksForward = (float) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * Math.abs(TicksForward) * 1.5, Math.abs(TicksForward))));
-            TimedTicksRight = (float) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * Math.abs(TicksRight) * 1.5, Math.abs(TicksRight))));
+            TimedTicksForward = (float) (Math.signum(TicksForward) * (Math.min(TicksTime.seconds() * Math.abs(TicksForward) * 1, Math.abs(TicksForward))));
+            TimedTicksRight = (float) (Math.signum(TicksRight) * (Math.min(TicksTime.seconds() * Math.abs(TicksRight) * 1, Math.abs(TicksRight))));
             TimedAngle = (Math.signum(angle) * (Math.min(TicksTime.seconds() * angleinc, Math.abs(angle))));
 
             if(Math.abs(TimedTicksForward) < 6 ) TimedTicksForward = 10 * Math.signum((TimedTicksForward));
@@ -177,12 +177,17 @@ public class Autonomous_Base extends LinearOpMode{
             telemetry.addData("KI", String.valueOf(KI));
             telemetry.addData("Total", String.valueOf(TotalPowerM1));
             telemetry.addData("Max", String.valueOf(TrueMax));
+            telemetry.addData("M1", robot.Motor1.getPower());
+            telemetry.addData("M2", robot.Motor2.getPower());
+            telemetry.addData("M3", robot.Motor3.getPower());
+            telemetry.addData("M4", robot.Motor4.getPower());
+
             telemetry.update();
 
-            TotalPowerM1 = ((speed * ((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
-            TotalPowerM2 = ((speed * ((M2Error * KP) + (DM2 * KD) + (IM2 * KI))) - (GyroCorrection));
-            TotalPowerM3 = ((speed * ((M3Error * KP) + (DM3 * KD) + (IM3 * KI))) - (GyroCorrection));
-            TotalPowerM4 = ((speed * ((M4Error * KP) + (DM4 * KD) + (IM4 * KI))) - (GyroCorrection));
+            TotalPowerM1 = ((((M1Error * KP) + (DM1 * KD) + (IM1 * KI))) - (GyroCorrection));
+            TotalPowerM2 = ((((M2Error * KP) + (DM2 * KD) + (IM2 * KI))) - (GyroCorrection));
+            TotalPowerM3 = ((((M3Error * KP) + (DM3 * KD) + (IM3 * KI))) - (GyroCorrection));
+            TotalPowerM4 = ((((M4Error * KP) + (DM4 * KD) + (IM4 * KI))) - (GyroCorrection));
 
             TrueMax = Math.max(Math.max(Math.abs(TotalPowerM3), Math.abs(TotalPowerM4)), Math.max(Math.abs(TotalPowerM1), Math.abs(TotalPowerM2)));
 
@@ -193,10 +198,10 @@ public class Autonomous_Base extends LinearOpMode{
                 TotalPowerM4 = TotalPowerM4 / Math.abs(TrueMax);
 
             }
-            robot.Motor1.setPower(TotalPowerM1);
-            robot.Motor2.setPower(TotalPowerM2);
-            robot.Motor3.setPower(TotalPowerM3);
-            robot.Motor4.setPower(TotalPowerM4);
+            robot.Motor4.setPower(speed * TotalPowerM4);
+            robot.Motor3.setPower(speed * TotalPowerM3);
+            robot.Motor2.setPower(speed * TotalPowerM2);
+            robot.Motor1.setPower(speed * TotalPowerM1);
 
             DITime.reset();
             PreviousM1error = M1Error;
