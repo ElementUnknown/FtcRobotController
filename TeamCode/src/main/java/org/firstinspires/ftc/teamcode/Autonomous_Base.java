@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
@@ -566,5 +567,18 @@ public class Autonomous_Base extends LinearOpMode{
    @Override
    public void runOpMode()  {
 
+   }
+
+   public void odsStop(int speed) {
+       while(robot.ods.getDistance(DistanceUnit.CM) > 10) {
+           robot.Motor1.setPower(-speed);
+           robot.Motor2.setPower(speed);
+           robot.Motor3.setPower(speed);
+           robot.Motor4.setPower(-speed);
+       }
+       robot.Motor1.setPower(0);
+       robot.Motor2.setPower(0);
+       robot.Motor3.setPower(0);
+       robot.Motor4.setPower(0);
    }
 }
