@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 /*
  * This is an example LinearOpMode that shows how to use
  * a Modern Robotics Optical Distance Sensor
@@ -60,9 +62,7 @@ public class odsTest extends Autonomous_Base {
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     while (opModeIsActive()) {
 
-      // send the info back to driver station using telemetry function.
-      telemetry.addData("Raw",    super.robot.ods.getRawLightDetected());
-      telemetry.addData("Normal", super.robot.ods.getLightDetected());
+      telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.CM));
 
       telemetry.update();
     }
