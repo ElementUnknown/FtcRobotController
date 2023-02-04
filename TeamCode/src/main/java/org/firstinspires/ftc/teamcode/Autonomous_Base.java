@@ -22,6 +22,7 @@ public class Autonomous_Base extends LinearOpMode{
     public double intoffset = 0;
     private int color = 0;
     private int checkNum = 0;
+    private boolean GoalFound = false;
 
 
     boolean turn[] = new boolean[3];
@@ -527,6 +528,67 @@ public class Autonomous_Base extends LinearOpMode{
        while(heading > 180)             heading    = heading  - 360;
        while(heading < -180)            heading    = heading    + 360;
        return heading;
+    }
+
+    public void ODSNavigateGoal(double speed, double CloseBound, double FarBound, int height, double FinalCorrection){
+        int CloseBoundTicks = (int) (CloseBound * horizontal_ticks_perinch);
+        int FarBoundTicks = (int) (FarBound * vertical_ticks_perinch);
+        double Distance = robot.ods.getDistance(DistanceUnit.INCH);
+        Move(speed, 0, CloseBound);
+        CloseToFar(speed, CloseBoundTicks, FarBoundTicks);
+        if (!GoalFound){
+            FarToClose(speed, CloseBoundTicks, FarBoundTicks);
+        }
+        if (!GoalFound){
+            Move(speed, 0, FinalCorrection);
+        }
+
+    }
+
+
+    public void CloseToFar(double speed, int CloseTicks, int FarTicks){
+        int DistanceTravel = FarTicks - CloseTicks;
+        double Distance = robot.ods.getDistance(DistanceUnit.INCH);
+        boolean RunLoop = true;
+
+        while (opModeIsActive() && RunLoop && Distance > 10){
+            Distance = robot.ods.getDistance(DistanceUnit.INCH);
+
+            robot.Motor1.setPower(-speed * Math.signum(CloseTicks));
+            robot.Motor2.setPower(speed * Math.signum(CloseTicks));
+            robot.Motor3.setPower(speed * Math.signum(CloseTicks));
+            robot.Motor4.setPower(-speed * Math.signum(CloseTicks));
+
+            if (Math.abs(robot.Motor1.getCurrentPosition()) >= Math.abs(FarTicks) || Math.abs(robot.Motor2.getCurrentPosition()) >= Math.abs(FarTicks) || Math.abs(robot.Motor3.getCurrentPosition()) >= Math.abs(FarTicks) || Math.abs(robot.Motor4.getCurrentPosition()) >= Math.abs(FarTicks)){
+                RunLoop = false;
+                GoalFound = false;
+            }
+            else if (Distance < 10){
+                RunLoop = false;
+                GoalFound = true;
+            }
+        }
+    }
+    public void FarToClose(double speed, int CloseTicks, int FarTicks){
+        double Distance = robot.ods.getDistance(DistanceUnit.INCH);
+        boolean RunLoop = true;
+        while (opModeIsActive() && RunLoop && Distance > 10){
+            Distance = robot.ods.getDistance(DistanceUnit.INCH);
+
+            robot.Motor1.setPower(speed * Math.signum(CloseTicks));
+            robot.Motor2.setPower(speed * Math.signum(CloseTicks));
+            robot.Motor3.setPower(speed * Math.signum(CloseTicks));
+            robot.Motor4.setPower(speed * Math.signum(CloseTicks));
+
+            if(Math.abs(robot.Motor1.getCurrentPosition()) > Math.abs(FarTicks) || Math.abs(robot.Motor2.getCurrentPosition()) > Math.abs(FarTicks) || Math.abs(robot.Motor3.getCurrentPosition()) > Math.abs(FarTicks) || Math.abs(robot.Motor4.getCurrentPosition()) > Math.abs(FarTicks)) {
+                RunLoop = false;
+                GoalFound = false;
+            }
+            else if (Distance < 10){
+                RunLoop = false;
+                GoalFound = true;
+            }
+        }
     }
     public void EmergencyCorrectionForward(){
         telemetry.addData("FORWARD TILT CORRECTION", "");
