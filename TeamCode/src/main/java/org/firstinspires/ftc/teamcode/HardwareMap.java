@@ -18,6 +18,8 @@ public class HardwareMap {
     public DcMotor Motor2       = null;
     public DcMotor Motor3       = null;
     public DcMotor Motor4       = null;
+    //public DcMotor intake1      = null;
+    //public DcMotor intake2      = null;
     //public DcMotor liftArmL     = null;
     //public DcMotor liftArmR     = null;
     //public Servo   Claw         = null;
@@ -49,6 +51,8 @@ public class HardwareMap {
         Motor4          = hwMap.get(DcMotor.class, "Motor4");
         //liftArmL        = hwMap.get(DcMotor.class, "liftArmL");
         //liftArmR        = hwMap.get(DcMotor.class, "LiftArmR");
+        //intake1        = hwMap.get(DcMotor.class, "intake1");
+        //intake2        = hwMap.get(DcMotor.class, "intake2");
         //initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -68,6 +72,8 @@ public class HardwareMap {
         Motor4.setPower(0);
         //liftArmL.setPower(0);
         //liftArmR.setPower(0);
+        //intake1.setPower(0);
+        //intake2.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -77,6 +83,8 @@ public class HardwareMap {
         Motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //liftArmL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //liftArmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -84,6 +92,8 @@ public class HardwareMap {
         Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Claw = hwMap.get(Servo.class, "Claw");
         //Claw.setPosition(.5);

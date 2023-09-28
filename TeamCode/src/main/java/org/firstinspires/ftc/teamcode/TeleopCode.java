@@ -245,6 +245,23 @@ public class TeleopCode extends Autonomous_Base {
 
             }
 
+            if(gamepad2.right_trigger > 0.2) {
+                //super.robot.intake1.setPower(1);
+                //super.robot.intake2.setPower(-1);
+            }
+            else {
+                //super.robot.intake1.setPower(0);
+                //super.robot.intake2.setPower(0);
+            }
+            if(gamepad2.left_trigger > 0.2) {
+                //super.robot.intake1.setPower(-1);
+                //super.robot.intake2.setPower(1);
+            }
+            else {
+                //super.robot.intake1.setPower(0);
+                //super.robot.intake2.setPower(0);
+            }
+
             /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
                 super.robot.liftArmR.setPower(0);
                 super.robot.liftArmL.setPower(0);
