@@ -89,11 +89,11 @@ public class TeleopCode extends Autonomous_Base {
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -245,7 +245,7 @@ public class TeleopCode extends Autonomous_Base {
 
             }
 
-            if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
+            /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
                 super.robot.liftArmR.setPower(0);
                 super.robot.liftArmL.setPower(0);
             }
@@ -280,16 +280,9 @@ public class TeleopCode extends Autonomous_Base {
             }
             else if (!gamepad2.y && lastButton.equals("Y")) {
                 super.robot.Claw.setPosition(.35);
-            }
-
-           /* if (rx2 > .2 || rx2 < -.2) {
-                super.robot.PivotClaw.setPosition(.25*rx2+.5);
-            }
-            else if (rx2 < .2 && rx2 >-.2){
-                super.robot.PivotClaw.setPosition(.5);
             }*/
 
-            if (gamepad2.dpad_left && ly2 == 0.0) {
+            /*if (gamepad2.dpad_left && ly2 == 0.0) {
                 multiplier = (double)(760 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
@@ -350,7 +343,7 @@ public class TeleopCode extends Autonomous_Base {
             telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.INCH));
             if(super.robot.ods.getDistance(DistanceUnit.INCH) < 7){
                 telemetry.addData("Goal Aligned", "");
-            }
+            }*/
             telemetry.update();
         }
     }

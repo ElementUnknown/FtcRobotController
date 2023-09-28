@@ -333,7 +333,7 @@ public class Autonomous_Base extends LinearOpMode {
                 robot.Motor2.setPower( Motor2Power + (AngleDistance / 360 ));
                 robot.Motor3.setPower( Motor3Power - (AngleDistance / 360 ));
                 robot.Motor4.setPower( Motor4Power + (AngleDistance / 360 ));*/
-    public void waitforarmfinish() {
+    /*public void waitforarmfinish() {
         while (robot.liftArmL.isBusy() || robot.liftArmR.isBusy()) {
 
         }
@@ -450,7 +450,7 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    }
+    }*/
 
     public void TurnByGyro(double target, double speed, double buffer, double multplierquotiant) {//quotiant is the degree from the target with which you want to begin decelaeration
         double TurnSpeed = 0; // if quotiant is too small, the angle may not be met, so the loop may get stuck
@@ -509,7 +509,7 @@ public class Autonomous_Base extends LinearOpMode {
         }
     }
 
-    public void MoveArm(int time, double speed) {
+    /*public void MoveArm(int time, double speed) {
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmL.setPower(speed);
@@ -527,7 +527,7 @@ public class Autonomous_Base extends LinearOpMode {
     public void closeClaw() {
         robot.Claw.setPosition(.0);
         sleep(500);
-    }
+    }*/
 
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -537,7 +537,7 @@ public class Autonomous_Base extends LinearOpMode {
         return heading;
     }
 
-    public void ODSNavigateGoal(double speed, double CloseBound, double FarBound, int height, double FinalCorrection){
+    /*public void ODSNavigateGoal(double speed, double CloseBound, double FarBound, int height, double FinalCorrection){
         int CloseBoundTicks = (int) (CloseBound * horizontal_ticks_perinch);
         int FarBoundTicks = (int) (FarBound * vertical_ticks_perinch);
         double Distance = robot.ods.getDistance(DistanceUnit.INCH);
@@ -562,7 +562,7 @@ public class Autonomous_Base extends LinearOpMode {
                 Move(.2,error,0);
         }
 
-    }
+    }*/
 
 
     public void CloseToFar(double speed, int CloseTicks, int FarTicks){
