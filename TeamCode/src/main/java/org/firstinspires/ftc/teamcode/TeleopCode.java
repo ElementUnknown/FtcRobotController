@@ -29,17 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This particular OpMode executes a POV Game style Teleop for a direct drive robot
@@ -72,14 +69,16 @@ public class TeleopCode extends Autonomous_Base {
         double lyModifier;
         double rx;
         double ly2;
-        double rx2;
+        //double rx2;
         double angleDistance = 0;
         double initHeading = 0;
         boolean gamepadCheck;
         double multiplier = 0;
+        double rx2 = 0;
         double liftpower = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
+        double SpeedMod;
         String lastButton = "None";
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
@@ -89,8 +88,13 @@ public class TeleopCode extends Autonomous_Base {
         super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -105,7 +109,7 @@ public class TeleopCode extends Autonomous_Base {
             ly = gamepad1.left_stick_y*1;
             lx = -gamepad1.left_stick_x*.7;
             rx = gamepad1.right_stick_x;
-            ly2 = gamepad2.left_stick_y*-1;
+            ly2 = gamepad2.left_stick_y*-1.0;
             rx2 = gamepad2.right_stick_x;
 
             if (gamepad2.x) {
@@ -124,13 +128,13 @@ public class TeleopCode extends Autonomous_Base {
             if (ly > -.2 && ly < .2) {
                 runtimely.reset();
             }
-            lyRuntimeMod = Double.max(runtimely.seconds()*1.3, .3);
+            lyRuntimeMod = Double.max(runtimely.seconds()*1.7, .3);
             lyModifier = Double.min(lyRuntimeMod,1);
 
             if (lx > -.2 && lx < .2) {
                 runtimelx.reset();
             }
-            lxRuntimeMod = Double.max(runtimelx.seconds()*1.3, .3);
+            lxRuntimeMod = Double.max(runtimelx.seconds()*1.7, .3);
             lxModifier = Double.min(lxRuntimeMod,1);
 
             if (rx > -.2 && rx < .2) {
@@ -140,7 +144,8 @@ public class TeleopCode extends Autonomous_Base {
             if (ly2 > -.2 && ly2 < .2) {
                 ly2 = 0;
             }
-
+            if(gamepad1.b) SpeedMod = .5;
+            else SpeedMod = 1;
             if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
                 gamepadCheck = true;
             }
@@ -197,28 +202,28 @@ public class TeleopCode extends Autonomous_Base {
             wheelspeed[1] = (ly*lyModifier + lx*lxModifier + (angleDistance / 90 ));
             wheelspeed[2] = (ly*lyModifier + lx*lxModifier - (angleDistance / 90 ));
             wheelspeed[3] = (ly*lyModifier - lx*lxModifier + (angleDistance / 90 ));
-            wheelspeed[4] =  rx*.5 + (ly*lyModifier - lx*lxModifier);
-            wheelspeed[5] = -rx*.5 + (ly*lyModifier + lx*lxModifier);
-            wheelspeed[6] =  rx*.5 + (ly*lyModifier - lx*lxModifier);
-            wheelspeed[7] = -rx*.5 + (ly*lyModifier + lx*lxModifier);
+            wheelspeed[4] =  rx*.3 + (ly*lyModifier - lx*lxModifier);
+            wheelspeed[5] = -rx*.3 + (ly*lyModifier + lx*lxModifier);
+            wheelspeed[6] =  rx*.3 + (ly*lyModifier - lx*lxModifier);
+            wheelspeed[7] = -rx*.3 + (ly*lyModifier + lx*lxModifier);
 
             if (!gamepadCheck && (lx != 0 || ly != 0) && rx == 0) {
-                super.robot.Motor1.setPower(wheelspeed[0]);
-                super.robot.Motor2.setPower(wheelspeed[1]);
-                super.robot.Motor3.setPower(wheelspeed[2]);
-                super.robot.Motor4.setPower(wheelspeed[3]);
+                super.robot.Motor1.setPower(SpeedMod * wheelspeed[0]);
+                super.robot.Motor2.setPower(SpeedMod * wheelspeed[1]);
+                super.robot.Motor3.setPower(SpeedMod * wheelspeed[2]);
+                super.robot.Motor4.setPower(SpeedMod * wheelspeed[3]);
             }
             else if (gamepadCheck) {
-                super.robot.Motor1.setPower(wheelspeed[8]);
-                super.robot.Motor2.setPower(wheelspeed[9]);
-                super.robot.Motor3.setPower(wheelspeed[10]);
-                super.robot.Motor4.setPower(wheelspeed[11]);
+                super.robot.Motor1.setPower(SpeedMod * wheelspeed[8]);
+                super.robot.Motor2.setPower(SpeedMod * wheelspeed[9]);
+                super.robot.Motor3.setPower(SpeedMod * wheelspeed[10]);
+                super.robot.Motor4.setPower(SpeedMod * wheelspeed[11]);
             }
             else if (rx != 0){
-                super.robot.Motor1.setPower(wheelspeed[4]);
-                super.robot.Motor2.setPower(wheelspeed[5]);
-                super.robot.Motor3.setPower(wheelspeed[6]);
-                super.robot.Motor4.setPower(wheelspeed[7]);
+                super.robot.Motor1.setPower(SpeedMod * wheelspeed[4]);
+                super.robot.Motor2.setPower(SpeedMod * wheelspeed[5]);
+                super.robot.Motor3.setPower(SpeedMod * wheelspeed[6]);
+                super.robot.Motor4.setPower(SpeedMod * wheelspeed[7]);
             }
             else {
                 super.robot.Motor1.setPower(0);
@@ -226,15 +231,52 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor3.setPower(0);
                 super.robot.Motor4.setPower(0);
             }
-
-            if(ly2 != 0) {
-                super.robot.liftArmL.setPower(ly2);
-                super.robot.liftArmR.setPower(ly2);
+            if (gamepad1.right_trigger > .5){
+                super.robot.Motor1.setPower(.75);
+                super.robot.Motor2.setPower(-.75);
+                super.robot.Motor3.setPower(.75);
+                super.robot.Motor4.setPower(-.75);
             }
-            if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
+            else if (gamepad1.left_trigger > .5){
+                super.robot.Motor1.setPower(-.75);
+                super.robot.Motor2.setPower(.75);
+                super.robot.Motor3.setPower(-.75);
+                super.robot.Motor4.setPower(.75);
+
+            }
+
+            if(gamepad2.right_trigger > 0.2) {
+                //super.robot.intake1.setPower(1);
+                //super.robot.intake2.setPower(-1);
+            }
+            else {
+                //super.robot.intake1.setPower(0);
+                //super.robot.intake2.setPower(0);
+            }
+            if(gamepad2.left_trigger > 0.2) {
+                //super.robot.intake1.setPower(-1);
+                //super.robot.intake2.setPower(1);
+            }
+            else {
+                //super.robot.intake1.setPower(0);
+                //super.robot.intake2.setPower(0);
+            }
+
+            /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
                 super.robot.liftArmR.setPower(0);
                 super.robot.liftArmL.setPower(0);
             }
+            else if (ly2 < 0){
+                super.robot.liftArmL.setPower(ly2);
+                super.robot.liftArmR.setPower(ly2);
+            }
+            else if (ly2 > 0){
+                super.robot.liftArmL.setPower(ly2 * .75);
+                super.robot.liftArmR.setPower(ly2 * .75);
+
+            }
+
+
             if (gamepad2.a) {
                 super.robot.Claw.setPosition(.35);
             }
@@ -255,17 +297,10 @@ public class TeleopCode extends Autonomous_Base {
             }
             else if (!gamepad2.y && lastButton.equals("Y")) {
                 super.robot.Claw.setPosition(.35);
-            }
-
-           /* if (rx2 > .2 || rx2 < -.2) {
-                super.robot.PivotClaw.setPosition(.25*rx2+.5);
-            }
-            else if (rx2 < .2 && rx2 >-.2){
-                super.robot.PivotClaw.setPosition(.5);
             }*/
 
-            if (gamepad2.dpad_left && ly2 == 0) {
-                multiplier = (double)(760 - super.robot.liftArmR.getCurrentPosition()) / 200;
+            /*if (gamepad2.dpad_left && ly2 == 0.0) {
+                multiplier = (double)(760 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
@@ -276,8 +311,8 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmR.setPower(liftpower);
                 super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_up && ly2 == 0) {
-                multiplier = (double)(1175 - super.robot.liftArmR.getCurrentPosition()) / 200;
+            else if (gamepad2.dpad_up && ly2 == 0.0) {
+                multiplier = (double)(1250 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
@@ -288,8 +323,8 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmR.setPower(liftpower);
                 super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_right && ly2 == 0) {
-                multiplier = (double)(500 - super.robot.liftArmR.getCurrentPosition()) / 200;
+            else if (gamepad2.dpad_right && ly2 == 0.0) {
+                multiplier = (double)(550 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
@@ -300,8 +335,8 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmR.setPower(liftpower);
                 super.robot.liftArmL.setPower(liftpower);
             }
-            else if (gamepad2.dpad_down && ly2 == 0){
-                multiplier = (double)(1 - super.robot.liftArmR.getCurrentPosition()) / 200;
+            else if (gamepad2.dpad_down && ly2 == 0.0){
+                multiplier = (double)(1 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
                     liftpower =1;
@@ -322,6 +357,10 @@ public class TeleopCode extends Autonomous_Base {
             }
             if (Math.abs(super.robot.angles.secondAngle) < 15 ) TILT.reset();
             telemetry.addData("", super.robot.angles.secondAngle);
+            telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.INCH));
+            if(super.robot.ods.getDistance(DistanceUnit.INCH) < 7){
+                telemetry.addData("Goal Aligned", "");
+            }*/
             telemetry.update();
         }
     }

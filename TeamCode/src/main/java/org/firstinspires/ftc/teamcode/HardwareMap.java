@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -22,12 +18,13 @@ public class HardwareMap {
     public DcMotor Motor2       = null;
     public DcMotor Motor3       = null;
     public DcMotor Motor4       = null;
-    public DcMotor liftArmL     = null;
-    public DcMotor liftArmR     = null;
-    public Servo   Claw         = null;
-   // public Servo   PivotClaw    = null;
+    //public DcMotor intake1      = null;
+    //public DcMotor intake2      = null;
+    //public DcMotor liftArmL     = null;
+    //public DcMotor liftArmR     = null;
+    //public Servo   Claw         = null;
+    //public Servo   PivotClaw    = null;
 
-    public ModernRoboticsI2cColorSensor colorSensor = null;
     public BNO055IMU       imu;
     public Orientation angles;
     public double initAngle;
@@ -52,9 +49,10 @@ public class HardwareMap {
         Motor2          = hwMap.get(DcMotor.class, "Motor2");
         Motor3          = hwMap.get(DcMotor.class, "Motor3");
         Motor4          = hwMap.get(DcMotor.class, "Motor4");
-        liftArmL        = hwMap.get(DcMotor.class, "liftArmL");
-        liftArmR        = hwMap.get(DcMotor.class, "LiftArmR");
-        colorSensor     = hwMap.get(ModernRoboticsI2cColorSensor.class, "colorSensor");
+        //liftArmL        = hwMap.get(DcMotor.class, "liftArmL");
+        //liftArmR        = hwMap.get(DcMotor.class, "LiftArmR");
+        //intake1        = hwMap.get(DcMotor.class, "intake1");
+        //intake2        = hwMap.get(DcMotor.class, "intake2");
         //initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -64,7 +62,6 @@ public class HardwareMap {
 
         ods = hwMap.get(DistanceSensor.class, "ods");
 
-
         Motor1.setDirection(DcMotor.Direction.REVERSE);
         Motor3.setDirection(DcMotor.Direction.REVERSE);
 
@@ -73,8 +70,10 @@ public class HardwareMap {
         Motor2.setPower(0);
         Motor3.setPower(0);
         Motor4.setPower(0);
-        liftArmL.setPower(0);
-        liftArmR.setPower(0);
+        //liftArmL.setPower(0);
+        //liftArmR.setPower(0);
+        //intake1.setPower(0);
+        //intake2.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -82,18 +81,22 @@ public class HardwareMap {
         Motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftArmL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftArmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //liftArmL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //liftArmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //liftArmL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //liftArmR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        Claw = hwMap.get(Servo.class, "Claw");
-        Claw.setPosition(.5);
+        //Claw = hwMap.get(Servo.class, "Claw");
+        //Claw.setPosition(.5);
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         //PivotClaw.setPosition(.5);
         initAngle = angles.firstAngle;
