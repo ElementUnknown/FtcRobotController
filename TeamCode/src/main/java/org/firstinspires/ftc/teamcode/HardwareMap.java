@@ -101,7 +101,7 @@ public class HardwareMap {
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         //PivotClaw.setPosition(.5);
         plowHold        = hwMap.get(Servo.class, "plowHold");
-        plowHold.setPosition(.5);
+        plowHold.setPosition(.75);
         initAngle = angles.firstAngle;
     }
 }
