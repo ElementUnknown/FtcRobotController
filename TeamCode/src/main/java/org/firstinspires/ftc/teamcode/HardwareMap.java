@@ -18,6 +18,7 @@ public class HardwareMap {
     public DcMotor Motor2       = null;
     public DcMotor Motor3       = null;
     public DcMotor Motor4       = null;
+    public Servo   plowHold     = null;
     //public DcMotor intake1      = null;
     //public DcMotor intake2      = null;
     //public DcMotor liftArmL     = null;
@@ -99,6 +100,8 @@ public class HardwareMap {
         //Claw.setPosition(.5);
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         //PivotClaw.setPosition(.5);
+        plowHold        = hwMap.get(Servo.class, "plowHold");
+        plowHold.setPosition(.75);
         initAngle = angles.firstAngle;
     }
 }

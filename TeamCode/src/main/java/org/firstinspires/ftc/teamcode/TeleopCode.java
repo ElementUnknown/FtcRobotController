@@ -274,18 +274,18 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.liftArmL.setPower(ly2 * .75);
                 super.robot.liftArmR.setPower(ly2 * .75);
 
-            }
+            }*/
 
 
             if (gamepad2.a) {
-                super.robot.Claw.setPosition(.35);
+                super.robot.plowHold.setPosition(.75);
             }
 
             if (gamepad2.b) {
-                super.robot.Claw.setPosition(.0);
+                super.robot.plowHold.setPosition(0);
             }
 
-            if (gamepad2.x && lastButton.equals("X")) {
+            /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);
             }
             else if (!gamepad2.x && lastButton.equals("X")) {
