@@ -565,7 +565,7 @@ public class Autonomous_Base extends LinearOpMode {
     }*/
 
 
-    public void CloseToFar(double speed, int CloseTicks, int FarTicks){
+    /*public void CloseToFar(double speed, int CloseTicks, int FarTicks){
         int DistanceTravel = FarTicks - CloseTicks;
         double Distance = robot.ods.getDistance(DistanceUnit.INCH);
         boolean RunLoop = true;
@@ -608,12 +608,12 @@ public class Autonomous_Base extends LinearOpMode {
                 GoalFound = true;
             }
         }
-    }
+    }*/
     public void EmergencyCorrectionForward(){
         telemetry.addData("FORWARD TILT CORRECTION", "");
         telemetry.update();
-        robot.liftArmL.setPower(-1);
-        robot.liftArmR.setPower(-1);
+        //robot.liftArmL.setPower(-1);
+        //robot.liftArmR.setPower(-1);
         robot.Motor1.setPower(.75);
         robot.Motor2.setPower(.75);
         robot.Motor3.setPower(.75);
@@ -624,16 +624,16 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor3.setPower(0);
         robot.Motor4.setPower(0);
         sleep(500);
-        robot.liftArmL.setPower(0);
+        /*robot.liftArmL.setPower(0);
         robot.liftArmR.setPower(0);
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
     }
     public void EmergencyCorrectionBackwards(){
         telemetry.addData("BACKWARD TILT CORRECTION","");
         telemetry.update();
-        robot.liftArmL.setPower(-1);
-        robot.liftArmR.setPower(-1);
+        //robot.liftArmL.setPower(-1);
+        //robot.liftArmR.setPower(-1);
         robot.Motor1.setPower(-.75);
         robot.Motor2.setPower(-.75);
         robot.Motor3.setPower(-.75);
@@ -644,10 +644,10 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor3.setPower(0);
         robot.Motor4.setPower(0);
         sleep(500);
-        robot.liftArmL.setPower(0);
+        /*robot.liftArmL.setPower(0);
         robot.liftArmR.setPower(0);
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
     }
 
    @Override

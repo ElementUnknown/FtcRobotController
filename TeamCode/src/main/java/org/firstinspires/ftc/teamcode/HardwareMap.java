@@ -30,7 +30,7 @@ public class HardwareMap {
     public Orientation angles;
     public double initAngle;
 
-    public DistanceSensor ods;
+    //public DistanceSensor ods;
     /* local OpMode members. */
     com.qualcomm.robotcore.hardware.HardwareMap hwMap = null;
     private ElapsedTime period  = new ElapsedTime();
@@ -61,7 +61,7 @@ public class HardwareMap {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        ods = hwMap.get(DistanceSensor.class, "ods");
+        //ods = hwMap.get(DistanceSensor.class, "ods");
 
         Motor1.setDirection(DcMotor.Direction.REVERSE);
         Motor3.setDirection(DcMotor.Direction.REVERSE);

@@ -50,7 +50,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Teleop_22_23", group="Robot")
+@TeleOp(name="Teleop_23_24", group="Robot")
 public class TeleopCode extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
@@ -277,11 +277,11 @@ public class TeleopCode extends Autonomous_Base {
             }*/
 
 
-            if (gamepad2.a) {
+            if (gamepad2.y) {
                 super.robot.plowHold.setPosition(.75);
             }
 
-            if (gamepad2.b) {
+            if (gamepad2.a) {
                 super.robot.plowHold.setPosition(0);
             }
 
