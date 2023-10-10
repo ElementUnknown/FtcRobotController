@@ -565,7 +565,7 @@ public class Autonomous_Base extends LinearOpMode {
     }*/
 
 
-    public void CloseToFar(double speed, int CloseTicks, int FarTicks){
+    /*public void CloseToFar(double speed, int CloseTicks, int FarTicks){
         int DistanceTravel = FarTicks - CloseTicks;
         double Distance = robot.ods.getDistance(DistanceUnit.INCH);
         boolean RunLoop = true;
@@ -587,8 +587,8 @@ public class Autonomous_Base extends LinearOpMode {
                 GoalFound = true;
             }
         }
-    }
-    public void FarToClose(double speed, int CloseTicks, int FarTicks){
+    }*/
+    /*public void FarToClose(double speed, int CloseTicks, int FarTicks){
         double Distance = robot.ods.getDistance(DistanceUnit.INCH);
         boolean RunLoop = true;
         while (opModeIsActive() && RunLoop && Distance > 10){
@@ -608,8 +608,8 @@ public class Autonomous_Base extends LinearOpMode {
                 GoalFound = true;
             }
         }
-    }
-    public void EmergencyCorrectionForward(){
+    }*/
+   /* public void EmergencyCorrectionForward(){
         telemetry.addData("FORWARD TILT CORRECTION", "");
         telemetry.update();
         robot.liftArmL.setPower(-1);
@@ -628,8 +628,8 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmR.setPower(0);
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-    public void EmergencyCorrectionBackwards(){
+    }*/
+    /*public void EmergencyCorrectionBackwards(){
         telemetry.addData("BACKWARD TILT CORRECTION","");
         telemetry.update();
         robot.liftArmL.setPower(-1);
@@ -648,7 +648,7 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmR.setPower(0);
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
+    }*/
 
    @Override
    public void runOpMode()  {
