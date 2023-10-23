@@ -293,7 +293,7 @@ public class Autonomous_Base extends LinearOpMode {
         while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop) {
             AngleDistance = -getHeading() + InitHeading;
 
-            double accceleratioon_ctl = Math.min(Time.milliseconds() / 1000.0,1.0);
+            double accceleratioon_ctl = Math.min(Time.milliseconds() / 1000.0, 1.0);
             if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
             if (AngleDistance <= -180) AngleDistance = AngleDistance + 360;
 
