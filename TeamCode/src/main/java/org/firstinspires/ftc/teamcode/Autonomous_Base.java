@@ -531,7 +531,7 @@ public class Autonomous_Base extends LinearOpMode {
 
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double heading = robot.angles.firstAngle;
+        double heading = -robot.angles.firstAngle;
         while (heading > 180) heading = heading - 360;
         while (heading < -180) heading = heading + 360;
         return heading;
