@@ -14,7 +14,6 @@ public class Autonomous_Base extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     public double vertical_ticks_perinch = 44.0771349;
     public double horizontal_ticks_perinch = 50.7936507;
-    public double intoffset = 0;
     private int checkNum = 0;
     private boolean GoalFound = false;
 
@@ -22,22 +21,20 @@ public class Autonomous_Base extends LinearOpMode {
     boolean turn[] = new boolean[3];
 
 
-    public void Move(double power, double distanceforward, double distancelateral /*, FinalTurnSpeed*/) {
+    public void Move(double power, double distanceforward, double distancelateral) {
         double InitHeading = getHeading();
-        double AngleDistance = 0;
         ElapsedTime Time = new ElapsedTime();
         double M1Speed;
         double M2Speed;
         double M3Speed;
         double M4Speed;
-
+        //Speed Variables are used to calculate the needed adjustments for straight line
         robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //diagnol movement statment (if it works it can replace the entire statment of movement
-        //it worked
+
         robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -45,27 +42,24 @@ public class Autonomous_Base extends LinearOpMode {
 
         int Target_ticks_Vertical = (int) -(vertical_ticks_perinch * distanceforward);
         int Target_tick_Horizontal = (int) -(horizontal_ticks_perinch * distancelateral);
-        robot.Motor1.setTargetPosition((int) (Target_ticks_Vertical - Target_tick_Horizontal));
-        robot.Motor2.setTargetPosition((int) (Target_ticks_Vertical + Target_tick_Horizontal));
-        robot.Motor3.setTargetPosition((int) (Target_ticks_Vertical + Target_tick_Horizontal));
-        robot.Motor4.setTargetPosition((int) (Target_ticks_Vertical - Target_tick_Horizontal));
+        //calculate the error
+        robot.Motor1.setTargetPosition((Target_ticks_Vertical - Target_tick_Horizontal));
+        robot.Motor2.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
+        robot.Motor3.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
+        robot.Motor4.setTargetPosition((Target_ticks_Vertical - Target_tick_Horizontal));
 
-        double accelortation = Math.min(Time.seconds(), 1.0);
         M1Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M2Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M3Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M4Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
-
-        //robot.Motor1.setPower(accelortation * (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral))))));
-        //robot.Motor2.setPower(accelortation * (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral))))));
-        //robot.Motor3.setPower(accelortation * (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral))))));
-        //robot.Motor4.setPower(accelortation * (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral))))));
-
+        //Calculating motor speeds based off of imputed power and target averages (basically a percent error calculation
         robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //set motors to run
         StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
+        //go to straight wait with the heading set at the beginning of method, and motor speeds
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
         robot.Motor3.setPower(0);
@@ -290,8 +284,9 @@ public class Autonomous_Base extends LinearOpMode {
         double AngleDistance = 0;
         boolean continueloop = true;
         double TickDistance;
+        //I don't even know how this works, I drank coffee and then the next day this was here
         while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop) {
-            AngleDistance = -getHeading() + InitHeading;
+            AngleDistance = getHeading() - InitHeading;
 
             double accceleratioon_ctl = Math.min(Time.milliseconds() / 1000.0, 1.0);
             if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
@@ -315,6 +310,7 @@ public class Autonomous_Base extends LinearOpMode {
             telemetry.update();
 
             TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
+            //All I know is that this really long line of code just calculates the total error between the four motors
             if (Math.abs(TickDistance) > 200) continueloop = true;
 
             else if (Math.abs(TickDistance) < 200) continueloop = false;
@@ -329,10 +325,6 @@ public class Autonomous_Base extends LinearOpMode {
         waitforfinish();
     }
 
-    /*robot.Motor1.setPower( Motor1Power - (AngleDistance / 360 ));
-                robot.Motor2.setPower( Motor2Power + (AngleDistance / 360 ));
-                robot.Motor3.setPower( Motor3Power - (AngleDistance / 360 ));
-                robot.Motor4.setPower( Motor4Power + (AngleDistance / 360 ));*/
     /*public void waitforarmfinish() {
         while (robot.liftArmL.isBusy() || robot.liftArmR.isBusy()) {
 

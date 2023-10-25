@@ -53,7 +53,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp(name="Teleop_23_24", group="Robot")
 public class TeleopCode extends Autonomous_Base {
 
-    HardwareMap robot = new HardwareMap();
 
     @Override
     public void runOpMode() {
@@ -73,9 +72,7 @@ public class TeleopCode extends Autonomous_Base {
         double angleDistance = 0;
         double initHeading = 0;
         boolean gamepadCheck;
-        double multiplier = 0;
         double rx2 = 0;
-        double liftpower = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
         double SpeedMod;
@@ -89,11 +86,7 @@ public class TeleopCode extends Autonomous_Base {
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -190,7 +183,7 @@ public class TeleopCode extends Autonomous_Base {
                 initHeading = getHeading();
             }
 
-            angleDistance = -getHeading() + initHeading;
+            angleDistance = getHeading() - initHeading;
             if (angleDistance > 180) {
                 angleDistance = angleDistance - 360;
             }
@@ -244,39 +237,6 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor4.setPower(.75);
 
             }
-
-            if(gamepad2.right_trigger > 0.2) {
-                //super.robot.intake1.setPower(1);
-                //super.robot.intake2.setPower(-1);
-            }
-            else {
-                //super.robot.intake1.setPower(0);
-                //super.robot.intake2.setPower(0);
-            }
-            if(gamepad2.left_trigger > 0.2) {
-                //super.robot.intake1.setPower(-1);
-                //super.robot.intake2.setPower(1);
-            }
-            else {
-                //super.robot.intake1.setPower(0);
-                //super.robot.intake2.setPower(0);
-            }
-
-            /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
-                super.robot.liftArmR.setPower(0);
-                super.robot.liftArmL.setPower(0);
-            }
-            else if (ly2 < 0){
-                super.robot.liftArmL.setPower(ly2);
-                super.robot.liftArmR.setPower(ly2);
-            }
-            else if (ly2 > 0){
-                super.robot.liftArmL.setPower(ly2 * .75);
-                super.robot.liftArmR.setPower(ly2 * .75);
-
-            }*/
-
-
             if (gamepad2.y) {
                 super.robot.plowHold.setPosition(.75);
             }
@@ -298,8 +258,8 @@ public class TeleopCode extends Autonomous_Base {
             else if (!gamepad2.y && lastButton.equals("Y")) {
                 super.robot.Claw.setPosition(.35);
             }*/
-
-            /*if (gamepad2.dpad_left && ly2 == 0.0) {
+            /** The Encoder System for arm adjustment may be used later as it may become helpful**/
+    /*This is the arm encoder*/        /*if (gamepad2.dpad_left && ly2 == 0.0) {
                 multiplier = (double)(760 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
                 liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
                 if (liftpower > 1){
@@ -347,8 +307,9 @@ public class TeleopCode extends Autonomous_Base {
                 }
                 super.robot.liftArmR.setPower(liftpower);
                 super.robot.liftArmL.setPower(liftpower);
-            }
-            super.robot.angles = super.robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            }*/
+            /** The anti-tip system can be modified for new hardware and still used, we should check the instability of the robot at various arm heights**/
+    /*This is the Anti-tip*/        /*super.robot.angles = super.robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             if (super.robot.angles.secondAngle > 10 && TILT.milliseconds() > 150 && super.robot.liftArmL.getCurrentPosition() > 1000){
                 EmergencyCorrectionForward();
             }
