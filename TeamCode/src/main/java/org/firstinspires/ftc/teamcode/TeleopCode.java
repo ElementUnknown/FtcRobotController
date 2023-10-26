@@ -72,7 +72,7 @@ public class TeleopCode extends Autonomous_Base {
         double angleDistance = 0;
         double initHeading = 0;
         boolean gamepadCheck;
-        double rx2 = 0;
+        double ry2 = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
         double SpeedMod;
@@ -103,7 +103,7 @@ public class TeleopCode extends Autonomous_Base {
             lx = -gamepad1.left_stick_x*.7;
             rx = gamepad1.right_stick_x;
             ly2 = gamepad2.left_stick_y*-1.0;
-            rx2 = gamepad2.right_stick_x;
+            ry2 = gamepad2.right_stick_y;
 
             if (gamepad2.x) {
                 lastButton = "X";
@@ -244,7 +244,7 @@ public class TeleopCode extends Autonomous_Base {
             if (gamepad2.a) {
                 super.robot.plowHold.setPosition(0);
             }
-
+            super.robot.PivotArm.setPower(ry2);
             /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);
             }

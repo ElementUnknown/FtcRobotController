@@ -47,7 +47,10 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor3.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor4.setTargetPosition((Target_ticks_Vertical - Target_tick_Horizontal));
-
+        robot.Motor1.setPower(power);
+        robot.Motor2.setPower(power);
+        robot.Motor3.setPower(power);
+        robot.Motor4.setPower(power);
         M1Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M2Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M3Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
@@ -58,7 +61,8 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //set motors to run
-        StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
+        waitforfinish();
+        //StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
         //go to straight wait with the heading set at the beginning of method, and motor speeds
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);

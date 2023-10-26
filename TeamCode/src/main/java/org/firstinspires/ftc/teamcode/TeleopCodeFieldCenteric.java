@@ -57,11 +57,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double wheelspeed[] = new double[12];
 
         double lx;
-        double lxRuntimeMod;
-        double lxModifier;
         double ly;
-        double lyRuntimeMod;
-        double lyModifier;
         double rx;
         double ly2;
         //double rx2;
@@ -73,15 +69,16 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double liftpower = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
-        double SpeedMod;
+        double speedMod;
         double totPower = 0;
         double AngleJ = 0;
         double Pheta = 0;
         double PowerX = 0;
         double PowerY = 0;
         String lastButton = "None";
-        ElapsedTime runtimely = new ElapsedTime();
-        ElapsedTime runtimelx = new ElapsedTime();
+        ElapsedTime stickRuntime = new ElapsedTime();
+        double stickRuntimeMod;
+        double stickMod;
         ElapsedTime TILT = new ElapsedTime();
         boolean Centric = true;
         boolean DoubleButton = false;
@@ -127,17 +124,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 lastButton = "B";
             }
 
-            if (ly > -.2 && ly < .2) {
-                runtimely.reset();
+            if (!leftStickIsActive && !rightstickisactive) {
+                stickRuntime.reset();
             }
-            lyRuntimeMod = Double.max(runtimely.seconds()*1.7, .3);
-            lyModifier = Double.min(lyRuntimeMod,1);
-
-            if (lx > -.2 && lx < .2) {
-                runtimelx.reset();
-            }
-            lxRuntimeMod = Double.max(runtimelx.seconds()*1.7, .3);
-            lxModifier = Double.min(lxRuntimeMod,1);
+            stickRuntimeMod = Double.max(stickRuntime.seconds()*1.7, .3);
+            stickMod = Double.min(stickRuntimeMod,1);
 
             if (rx > -.2 && rx < .2) {
                 rx = 0;
@@ -146,8 +137,13 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (ly2 > -.2 && ly2 < .2) {
                 ly2 = 0;
             }
-            if(gamepad1.b) SpeedMod = .5;
-            else SpeedMod = 1;
+
+            if(gamepad1.b) {
+                speedMod = .5*stickMod;
+            }
+            else {
+                speedMod = 1*stickMod;
+            }
             if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
                 gamepadCheck = true;
             }
@@ -179,6 +175,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 wheelspeed[10] = 1;
                 wheelspeed[11] = -1;
             }
+
             if (rx != 0) rightstickisactive = true;
             else rightstickisactive = false;
             if (lx != 0 || ly != 0) {
@@ -188,7 +185,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 leftStickIsActive = false;
             }
 
-            if (rightstickisactive) {
+            if (!leftStickIsActive || rightstickisactive) {
                 initHeading = getHeading();
             }
             if(gamepad1.x && gamepad1.b && !DoubleButton && Centric){
@@ -197,26 +194,25 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             }
             if (gamepad1.x && gamepad1.b && !DoubleButton && !Centric){
                 DoubleButton = true;
-                Centric = false;
+                Centric = true;
             }
             if(!gamepad1.x || !gamepad1.b){
                 DoubleButton = false;
             }
 
             if (gamepad1.x || !Centric){
-                robot.initAngle = robot.angles.firstAngle;
+                super.robot.initAngle = getHeading();
             }
-            angleDistance = getHeading() + initHeading;
+            angleDistance = getHeading() - initHeading;
             if (angleDistance > 180) {
                 angleDistance = angleDistance - 360;
             }
             if (angleDistance < -180) {
                 angleDistance = angleDistance + 360;
             }
-
             totPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
             AngleJ = Math.toDegrees((Math.atan2(-lx, -ly)));
-            Pheta = AngleJ - (getHeading() - robot.initAngle);
+            Pheta = AngleJ - (getHeading() - super.robot.initAngle);
             telemetry.addData("Angle of joystick", AngleJ);
             telemetry.addData("Angle of Robot", getHeading());
             telemetry.addData("Angle of adjustment", Pheta);
@@ -227,42 +223,35 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             telemetry.addData("Motor2", wheelspeed[1]);
             telemetry.addData("Motor3", wheelspeed[2]);
             telemetry.addData("Motor4", wheelspeed[3]);
+            telemetry.addData("InitHeading", initHeading);
+            telemetry.addData("angledistance", angleDistance);
+            telemetry.addData("Leftsitckactive", leftStickIsActive);
+            telemetry.addData("RightStickisActive", rightstickisactive);
 
             PowerX = totPower * Math.sin(Math.toRadians(Pheta));
             PowerY = totPower * Math.cos(Math.toRadians(Pheta));
-            wheelspeed[0] = (-PowerY + PowerX - (angleDistance / 90 ));
-            wheelspeed[1] = (-PowerY - PowerX + (angleDistance / 90 ));
-            wheelspeed[2] = (-PowerY - PowerX - (angleDistance / 90 ));
-            wheelspeed[3] = (-PowerY + PowerX + (angleDistance / 90 ));
-            wheelspeed[4] =  rx*.3 + (PowerY*lyModifier - PowerX*lxModifier);
-            wheelspeed[5] = -rx*.3 + (PowerY*lyModifier + PowerX*lxModifier);
-            wheelspeed[6] =  rx*.3 + (PowerY*lyModifier - PowerX*lxModifier);
-            wheelspeed[7] = -rx*.3 + (PowerY*lyModifier + PowerX*lxModifier);
+            wheelspeed[0] = rx*.5 + (-PowerY + PowerX - (angleDistance / 90 ));
+            wheelspeed[1] = -rx*.5 + (-PowerY - PowerX + (angleDistance / 90 ));
+            wheelspeed[2] = rx*.5 + (-PowerY - PowerX - (angleDistance / 90 ));
+            wheelspeed[3] = -rx*.5 + (-PowerY + PowerX + (angleDistance / 90 ));
+            /*wheelspeed[4] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
+            wheelspeed[5] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);
+            wheelspeed[6] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
+            wheelspeed[7] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);*/
 
-            if (!gamepadCheck && (lx != 0 || ly != 0) && rx == 0) {
-                super.robot.Motor1.setPower(SpeedMod * wheelspeed[0]);
-                super.robot.Motor2.setPower(SpeedMod * wheelspeed[1]);
-                super.robot.Motor3.setPower(SpeedMod * wheelspeed[2]);
-                super.robot.Motor4.setPower(SpeedMod * wheelspeed[3]);
+
+            super.robot.Motor1.setPower(speedMod * wheelspeed[0]);
+            super.robot.Motor2.setPower(speedMod * wheelspeed[1]);
+            super.robot.Motor3.setPower(speedMod * wheelspeed[2]);
+            super.robot.Motor4.setPower(speedMod * wheelspeed[3]);
+
+            if (gamepadCheck) {
+                super.robot.Motor1.setPower(speedMod * wheelspeed[8]);
+                super.robot.Motor2.setPower(speedMod * wheelspeed[9]);
+                super.robot.Motor3.setPower(speedMod * wheelspeed[10]);
+                super.robot.Motor4.setPower(speedMod * wheelspeed[11]);
             }
-            else if (gamepadCheck) {
-                super.robot.Motor1.setPower(SpeedMod * wheelspeed[8]);
-                super.robot.Motor2.setPower(SpeedMod * wheelspeed[9]);
-                super.robot.Motor3.setPower(SpeedMod * wheelspeed[10]);
-                super.robot.Motor4.setPower(SpeedMod * wheelspeed[11]);
-            }
-            else if (rx != 0){
-                super.robot.Motor1.setPower(SpeedMod * wheelspeed[4]);
-                super.robot.Motor2.setPower(SpeedMod * wheelspeed[5]);
-                super.robot.Motor3.setPower(SpeedMod * wheelspeed[6]);
-                super.robot.Motor4.setPower(SpeedMod * wheelspeed[7]);
-            }
-            else {
-                super.robot.Motor1.setPower(0);
-                super.robot.Motor2.setPower(0);
-                super.robot.Motor3.setPower(0);
-                super.robot.Motor4.setPower(0);
-            }
+
             if (gamepad1.right_trigger > .5){
                 super.robot.Motor1.setPower(.75);
                 super.robot.Motor2.setPower(-.75);
