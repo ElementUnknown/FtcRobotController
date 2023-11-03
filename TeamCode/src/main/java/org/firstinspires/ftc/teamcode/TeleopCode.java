@@ -76,6 +76,8 @@ public class TeleopCode extends Autonomous_Base {
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
         double SpeedMod;
+        boolean lBumperSwap = false;
+        boolean rBumperSwap = false;
         String lastButton = "None";
         ElapsedTime runtimely = new ElapsedTime();
         ElapsedTime runtimelx = new ElapsedTime();
@@ -245,6 +247,27 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.plowHold.setPosition(0);
             }
             super.robot.PivotArm.setPower(ry2);
+
+            if (gamepad2.left_bumper && lBumperSwap) {
+                super.robot.clawL.setPosition(.7);
+                lBumperSwap = false;
+            }
+            else if (gamepad2.left_bumper) {
+                super.robot.clawL.setPosition(.3);
+                lBumperSwap = true;
+            }
+
+            if (gamepad2.right_bumper && rBumperSwap) {
+                super.robot.clawR.setPosition(.7);
+                rBumperSwap = false;
+            }
+            else if (gamepad2.right_bumper) {
+                super.robot.clawR.setPosition(.3);
+                rBumperSwap = true;
+            }
+
+
+
             /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);
             }

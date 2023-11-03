@@ -24,9 +24,10 @@ public class HardwareMap {
     //public DcMotor intake2      = null;
     //public DcMotor liftArmL     = null;
     //public DcMotor liftArmR     = null;
-    //public Servo   Claw         = null;
-    //public Servo   PivotClaw    = null;
+    public Servo   clawL         = null;
+    public Servo   clawR         = null;
 
+    public Servo   Launch       = null;
     public BNO055IMU       imu;
     public Orientation angles;
     public double initAngle;
@@ -101,12 +102,16 @@ public class HardwareMap {
         //intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //intake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Claw = hwMap.get(Servo.class, "Claw");
-        //Claw.setPosition(.5);
+        clawL = hwMap.get(Servo.class, "clawL");
+        clawR = hwMap.get(Servo.class, "clawR");
+        Launch = hwMap.get(Servo.class, "Launch");
+        clawL.setPosition(.2);
+        clawR.setPosition(.8);
+        Launch.setPosition(1);
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         //PivotClaw.setPosition(.5);
         plowHold        = hwMap.get(Servo.class, "plowHold");
-        plowHold.setPosition(.75);
+        plowHold.setPosition(.0);
         initAngle = angles.firstAngle;
     }
 }

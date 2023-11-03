@@ -30,23 +30,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoTest", group="Robot")
+@Autonomous(name="RedSideRight", group="Robot")
 
-public class AutoTest extends Autonomous_Base {
+public class RedSideRight extends Autonomous_Base {
 
     public void runOpMode() {
 
         super.robot.init(super.hardwareMap);
 
-        waitForStart();
-        Move(.5,12,0);
-        Move(.5, 0,12);
 
+        waitForStart();
+        Move(.5,25,0);
+        //realse either yelloy, or both pixels
+        Move(.5,0,96);
     }
 }

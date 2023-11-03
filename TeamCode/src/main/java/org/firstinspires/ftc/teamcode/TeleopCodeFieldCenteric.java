@@ -60,12 +60,16 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double ly;
         double rx;
         double ly2;
+        boolean LBumperOpen = true;
+        boolean RBumperOpen = true;
+        boolean LLastPressed = false;
+        boolean RLastPressed = false;
         //double rx2;
         double angleDistance = 0;
         double initHeading = 0;
         boolean gamepadCheck;
         double multiplier = 0;
-        double rx2 = 0;
+        double ry2 = 0;
         double liftpower = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
@@ -105,11 +109,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             // This way it's also easy to just drive straight, or just turn.
 
 
-            ly = gamepad1.left_stick_y;
-            lx = -gamepad1.left_stick_x;
+            ly = -gamepad1.left_stick_y;
+            lx = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
             ly2 = gamepad2.left_stick_y*-1.0;
-            rx2 = gamepad2.right_stick_x;
+            ry2 = gamepad2.left_stick_y;
 
             if (gamepad2.x) {
                 lastButton = "X";
@@ -305,6 +309,29 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (gamepad2.a) {
                 super.robot.plowHold.setPosition(0);
             }
+            if (Math.abs(ry2) < .1){
+               ry2 = 0;
+            }
+
+            super.robot.PivotArm.setPower(ry2);
+
+            if (gamepad2.left_bumper){
+                super.robot.clawL.setPosition(.2);
+            }
+            else if (gamepad2.left_trigger > .3){
+                super.robot.clawL.setPosition(.7);
+            }
+
+            if (gamepad2.right_bumper){
+                super.robot.clawR.setPosition(.8);
+            }
+            else if (gamepad2.right_trigger > .3){
+                super.robot.clawR.setPosition(.2);
+            }
+            if (gamepad2.dpad_up){
+                super.robot.Launch.setPosition(0);
+            }
+            
 
             /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);

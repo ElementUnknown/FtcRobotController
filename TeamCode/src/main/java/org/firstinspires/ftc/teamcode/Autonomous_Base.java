@@ -47,10 +47,10 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor3.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor4.setTargetPosition((Target_ticks_Vertical - Target_tick_Horizontal));
-        robot.Motor1.setPower(power);
-        robot.Motor2.setPower(power);
-        robot.Motor3.setPower(power);
-        robot.Motor4.setPower(power);
+        //robot.Motor1.setPower(power);
+        //robot.Motor2.setPower(power);
+        //robot.Motor3.setPower(power);
+        //robot.Motor4.setPower(power);
         M1Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M2Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
         M3Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
@@ -61,8 +61,8 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //set motors to run
-        waitforfinish();
-        //StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
+        //waitforfinish();
+        StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
         //go to straight wait with the heading set at the beginning of method, and motor speeds
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
@@ -274,8 +274,12 @@ public class Autonomous_Base extends LinearOpMode {
 
     public void waitforfinish() {
 
-        while (robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) {
-
+        while (robot.Motor1.isBusy() || robot.Motor2.isBusy() || robot.Motor3.isBusy() || robot.Motor4.isBusy()) {
+            telemetry.addData("Motor 1 Position", robot.Motor1.getCurrentPosition());
+            telemetry.addData("Motor 2 Position", robot.Motor2.getCurrentPosition());
+            telemetry.addData("Motor 3 Position", robot.Motor3.getCurrentPosition());
+            telemetry.addData("Motor 4 Position", robot.Motor4.getCurrentPosition());
+            telemetry.update();
         }
     }
 
@@ -448,24 +452,24 @@ public class Autonomous_Base extends LinearOpMode {
 
     }*/
 
-    public void TurnByGyro(double target, double speed, double buffer, double multplierquotiant) {//quotiant is the degree from the target with which you want to begin decelaeration
+    public void TurnByGyro(double target, double speed, double buffer) {//quotiant is the degree from the target with which you want to begin decelaeration
         double TurnSpeed = 0; // if quotiant is too small, the angle may not be met, so the loop may get stuck
         double currentHeading;
         boolean continueangleloop = false;
         double truetarget;
         double offset = 0;
         double angledistance = 0;
-        int KI = 0;
+        //int KI = 0;
         int KP = 0;
-        int KD = 0;
+        //int KD = 0;
         double AngleInc = 90;
-        double LastGyroError = 0;
+        //double LastGyroError = 0;
         double P = 0;
-        double I = 0;
-        double D = 0;
+        //double I = 0;
+        //double D = 0;
         double TimeTarget = 0;
         ElapsedTime NotReset = new ElapsedTime();
-        ElapsedTime Reset = new ElapsedTime();
+
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -488,20 +492,19 @@ public class Autonomous_Base extends LinearOpMode {
             if (angledistance < -180) angledistance = angledistance + 360;
 
             P = angledistance * KP;
-            D = (angledistance - LastGyroError) / Reset.seconds();
-            I = I + (angledistance * Reset.seconds());
+           // D = (angledistance - LastGyroError) / Reset.seconds();
+            //I = I + (angledistance * Reset.seconds());
 
-            LastGyroError = angledistance;
+            //LastGyroError = angledistance;
 
-            robot.Motor1.setPower(speed * ((P) + (I * KI) + (D * KD)));
-            robot.Motor2.setPower(-speed * ((P) + (I * KI) + (D * KD)));
-            robot.Motor3.setPower(speed * ((P) + (I * KI) + (D * KD)));
-            robot.Motor4.setPower(-speed * ((P) + (I * KI) + (D * KD)));
+            robot.Motor1.setPower(speed * (P));
+            robot.Motor2.setPower(-speed * (P));
+            robot.Motor3.setPower(speed * (P));
+            robot.Motor4.setPower(-speed * (P));
             if (Math.abs(angledistance) >= buffer) continueangleloop = true;
             else continueangleloop = false;
             telemetry.addData("", String.valueOf(currentHeading));
             telemetry.update();
-            Reset.reset();
         }
     }
 
@@ -514,23 +517,36 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmL.setPower(0);
         robot.liftArmR.setPower(0);
     }
-
-    public void releaseClaw() {
-        robot.Claw.setPosition(.5);
+    */
+    public void releaseClawL() {
+        robot.clawL.setPosition(.7);
         sleep(500);
     }
 
-    public void closeClaw() {
-        robot.Claw.setPosition(.0);
+    public void closeClawL() {
+        robot.clawL.setPosition(.2);
         sleep(500);
-    }*/
+    }
+    public void releaseClawR() {
+        robot.clawR.setPosition(.2);
+        sleep(500);
+    }
 
+    public void closeClawR() {
+        robot.clawR.setPosition(.8);
+        sleep(500);
+    }
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = -robot.angles.firstAngle;
         while (heading > 180) heading = heading - 360;
         while (heading < -180) heading = heading + 360;
         return heading;
+    }
+    public void SetPivotPower(double power, int Milis){
+        robot.PivotArm.setPower(power);
+        sleep(Milis);
+        robot.PivotArm.setPower(0);
     }
 
     /*public void ODSNavigateGoal(double speed, double CloseBound, double FarBound, int height, double FinalCorrection){
