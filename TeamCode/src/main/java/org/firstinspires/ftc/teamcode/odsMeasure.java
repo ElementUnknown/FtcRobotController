@@ -42,7 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "odsTest", group = "Robot")
-public class odsTest extends Autonomous_Base {
+public class odsMeasure extends Autonomous_Base {
 
   HardwareMap robot = new HardwareMap();
 
@@ -55,13 +55,16 @@ public class odsTest extends Autonomous_Base {
     // wait for the start button to be pressed.
     waitForStart();
 
-    checkDistance(spikeFound);
+    // while the op mode is active, loop and read the light levels.
+    // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
+    while (opModeIsActive()) {
 
-    if (spikeFound) {
-      Move(1,0,1);
-    }
-    else {
-      Move(1,0,-1);
+
+      // send the info back to driver station using telemetry function.
+
+      telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.INCH));
+
+      telemetry.update();
     }
   }
 }

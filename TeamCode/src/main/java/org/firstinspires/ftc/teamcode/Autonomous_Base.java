@@ -15,7 +15,7 @@ public class Autonomous_Base extends LinearOpMode {
     public double vertical_ticks_perinch = 44.0771349;
     public double horizontal_ticks_perinch = 50.7936507;
     private int checkNum = 0;
-    private boolean GoalFound = false;
+    public boolean spikeFound = false;
 
 
     boolean turn[] = new boolean[3];
@@ -660,6 +660,13 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmR.setPower(0);
         robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
+    }
+
+    public void checkDistance(boolean spikeFound) {
+        double distance = robot.ods.getDistance(DistanceUnit.INCH);
+        if (distance < 3) {
+            spikeFound = true;
+        }
     }
 
    @Override

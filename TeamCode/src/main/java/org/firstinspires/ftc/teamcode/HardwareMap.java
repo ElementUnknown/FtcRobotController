@@ -31,6 +31,7 @@ public class HardwareMap {
     public BNO055IMU       imu;
     public Orientation angles;
     public double initAngle;
+    public DistanceSensor ods;
 
     //public DistanceSensor ods;
     /* local OpMode members. */
@@ -62,14 +63,14 @@ public class HardwareMap {
        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
        imu = hwMap.get(BNO055IMU.class, "imu");
        imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+       angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        //ods = hwMap.get(DistanceSensor.class, "ods");
+       ods = hwMap.get(DistanceSensor.class, "ods");
 
-        Motor1.setDirection(DcMotor.Direction.REVERSE);
-        Motor3.setDirection(DcMotor.Direction.REVERSE);
+       Motor1.setDirection(DcMotor.Direction.REVERSE);
+       Motor3.setDirection(DcMotor.Direction.REVERSE);
 
-        // Set all motors to zero power
+        //Set all motors to zero power
         Motor1.setPower(0);
         Motor2.setPower(0);
         Motor3.setPower(0);
