@@ -45,7 +45,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="FieldCentric", group="Robot")
+@TeleOp(name="Field Centric", group="Robot")
 public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
     HardwareMap robot = new HardwareMap();
@@ -270,22 +270,20 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
             }
 
-            if(gamepad2.right_trigger > 0.2) {
-                //super.robot.intake1.setPower(1);
-                //super.robot.intake2.setPower(-1);
+            if (gamepad1.y) {
+                super.robot.intake.setPower(-1);
+                telemetry.addData("Y Pressed: ",gamepad1.y);
+            }
+            else if (gamepad1.a) {
+                super.robot.intake.setPower(1);
+                telemetry.addData("A Pressed: ",gamepad1.a);
             }
             else {
-                //super.robot.intake1.setPower(0);
-                //super.robot.intake2.setPower(0);
+                super.robot.intake.setPower(0);
             }
-            if(gamepad2.left_trigger > 0.2) {
-                //super.robot.intake1.setPower(-1);
-                //super.robot.intake2.setPower(1);
-            }
-            else {
-                //super.robot.intake1.setPower(0);
-                //super.robot.intake2.setPower(0);
-            }
+
+
+
 
             /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
                 super.robot.liftArmR.setPower(0);
@@ -302,13 +300,13 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             }*/
 
 
-            if (gamepad2.y) {
+            /*if (gamepad2.y) {
                 super.robot.plowHold.setPosition(.75);
             }
 
             if (gamepad2.a) {
                 super.robot.plowHold.setPosition(0);
-            }
+            }*/
             if (Math.abs(ry2) < .1){
                ry2 = 0;
             }
@@ -331,7 +329,16 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (gamepad2.dpad_up){
                 super.robot.Launch.setPosition(0);
             }
-            
+
+            if (gamepad2.dpad_up) {
+                super.robot.liftArm.setPower(1);
+            }
+            else if (gamepad2.dpad_down) {
+                super.robot.liftArm.setPower(-1);
+            }
+            else {
+                super.robot.liftArm.setPower(0);
+            }
 
             /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);

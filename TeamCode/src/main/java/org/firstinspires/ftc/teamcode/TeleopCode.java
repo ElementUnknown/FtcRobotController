@@ -50,7 +50,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Teleop_23_24", group="Robot")
+@TeleOp(name="Teleop _23_24", group="Robot")
 public class TeleopCode extends Autonomous_Base {
 
 
@@ -239,13 +239,21 @@ public class TeleopCode extends Autonomous_Base {
                 super.robot.Motor4.setPower(.75);
 
             }
-            if (gamepad2.y) {
-                super.robot.plowHold.setPosition(.75);
+
+            if (gamepad2.y || gamepad1.y) {
+                super.robot.intake.setPower(-1);
+            }
+            else {
+                super.robot.intake.setPower(0);
             }
 
-            if (gamepad2.a) {
-                super.robot.plowHold.setPosition(0);
+            if (gamepad2.a || gamepad1.a) {
+                super.robot.intake.setPower(1);
             }
+            else {
+                super.robot.intake.setPower(0);
+            }
+
             super.robot.PivotArm.setPower(ry2);
 
             if (gamepad2.left_bumper && lBumperSwap) {
@@ -266,7 +274,15 @@ public class TeleopCode extends Autonomous_Base {
                 rBumperSwap = true;
             }
 
-
+            if (gamepad2.dpad_up) {
+                super.robot.liftArm.setPower(1);
+            }
+            else if (gamepad2.dpad_down) {
+                super.robot.liftArm.setPower(-1);
+            }
+            else {
+                super.robot.liftArm.setPower(0);
+            }
 
             /*if (gamepad2.x && lastButton.equals("X")) {
                 super.robot.Claw.setPosition(.35);

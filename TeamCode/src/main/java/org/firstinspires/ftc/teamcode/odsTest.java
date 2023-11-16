@@ -55,13 +55,9 @@ public class odsTest extends Autonomous_Base {
     // wait for the start button to be pressed.
     waitForStart();
 
-    checkDistance(spikeFound);
-
-    if (spikeFound) {
+    while(!checkDistance(3)) {
       Move(1,0,1);
     }
-    else {
-      Move(1,0,-1);
-    }
+    Move(1,3,0);
   }
 }

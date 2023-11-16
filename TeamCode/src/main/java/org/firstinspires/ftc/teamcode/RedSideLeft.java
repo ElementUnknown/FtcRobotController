@@ -43,10 +43,10 @@ public class RedSideLeft extends Autonomous_Base {
 
         waitForStart();
         Move(.5,35,0);
-        super.robot.plowHold.setPosition(.75);
+        //super.robot.plowHold.setPosition(.75);
         sleep(100);
         Move(.5,-8,0);
-        super.robot.plowHold.setPosition(0);
+        //super.robot.plowHold.setPosition(0);
         Move(.5,0,-86);
         //Move(.5,0,-39);
         //Move(.5,-96,0);

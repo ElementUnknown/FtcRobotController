@@ -508,16 +508,12 @@ public class Autonomous_Base extends LinearOpMode {
         }
     }
 
-    /*public void MoveArm(int time, double speed) {
-        robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.liftArmL.setPower(speed);
-        robot.liftArmR.setPower(speed);
+    public void MoveArm(int time, double speed) {
+        robot.liftArm.setPower(speed);
         sleep(time);
-        robot.liftArmL.setPower(0);
-        robot.liftArmR.setPower(0);
+        robot.liftArm.setPower(0);
     }
-    */
+
     public void releaseClawL() {
         robot.clawL.setPosition(.7);
         sleep(500);
@@ -662,11 +658,26 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
     }
 
-    public void checkDistance(boolean spikeFound) {
+    public boolean checkDistance(double inches) {
         double distance = robot.ods.getDistance(DistanceUnit.INCH);
-        if (distance < 3) {
-            spikeFound = true;
+        if (distance < inches) {
+            return true;
         }
+        else {
+            return false;
+        }
+    }
+
+    public void pickUp() {
+        robot.intake.setPower(-1);
+        sleep(1000);
+        robot.intake.setPower(0);
+    }
+
+    public void drop() {
+        robot.intake.setPower(1);
+        sleep(1000);
+        robot.intake.setPower(0);
     }
 
    @Override
