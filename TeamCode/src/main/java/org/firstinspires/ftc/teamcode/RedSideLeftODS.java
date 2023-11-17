@@ -32,9 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="RedSideRight", group="Robot")
+@Autonomous(name="RedSideLeftODS", group="Robot")
 
-public class RedSideRight extends Autonomous_Base {
+public class RedSideLeftODS extends Autonomous_Base {
 
     public void runOpMode() {
 
@@ -42,8 +42,28 @@ public class RedSideRight extends Autonomous_Base {
 
 
         waitForStart();
-        Move(.5,25,0);
-        //realse either yelloy, or both pixels
-        Move(.5,0,96);
+
+        if (checkDistance(10)) {
+            Move(.5,35,0);
+            dropPixel(1);
+            Move(.5,-8,0);
+            Move(.5,0,-86);
+        }
+        else {
+            Move(.5,0,10);
+            if (checkDistance(10)) {
+                Move(.5,20,0);
+                dropPixel(1);
+                Move(.5,-8,0);
+                Move(.5,0,-86);
+            }
+            else {
+                Move(.5,0,-20);
+                Move(.5,20,0);
+                dropPixel(1);
+                Move(.5,-8,0);
+                Move(.5,0,-86);
+            }
+        }
     }
 }
