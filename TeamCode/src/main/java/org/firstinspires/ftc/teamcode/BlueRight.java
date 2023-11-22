@@ -32,7 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="BlueRight", group="Robot")
+@Autonomous(name="BlueLeft", group="Robot")
 
 public class BlueRight extends Autonomous_Base {
 
@@ -61,7 +61,7 @@ public class BlueRight extends Autonomous_Base {
             //if not in the center check the right
             TurnByGyro(45,.5,3);
             if(checkDistance(10)){
-                //if in left
+                //if in right
                 PivotTick(4350, .75);
                 Move(.5,5,0);
                 PivotWaitFinish();
@@ -89,7 +89,7 @@ public class BlueRight extends Autonomous_Base {
                 //finish facing board
             }
         }
-
+        Move(.7,-70,0); //Move through gate
         closeClawL(); //Close left to conserve space on the board
         switch(Spike){
             case(0):
@@ -104,10 +104,10 @@ public class BlueRight extends Autonomous_Base {
                 //Move right an amount
                 break;
         }
-        Move(.5,20,0); //move to board
+        Move(.5,-17,0); //move to board
         releaseClawR();
-        Move(.3,-4,0); // Move back to allow the pixel to fall
+        Move(.3,4,0); // Move back to allow the pixel to fall
         PivotTick(0,1);//close arm to final position
-        Move(.3,3,0); //final move to park
+        Move(.3,-3,0); //final move to park
     }
 }

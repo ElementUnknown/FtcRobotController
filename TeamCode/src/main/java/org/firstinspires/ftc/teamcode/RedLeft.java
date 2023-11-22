@@ -32,9 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="RedRight", group="Robot")
+@Autonomous(name="RedLeft", group="Robot")
 
-public class RedRight extends Autonomous_Base {
+public class RedLeft extends Autonomous_Base {
 
     public void runOpMode() {
 
@@ -89,12 +89,15 @@ public class RedRight extends Autonomous_Base {
                 //finish facing board
             }
         }
-
+        //assuming correct alignment to pass through gate
+        Move(.7,-70,0); //based on 87 inch lateralmove, may vary with forward move
+        //the goal is to be beyond the spike detection area of our partner yet not to close to the board
+        //so that we may move horizontal adjustments accordingly
         closeClawL(); //Close left to conserve space on the board
         switch(Spike){
-            case(0):
+            case(0): //Spike == 0 should mean left
                 Move(.5,0,-5);
-                //Move left and amount
+                //Move left an amount
                 break;
             case(1):
                 //don't move?
@@ -104,11 +107,10 @@ public class RedRight extends Autonomous_Base {
                 //Move right an amount
                 break;
         }
-        Move(.5,-20,0); //move to board
+        Move(.5,-17,0); //this move and move on l93 should add to 87
         releaseClawR();
         Move(.3,4,0); // Move back to allow the pixel to fall
         PivotTick(0,1);//close arm to final position
         Move(.3,-3,0); //final move to park
-        //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
     }
 }

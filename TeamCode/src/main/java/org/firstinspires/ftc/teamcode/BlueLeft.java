@@ -32,9 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="RedRight", group="Robot")
+@Autonomous(name="BlueRight", group="Robot")
 
-public class RedRight extends Autonomous_Base {
+public class BlueLeft extends Autonomous_Base {
 
     public void runOpMode() {
 
@@ -52,16 +52,16 @@ public class RedRight extends Autonomous_Base {
             releaseClawL();
             PivotTick(2500, .75);
             sleep(500);
-            TurnByGyro(90,.5,4);
+            TurnByGyro(-90,.5,4);
             PivotWaitFinish();
             //Located facing board
             Spike = 1;
         }
         else {
-            //if not in the center check the left
-            TurnByGyro(-45,.5,3);
+            //if not in the center check the right
+            TurnByGyro(45,.5,3);
             if(checkDistance(10)){
-                //if in left
+                //if in right
                 PivotTick(4350, .75);
                 Move(.5,5,0);
                 PivotWaitFinish();
@@ -69,23 +69,23 @@ public class RedRight extends Autonomous_Base {
                 releaseClawL();
                 PivotTick(2500, .75);
                 sleep(200);
-                TurnByGyro(135,.5,3);
+                TurnByGyro(-135,.5,3);
                 PivotWaitFinish();
                 //finish facing the board
-                Spike = 0;
+                Spike = 2;
             }
             else {
-                //if not in center or left move to right
-                PivotTick(3900, .75);
-                TurnByGyro(90,.5,3);
+                //if not in center or right move to left
+                PivotTick(3900, .75); //to ensure some movement is done before the turn but the ball isn't hit during the turn
+                TurnByGyro(-90,.5,3);
                 PivotTick(4500, .75);
                 Move(.5,5,0);
                 PivotWaitFinish();
                 Move(.3,-5,0);
                 releaseClawL();
                 PivotTick(2500,.75);
-                TurnByGyro(45,.5,3);
-                Spike = 2;
+                TurnByGyro(-45,.5,3);
+                Spike = 0;
                 //finish facing board
             }
         }
@@ -109,6 +109,5 @@ public class RedRight extends Autonomous_Base {
         Move(.3,4,0); // Move back to allow the pixel to fall
         PivotTick(0,1);//close arm to final position
         Move(.3,-3,0); //final move to park
-        //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
     }
 }
