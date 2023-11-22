@@ -106,7 +106,7 @@ public class HardwareMap {
         clawL = hwMap.get(Servo.class, "clawL");
         clawR = hwMap.get(Servo.class, "clawR");
         Launch = hwMap.get(Servo.class, "Launch");
-        clawL.setPosition(.2);
+        clawL.setPosition(0);
         clawR.setPosition(.8);
         Launch.setPosition(1);
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");

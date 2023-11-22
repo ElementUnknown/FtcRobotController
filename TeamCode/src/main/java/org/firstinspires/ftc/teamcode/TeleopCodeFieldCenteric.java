@@ -73,7 +73,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double liftpower = 0;
         boolean leftStickIsActive = false;
         boolean rightstickisactive = false;
-        double speedMod;
+        double speedMod =1;
         double totPower = 0;
         double AngleJ = 0;
         double Pheta = 0;
@@ -81,10 +81,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double PowerY = 0;
         String lastButton = "None";
         ElapsedTime stickRuntime = new ElapsedTime();
+        ElapsedTime DistanceTime = new ElapsedTime();
         double stickRuntimeMod;
         double stickMod;
         ElapsedTime TILT = new ElapsedTime();
-        boolean Centric = true;
+        boolean Centric = false;
         boolean DoubleButton = false;
         super.robot.init(super.hardwareMap);
         super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -134,6 +135,22 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             stickRuntimeMod = Double.max(stickRuntime.seconds()*1.7, .3);
             stickMod = Double.min(stickRuntimeMod,1);
 
+
+            if(!checkDistance(3)){
+                DistanceTime.reset();
+
+            }
+            if(DistanceTime.milliseconds() > 350){
+                speedMod = stickMod*(getDistance()/5);
+            }
+            else if(gamepad1.b) {
+                speedMod = .5*stickMod;
+            }
+            else {
+                speedMod = 1*stickMod;
+            }
+
+            
             if (rx > -.2 && rx < .2) {
                 rx = 0;
             }
@@ -142,12 +159,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 ly2 = 0;
             }
 
-            if(gamepad1.b) {
-                speedMod = .5*stickMod;
-            }
-            else {
-                speedMod = 1*stickMod;
-            }
+
             if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
                 gamepadCheck = true;
             }
@@ -270,12 +282,12 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
             }
 
-            if (gamepad1.y) {
+            if (gamepad2.y) {
                 super.robot.intake.setPower(-1);
                 telemetry.addData("Y Pressed: ",gamepad1.y);
             }
-            else if (gamepad1.a) {
-                super.robot.intake.setPower(1);
+            else if (gamepad2.a) {
+                super.robot.intake.setPower(.5);
                 telemetry.addData("A Pressed: ",gamepad1.a);
             }
             else {
@@ -285,46 +297,25 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
 
 
-            /*if(ly2 == 0 && !gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left){
-                super.robot.liftArmR.setPower(0);
-                super.robot.liftArmL.setPower(0);
-            }
-            else if (ly2 < 0){
-                super.robot.liftArmL.setPower(ly2);
-                super.robot.liftArmR.setPower(ly2);
-            }
-            else if (ly2 > 0){
-                super.robot.liftArmL.setPower(ly2 * .75);
-                super.robot.liftArmR.setPower(ly2 * .75);
 
-            }*/
-
-
-            /*if (gamepad2.y) {
-                super.robot.plowHold.setPosition(.75);
-            }
-
-            if (gamepad2.a) {
-                super.robot.plowHold.setPosition(0);
-            }*/
             if (Math.abs(ry2) < .1){
                ry2 = 0;
             }
-
-            super.robot.PivotArm.setPower(ry2);
-
+            else {
+                super.robot.PivotArm.setPower(ry2+.5);
+            }
             if (gamepad2.left_bumper){
-                super.robot.clawL.setPosition(.2);
+                super.robot.clawL.setPosition(0);
             }
             else if (gamepad2.left_trigger > .3){
-                super.robot.clawL.setPosition(.7);
+                super.robot.clawL.setPosition(.3);
             }
 
             if (gamepad2.right_bumper){
                 super.robot.clawR.setPosition(.8);
             }
             else if (gamepad2.right_trigger > .3){
-                super.robot.clawR.setPosition(.2);
+                super.robot.clawR.setPosition(.5);
             }
             if (gamepad2.dpad_up){
                 super.robot.Launch.setPosition(0);
@@ -416,6 +407,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if(super.robot.ods.getDistance(DistanceUnit.INCH) < 7){
                 telemetry.addData("Goal Aligned", "");
             }*/
+
             telemetry.update();
         }
     }

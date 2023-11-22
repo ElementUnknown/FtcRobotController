@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 public class RedSideLeftODS extends Autonomous_Base {
 
+    boolean[] read = new boolean[4];
+
     public void runOpMode() {
 
         super.robot.init(super.hardwareMap);
@@ -43,26 +45,45 @@ public class RedSideLeftODS extends Autonomous_Base {
 
         waitForStart();
 
-        if (checkDistance(10)) {
-            Move(.5,35,0);
-            dropPixel(1);
-            Move(.5,-8,0);
-            Move(.5,0,-86);
+        Move(.5, -15, 0);
+        read[0] = checkDistance(15);
+        sleep(200);
+        read[1] = checkDistance(15);
+        sleep(200);
+        read[2] = checkDistance(15);
+        sleep(200);
+        read[3] = checkDistance(15);
+
+        if (read[0] && read[1] && read[2] && read[3]) {
+            MoveArm(500, -.5);
+            releaseClawR();
+            Move(.5,11,0);
+            MoveArm(500,.5);
+            Move(.2, 0, 87);
+
+
         }
         else {
-            Move(.5,0,10);
-            if (checkDistance(10)) {
-                Move(.5,20,0);
-                dropPixel(1);
-                Move(.5,-8,0);
-                Move(.5,0,-86);
+            Move(.5,0,11);
+            read[0] = checkDistance(15);
+            sleep(200);
+            read[1] = checkDistance(15);
+            sleep(200);
+            read[2] = checkDistance(15);
+            sleep(200);
+            read[3] = checkDistance(15);
+
+            if (read[0] && read[1] && read[2] && read[3]) {
+                Move(.5,5,0);
+                MoveArm(500,-.5);
+                releaseClawR();
+                Move(.5,6,0);
+                MoveArm(500,.5);
+                Move(.5,0,97);
             }
             else {
-                Move(.5,0,-20);
-                Move(.5,20,0);
-                dropPixel(1);
-                Move(.5,-8,0);
-                Move(.5,0,-86);
+
+
             }
         }
     }

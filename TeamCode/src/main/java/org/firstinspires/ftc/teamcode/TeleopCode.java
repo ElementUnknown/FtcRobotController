@@ -240,14 +240,14 @@ public class TeleopCode extends Autonomous_Base {
 
             }
 
-            if (gamepad2.y || gamepad1.y) {
+            if (gamepad2.y) {
                 super.robot.intake.setPower(-1);
             }
             else {
                 super.robot.intake.setPower(0);
             }
 
-            if (gamepad2.a || gamepad1.a) {
+            if (gamepad2.a) {
                 super.robot.intake.setPower(1);
             }
             else {
