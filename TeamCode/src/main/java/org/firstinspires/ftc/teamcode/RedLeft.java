@@ -42,75 +42,80 @@ public class RedLeft extends Autonomous_Base {
 
         int Spike;
         waitForStart();
-        Move(.5,-21,0);
+        Move(.5, -23, 0);
         //Check if found in center
-        if(checkDistance(10)){
-            PivotTick(4350, .75);
-            Move(.5,5,0);
+        if (checkDistance(10)) {
+            PivotTick(4300, .75);
+            Move(.5, 7, 0);
             PivotWaitFinish();
-            Move(.3,-5,0);
+            Move(.3, -5, 0);
             releaseClawL();
-            PivotTick(2500, .75);
-            sleep(500);
-            TurnByGyro(90,.5,4);
+            PivotTick(200, .75);
+            Move(.5, 22.5, 0);
+            TurnByGyro(85, .5, 2);
             PivotWaitFinish();
             //Located facing board
             Spike = 1;
-        }
-        else {
+        } else {
             //if not in the center check the left
-            TurnByGyro(-45,.5,3);
-            if(checkDistance(10)){
+            Move(.5, 3.5, 12);
+            if (checkDistance(10)) {
                 //if in left
-                PivotTick(4350, .75);
-                Move(.5,5,0);
+                PivotTick(4300, .75);
+                Move(.5, 10, -1.5);
                 PivotWaitFinish();
-                Move(.3,-5,0);
+                //Move(.3,0,0);
+                //May bring this back
                 releaseClawL();
-                PivotTick(2500, .75);
-                sleep(200);
-                TurnByGyro(135,.5,3);
+                PivotTick(3500, 1);
+                TurnByGyro(90, .5, 2);
                 PivotWaitFinish();
+                Move(.5, 0, -3);
                 //finish facing the board
                 Spike = 0;
-            }
-            else {
+            } else {
                 //if not in center or left move to right
+
                 PivotTick(3900, .75);
-                TurnByGyro(90,.5,3);
-                PivotTick(4500, .75);
-                Move(.5,5,0);
+                TurnByGyro(90, .5, 3);
+                PivotTick(4300, .75);
                 PivotWaitFinish();
-                Move(.3,-5,0);
+                Move(.6, -4.5, 14);
+                //Move(.3,-,0);
                 releaseClawL();
-                PivotTick(2500,.75);
-                TurnByGyro(45,.5,3);
+                PivotTick(100, 1);
+                Move(.6, 0, -30);
+
                 Spike = 2;
                 //finish facing board
             }
         }
-        //assuming correct alignment to pass through gate
-        Move(.7,-70,0); //based on 87 inch lateralmove, may vary with forward move
-        //the goal is to be beyond the spike detection area of our partner yet not to close to the board
-        //so that we may move horizontal adjustments accordingly
+        Move(.7, -87, 0);
+        sleep(5000);
+        Move(.8, 0, -10);
+        Move(.8, 0, 28);
         closeClawL(); //Close left to conserve space on the board
-        switch(Spike){
-            case(0): //Spike == 0 should mean left
-                Move(.5,0,-5);
-                //Move left an amount
+        switch (Spike) {
+            case (0):
+                Move(.5, 0, 4);
+                //Move left and amount
                 break;
-            case(1):
-                //don't move?
+            case (1):
+                Move(.7, -16, 0);
                 break;
-            case(2):
-                Move(.5,0,5);
+            case (2):
+                Move(.5, 0, -6);
                 //Move right an amount
                 break;
         }
-        Move(.5,-17,0); //this move and move on l93 should add to 87
+        Move(.5, -2.5, 0);
+        sleep(500);//move to board
         releaseClawR();
-        Move(.3,4,0); // Move back to allow the pixel to fall
-        PivotTick(0,1);//close arm to final position
-        Move(.3,-3,0); //final move to park
+        sleep(100);
+        Move(.7, 4, 0); // Move back to allow the pixel to fall
+        PivotTick(0, 1);//close arm to final position
+        Move(.3, -3, 0);
+        PivotWaitFinish();//final move to park
+        //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
     }
 }

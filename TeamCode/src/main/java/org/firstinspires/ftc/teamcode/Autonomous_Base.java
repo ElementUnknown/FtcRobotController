@@ -3,10 +3,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.Angle;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class Autonomous_Base extends LinearOpMode {
@@ -75,6 +83,62 @@ public class Autonomous_Base extends LinearOpMode {
         TurnByGyro(AngleDistance, .3,2,5);*/
     }
 
+    public void CentricMove(double Power, double Y,double X){
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        X *= horizontal_ticks_perinch;
+        Y *= vertical_ticks_perinch;
+        double AngleM = Math.toDegrees(Math.atan2(X,Y));
+        boolean ContLoop = true;
+        double TotDis;
+        double TrueAngle;
+        double PX;
+        double PY;
+        int PM1 = robot.Motor1.getCurrentPosition(), PM2= robot.Motor2.getCurrentPosition(),
+                PM3 = robot.Motor3.getCurrentPosition(), PM4 = robot.Motor4.getCurrentPosition();
+        int dTY, dTX, DTDistance;
+        while(ContLoop && opModeIsActive()){
+            int DTM1 = robot.Motor1.getCurrentPosition() - PM1; //find change in ticks of each motor
+            int DTM2 = robot.Motor2.getCurrentPosition() - PM2;
+            int DTM3 = robot.Motor3.getCurrentPosition() - PM3;
+            int DTM4 = robot.Motor4.getCurrentPosition() - PM4;
+            TotDis = Math.sqrt(Math.pow(Y,2) + Math.pow(X,2)); //Gets updated every loop
+            TrueAngle = AngleM - (getHeading() - robot.initAngle);
+            PX = (Math.sin(TrueAngle) * TotDis) / TotDis;
+            PY = (Math.cos(TrueAngle) * TotDis) / TotDis;
+
+            robot.Motor1.setPower((PY - PX) * Power);
+            robot.Motor2.setPower((PY + PX) * Power);
+            robot.Motor3.setPower((PY + PX) * Power);
+            robot.Motor4.setPower((PY - PX) * Power);
+
+            dTY = DTM1 + DTM2 + DTM3 + DTM4; // This might work it might not work, might need to be a more complicated distance measure
+            dTX = -DTM1 + DTM2 + DTM3 - DTM4; // Completly based off of the power calcs
+            /** We may have to take in account frictions as a change in 1 motor without changes of any other
+             * so we may just divide by 4
+             * I dont know,this is a question to ask the internet / Lucas**/
+            Y =- dTY;
+            X =- dTX;
+            ContLoop =(TotDis > 100);
+            PM1 = robot.Motor1.getCurrentPosition(); // set previous ticks of motors to the current measure
+            PM2 = robot.Motor2.getCurrentPosition();
+            PM3 = robot.Motor3.getCurrentPosition();
+            PM4 = robot.Motor4.getCurrentPosition();
+        }
+    }
     public void PIDMove(double INCHForward, double INCHRight, double speed, double angle, double angleinc) {
         double Offset = getHeading();
         boolean Runloop = true;
@@ -319,9 +383,7 @@ public class Autonomous_Base extends LinearOpMode {
 
             TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
             //All I know is that this really long line of code just calculates the total error between the four motors
-            if (Math.abs(TickDistance) > 200) continueloop = true;
-
-            else if (Math.abs(TickDistance) < 200) continueloop = false;
+            continueloop = (Math.abs(TickDistance) >= 200);
 
             telemetry.addData("", String.valueOf(InitHeading));
             telemetry.update();
@@ -391,6 +453,10 @@ public class Autonomous_Base extends LinearOpMode {
             telemetry.addData("TT", truetarget);
             telemetry.update();
         }
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
     }
 
     public void MoveArm(int time, double speed) {
@@ -582,8 +648,229 @@ public class Autonomous_Base extends LinearOpMode {
         sleep(1500);
         robot.intake.setPower(0);
     }
+    public boolean AprilTagNav(double p, double a, int ID, double RyB, int RxB, double Buffer, float BR, int milis){
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-   @Override
+        boolean targetFound     = false;
+        boolean SomethingFound;
+        double Rx =0;
+        double Ry =0;
+        double Bearing = 0;
+        double yaw = 0;
+        double initRx =0;
+        double initRy = 0;
+        double initD = 0;
+        int TimesFound =0;
+        double KP = 0;
+        double AngleD = getHeading() - a;
+        if(AngleD > 180) AngleD -= 180;
+        if(AngleD < -180) AngleD += 180;
+        float Direction;
+        robot.DESIRED_TAG_ID = ID;
+        ElapsedTime Time = new ElapsedTime();
+        ElapsedTime NotFound = new ElapsedTime();
+        NotFound.reset();
+        Time.reset();
+        Nav: while (opModeIsActive() && Time.milliseconds() < milis){
+            targetFound = false;
+            robot.desiredTag = null;
+            SomethingFound = false;
+            Direction = 0;
+            AngleD = getHeading() - a;
+            if(AngleD > 180) AngleD -= 180;
+            if(AngleD < -180) AngleD += 180;
+
+            // Step through the list of detected tags and look for a matching tag
+            List<AprilTagDetection> currentDetections = robot.aprilTag.getDetections();
+            //ArrayList<Integer> DectectedIDs = new ArrayList<Integer>();
+            for (AprilTagDetection detection : currentDetections) {
+                //DectectedIDs.add(detection.id);
+                if ((detection.metadata != null) &&
+                        ((robot.DESIRED_TAG_ID < 0) || (detection.id == robot.DESIRED_TAG_ID))) {
+                    targetFound = true;
+                    TimesFound++;
+                    SomethingFound = true;
+                    robot.desiredTag = detection;
+
+                    //else AngleD = getHeading() - a;
+                    break;  // don't look any further.
+
+                }
+                else if (detection.metadata != null) {
+                    Direction = Math.signum(robot.DESIRED_TAG_ID - detection.id);
+                    SomethingFound =true;
+                }
+                else {
+                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                }
+            }
+
+            // Tell the driver what we see, and what to do.
+            if(targetFound){
+                NotFound.reset();
+            }
+
+            Found: if ((targetFound || NotFound.milliseconds() < 500) && TimesFound > 0) {
+                if(targetFound){
+                    if(TimesFound == 1){
+                        initRy = robot.desiredTag.ftcPose.y;
+                        initRx = robot.desiredTag.ftcPose.x;
+                        initD =(Math.abs(initRy) + Math.abs(initRx));
+                    }
+
+                    telemetry.addData("", "TargetFound");
+                    telemetry.addData("Target", "ID %d (%s)", robot.desiredTag.id, robot.desiredTag.metadata.name);
+                    telemetry.addData("Range", "%5.1f inches", robot.desiredTag.ftcPose.range);
+                    telemetry.addData("Bearing", "%3.0f degrees", robot.desiredTag.ftcPose.bearing);
+                    telemetry.addData("Yaw", robot.desiredTag.ftcPose.yaw);
+                    double Range = robot.desiredTag.ftcPose.range;
+                    Bearing =  robot.desiredTag.ftcPose.bearing;
+                    yaw = robot.desiredTag.ftcPose.yaw;
+                    Rx = robot.desiredTag.ftcPose.x;
+                    Ry = robot.desiredTag.ftcPose.y;
+                    KP = Math.abs(Rx) + Math.abs(Ry);
+                    //if(Ry < RyB + Buffer && Ry > RyB - Buffer) Ry =0;
+                    //if(Rx < RxB + Buffer && Rx > RxB - Buffer) Rx =0;
+                    Ry -= RyB;
+                    Rx += RxB;
+                }
+                robot.Motor1.setPower(((Ry - Rx)/(KP)) - (yaw/120) - (Bearing / 90));
+                robot.Motor2.setPower(((Ry + Rx)/(KP)) +(yaw/120) + (Bearing / 90));
+                robot.Motor3.setPower(((Ry + Rx)/(KP)) - (yaw /120) - (Bearing / 90));
+                robot.Motor4.setPower(((Ry - Rx)/(KP)) + (yaw/120) + (Bearing / 90));
+                if(Math.abs(Ry) < Buffer && Math.abs(Rx) < Buffer){
+
+                    robot.Motor1.setPower(0);
+                    robot.Motor2.setPower(0);
+                    robot.Motor3.setPower(0);
+                    robot.Motor4.setPower(0);
+                    break Nav;
+                }
+
+            }
+            else {
+                if(SomethingFound){
+                telemetry.addData(">", "Correct Target Not Found Moving" + Direction);
+                robot.Motor1.setPower(-p*Direction - (AngleD/60));
+                robot.Motor2.setPower(p*Direction + (AngleD/60));
+                robot.Motor3.setPower(p*Direction -(AngleD/60));
+                robot.Motor4.setPower(-p*Direction + (AngleD/60));
+                }
+                else{
+                    telemetry.addData(">", "Nothing was Found" + BR);
+                    robot.Motor1.setPower((-p*.75 + p*BR*.75) - (AngleD/40));
+                    robot.Motor2.setPower((-p*.75 - p*BR*.75) +(AngleD/40));
+                    robot.Motor3.setPower((-p*.75 - p*BR*.75) -(AngleD/40));
+                    robot.Motor4.setPower((-p*.75 + p*BR*.75) + (AngleD/40));
+
+                }
+
+            }
+            telemetry.addData("Angle Distance", AngleD);
+            telemetry.addData("Current Heading", getHeading());
+            telemetry.addData("TargetFound", targetFound);
+            telemetry.addData("Something Found", SomethingFound);
+            telemetry.addData("RY",Ry);
+            telemetry.addData("Rx", Rx);
+
+            telemetry.update();
+        }
+        telemetry.addData("Target Was Found", TimesFound);
+        telemetry.update();
+        return targetFound;
+    }
+
+    public int LocateTag(double p, double a, float D, double Bound){
+        robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor2.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor3.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor4.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        boolean SomethingFound = false;
+        double AngleD = getHeading() - a;
+        int BoundTicks = (int)(Bound * horizontal_ticks_perinch);
+        int ret =-1;
+        double KP;
+        ElapsedTime Time = new ElapsedTime();
+        Time.reset();
+        move: while(opModeIsActive() && Time.seconds() < 5){
+            AngleD = getHeading() - a;
+            if(AngleD > 180) AngleD -= 180;
+            if(AngleD < -180) AngleD += 180;
+            List<AprilTagDetection> currentDetections = robot.aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    SomethingFound =true;
+                    ret = detection.id;
+                    break move;
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
+            }
+            if(Math.abs(BoundTicks - robot.Motor2.getCurrentPosition()) < 100){
+                SomethingFound = false;
+                ret = 0;
+                break move;
+            }
+            KP =  Math.abs(BoundTicks - robot.Motor2.getCurrentPosition())/400;
+            KP = Math.min(1,KP);
+            KP = Math.max(.3,KP);
+            KP *= Math.signum(BoundTicks - robot.Motor2.getCurrentPosition());
+            robot.Motor1.setPower((p*-D*(KP)) - (AngleD/60));
+            robot.Motor2.setPower((p*D* (KP)) +(AngleD/60));
+            robot.Motor3.setPower((p*D* (KP)) -(AngleD/60));
+            robot.Motor4.setPower((p*-D* (KP)) + (AngleD/60));
+        }
+        robot.Motor1.setPower(0);
+        robot.Motor2.setPower(0);
+        robot.Motor3.setPower(0);
+        robot.Motor4.setPower(0);
+
+        return ret;
+    }
+    public void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (robot.visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (robot.visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (robot.visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = robot.visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = robot.visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
+    }
+
+    @Override
    public void runOpMode()  {
 
    }

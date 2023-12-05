@@ -33,6 +33,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
+
 /**
  * This particular OpMode executes a POV Game style Teleop for a direct drive robot
  * The code is structured as a LinearOpMode
@@ -79,6 +83,12 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double Pheta = 0;
         double PowerX = 0;
         double PowerY = 0;
+        double ARX =0;
+        double ARY = 0;
+        double yaw = 0;
+        double Bearing;
+        double KP;
+        int TargetID = -1;
         String lastButton = "None";
         ElapsedTime stickRuntime = new ElapsedTime();
         ElapsedTime DistanceTime = new ElapsedTime();
@@ -87,61 +97,98 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         ElapsedTime TILT = new ElapsedTime();
         boolean Centric = false;
         boolean DoubleButton = false;
+
         super.robot.init(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap);
+
         super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (super.robot.USE_WEBCAM)
+            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            boolean targetFound = false;
+            robot.desiredTag = null;
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
 
-
+            TargetID = -10;
             ly = -gamepad1.left_stick_y;
             lx = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
-            ly2 = gamepad2.left_stick_y*-1.0;
+            ly2 = gamepad2.left_stick_y * -1.0;
             ry2 = gamepad2.left_stick_y;
+            if (gamepad1.dpad_left) TargetID = 8;
+            if (gamepad1.dpad_up) TargetID = 7;
+            if (gamepad1.dpad_right) TargetID = 3;
+            gamepadCheck = (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right);
+            if (gamepadCheck) {
+                telemetry.addData("Checking for tags", "");
+                List<AprilTagDetection> currentDetections = super.robot.aprilTag.getDetections();
+                for (AprilTagDetection detection : currentDetections) {
+                    if ((detection.metadata != null) &&
+                            ((detection.id == TargetID - 3) || (detection.id == TargetID))) {
+                        targetFound = true;
+                        super.robot.desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                    }
+                }
+            }
+            if (targetFound) {
+                yaw = super.robot.desiredTag.ftcPose.yaw;
+                ARX = super.robot.desiredTag.ftcPose.x;
+                ARY = super.robot.desiredTag.ftcPose.y -10;
+                Bearing = super.robot.desiredTag.ftcPose.bearing;
+                KP = Math.abs(ARX) + Math.abs(ARY);
+                KP = Math.max(15,KP);
 
+
+            } else {
+                ARX = 0;
+                ARY = 0;
+                yaw = 0;
+                Bearing =0;
+                KP = 10;
+            }
             if (gamepad2.x) {
                 lastButton = "X";
-            }
-            else if (gamepad2.y) {
+            } else if (gamepad2.y) {
                 lastButton = "Y";
-            }
-            else if (gamepad2.a) {
+            } else if (gamepad2.a) {
                 lastButton = "A";
-            }
-            else if (gamepad2.b) {
+            } else if (gamepad2.b) {
                 lastButton = "B";
             }
 
             if (!leftStickIsActive && !rightstickisactive) {
                 stickRuntime.reset();
             }
-            stickRuntimeMod = Double.max(stickRuntime.seconds()*1.7, .3);
-            stickMod = Double.min(stickRuntimeMod,1);
+            stickRuntimeMod = Double.max(stickRuntime.seconds() * 1.7, .3);
+            stickMod = Double.min(stickRuntimeMod, 1);
 
 
-            if(!checkDistance(3)){
+            if (!checkDistance(6)) {
                 DistanceTime.reset();
 
             }
             if(DistanceTime.milliseconds() > 350){
-                speedMod = stickMod*(getDistance()/5);
+                speedMod = stickMod*(getDistance()/9);
             }
             else if(gamepad1.b) {
                 speedMod = .5*stickMod;
@@ -160,46 +207,9 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             }
 
 
-            if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
-                gamepadCheck = true;
-            }
-            else {
-                gamepadCheck = false;
-            }
 
-            if (gamepad1.dpad_up) {
-                wheelspeed[8] = -1;
-                wheelspeed[9] = -1;
-                wheelspeed[10] = -1;
-                wheelspeed[11] = -1;
-            }
-            else if (gamepad1.dpad_down) {
-                wheelspeed[8] = 1;
-                wheelspeed[9] = 1;
-                wheelspeed[10] = 1;
-                wheelspeed[11] = 1;
-            }
-            else if (gamepad1.dpad_right) {
-                wheelspeed[8] = 1;
-                wheelspeed[9] = -1;
-                wheelspeed[10] = -1;
-                wheelspeed[11] = 1;
-            }
-            else if (gamepad1.dpad_left) {
-                wheelspeed[8] = -1;
-                wheelspeed[9] = 1;
-                wheelspeed[10] = 1;
-                wheelspeed[11] = -1;
-            }
-
-            if (rx != 0) rightstickisactive = true;
-            else rightstickisactive = false;
-            if (lx != 0 || ly != 0) {
-                leftStickIsActive = true;
-            }
-            else {
-                leftStickIsActive = false;
-            }
+            rightstickisactive = (rx != 0);
+            leftStickIsActive = (lx != 0 || ly != 0);
 
             if (!leftStickIsActive || rightstickisactive) {
                 initHeading = getHeading();
@@ -229,7 +239,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             totPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
             AngleJ = Math.toDegrees((Math.atan2(-lx, -ly)));
             Pheta = AngleJ - (getHeading() - super.robot.initAngle);
-            telemetry.addData("Angle of joystick", AngleJ);
+            /*telemetry.addData("Angle of joystick", AngleJ);
             telemetry.addData("Angle of Robot", getHeading());
             telemetry.addData("Angle of adjustment", Pheta);
             telemetry.addData("PowerX", PowerX);
@@ -242,7 +252,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             telemetry.addData("InitHeading", initHeading);
             telemetry.addData("angledistance", angleDistance);
             telemetry.addData("Leftsitckactive", leftStickIsActive);
-            telemetry.addData("RightStickisActive", rightstickisactive);
+            telemetry.addData("RightStickisActive", rightstickisactive); */
 
             PowerX = totPower * Math.sin(Math.toRadians(Pheta));
             PowerY = totPower * Math.cos(Math.toRadians(Pheta));
@@ -250,22 +260,27 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             wheelspeed[1] = -rx*.5 + (-PowerY - PowerX + (angleDistance / 90 ));
             wheelspeed[2] = rx*.5 + (-PowerY - PowerX - (angleDistance / 90 ));
             wheelspeed[3] = -rx*.5 + (-PowerY + PowerX + (angleDistance / 90 ));
+            wheelspeed[8] = .4*((ARY - ARX)/KP) - ((Bearing) / 90 ) - (yaw / 120);
+            wheelspeed[9] = .4*((ARY + ARX)/KP) + ((Bearing) / 90) + (yaw / 120);
+            wheelspeed[10] = .4*((ARY + ARX)/KP) - ((Bearing) / 90) - (yaw / 120);
+            wheelspeed[11] = .4*((ARY - ARX)/KP) + ((Bearing) / 90) + (yaw / 120);
+
             /*wheelspeed[4] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
             wheelspeed[5] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);
             wheelspeed[6] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
             wheelspeed[7] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);*/
 
-
-            super.robot.Motor1.setPower(speedMod * wheelspeed[0]);
-            super.robot.Motor2.setPower(speedMod * wheelspeed[1]);
-            super.robot.Motor3.setPower(speedMod * wheelspeed[2]);
-            super.robot.Motor4.setPower(speedMod * wheelspeed[3]);
-
-            if (gamepadCheck) {
-                super.robot.Motor1.setPower(speedMod * wheelspeed[8]);
-                super.robot.Motor2.setPower(speedMod * wheelspeed[9]);
-                super.robot.Motor3.setPower(speedMod * wheelspeed[10]);
-                super.robot.Motor4.setPower(speedMod * wheelspeed[11]);
+            if(!gamepadCheck || !targetFound) {
+                super.robot.Motor1.setPower(speedMod * wheelspeed[0]);
+                super.robot.Motor2.setPower(speedMod * wheelspeed[1]);
+                super.robot.Motor3.setPower(speedMod * wheelspeed[2]);
+                super.robot.Motor4.setPower(speedMod * wheelspeed[3]);
+            }
+            else{
+                super.robot.Motor1.setPower(wheelspeed[8]);
+                super.robot.Motor2.setPower(wheelspeed[9]);
+                super.robot.Motor3.setPower(wheelspeed[10]);
+                super.robot.Motor4.setPower(wheelspeed[11]);
             }
 
             if (gamepad1.right_trigger > .5){
@@ -301,9 +316,8 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (Math.abs(ry2) < .1){
                ry2 = 0;
             }
-            else {
-                super.robot.PivotArm.setPower(ry2+.5);
-            }
+            super.robot.PivotArm.setPower(ry2*.5);
+
             if (gamepad2.left_bumper){
                 super.robot.clawL.setPosition(0);
             }

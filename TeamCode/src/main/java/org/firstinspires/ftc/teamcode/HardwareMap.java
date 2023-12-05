@@ -6,10 +6,16 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class HardwareMap {
 
@@ -32,6 +38,11 @@ public class HardwareMap {
     public Orientation angles;
     public double initAngle;
     public DistanceSensor ods;
+    public static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    public int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    public VisionPortal visionPortal;               // Used to manage the video source.
+    public AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    public AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
     //public DistanceSensor ods;
     /* local OpMode members. */
@@ -67,6 +78,8 @@ public class HardwareMap {
 
        ods = hwMap.get(DistanceSensor.class, "ods");
 
+
+
        Motor1.setDirection(DcMotor.Direction.REVERSE);
        Motor3.setDirection(DcMotor.Direction.REVERSE);
 
@@ -92,7 +105,7 @@ public class HardwareMap {
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        PivotArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -112,5 +125,26 @@ public class HardwareMap {
         //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
         //PivotClaw.setPosition(.5);
         initAngle = angles.firstAngle;
+    }
+    public void AprilInit(com.qualcomm.robotcore.hardware.HardwareMap ahwMap) {
+        hwMap = ahwMap;
+        aprilTag = new AprilTagProcessor.Builder()
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USE_WEBCAM) {
+            builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
     }
 }
