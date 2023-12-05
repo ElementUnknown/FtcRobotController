@@ -132,9 +132,9 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             rx = gamepad1.right_stick_x;
             ly2 = gamepad2.left_stick_y * -1.0;
             ry2 = gamepad2.left_stick_y;
-            if (gamepad1.dpad_left) TargetID = 8;
-            if (gamepad1.dpad_up) TargetID = 7;
-            if (gamepad1.dpad_right) TargetID = 3;
+            if (gamepad1.dpad_left) TargetID = 4;
+            if (gamepad1.dpad_up) TargetID = 5;
+            if (gamepad1.dpad_right) TargetID = 6;
             gamepadCheck = (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right);
             if (gamepadCheck) {
                 telemetry.addData("Checking for tags", "");
