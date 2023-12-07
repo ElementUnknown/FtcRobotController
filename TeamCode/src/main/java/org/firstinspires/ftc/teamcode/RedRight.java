@@ -55,7 +55,7 @@ public class RedRight extends Autonomous_Base {
             TurnByGyro(85,.5,2);
             PivotWaitFinish();
             //Located facing board
-            Spike = 1;
+            Spike = 5;
         }
         else {
             //if not in the center check the left
@@ -73,7 +73,7 @@ public class RedRight extends Autonomous_Base {
                 TurnByGyro(90,.5,2);
                 PivotWaitFinish();
                 //finish facing the board
-                Spike = 2;
+                Spike = 6;
             }
             else {
                 //if not in center or left move to right
@@ -90,7 +90,7 @@ public class RedRight extends Autonomous_Base {
                 Move(.6,0,20);
 
                 TurnByGyro(180,.5,2);
-                Spike = 0;
+                Spike = 4;
                 //finish facing board
             }
         }
@@ -98,7 +98,7 @@ public class RedRight extends Autonomous_Base {
         Move(.8,0,-10);
         Move(.8,0,28);
         closeClawL(); //Close left to conserve space on the board
-        switch(Spike){
+        /*switch(Spike){
             case(0):
                 Move(.5,0,4);
                 //Move left and amount
@@ -112,11 +112,12 @@ public class RedRight extends Autonomous_Base {
                 break;
         }
         Move(.5,-2.5,0);
-        sleep(500);//move to board
+        sleep(500);//move to board*/
+        AprilTagNav(.6,90,Spike,7,0,.5,-1,5000);
         releaseClawR();
         sleep(100);
         Move(.7,4,0); // Move back to allow the pixel to fall
-        PivotTick(0,1);//close arm to final position
+        PivotTick(20,1);//close arm to final position
         Move(.3,-3,0);
         PivotWaitFinish();//final move to park
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle

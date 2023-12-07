@@ -665,6 +665,7 @@ public class Autonomous_Base extends LinearOpMode {
         double initD = 0;
         int TimesFound =0;
         double KP = 0;
+        double KP1 = 0;
         double AngleD = getHeading() - a;
         if(AngleD > 180) AngleD -= 180;
         if(AngleD < -180) AngleD += 180;
@@ -695,7 +696,6 @@ public class Autonomous_Base extends LinearOpMode {
                     SomethingFound = true;
                     robot.desiredTag = detection;
 
-                    //else AngleD = getHeading() - a;
                     break;  // don't look any further.
 
                 }
@@ -731,17 +731,20 @@ public class Autonomous_Base extends LinearOpMode {
                     yaw = robot.desiredTag.ftcPose.yaw;
                     Rx = robot.desiredTag.ftcPose.x;
                     Ry = robot.desiredTag.ftcPose.y;
-                    KP = Math.abs(Rx) + Math.abs(Ry);
                     //if(Ry < RyB + Buffer && Ry > RyB - Buffer) Ry =0;
                     //if(Rx < RxB + Buffer && Rx > RxB - Buffer) Rx =0;
                     Ry -= RyB;
                     Rx += RxB;
+                    KP = Math.min(Math.abs((Ry - Rx)/(20)) , 1) * Math.signum(Ry - Rx) * p;
+                    KP1 = Math.min(Math.abs((Ry + Rx)/(20)), 1) * Math.signum(Ry+Rx) * p;
+                    KP = Math.max(Math.abs(KP), .2)  * Math.signum(KP);
+                    KP1 = Math.max(Math.abs(KP1), .2) * Math.signum(KP1);
                 }
-                robot.Motor1.setPower(((Ry - Rx)/(KP)) - (yaw/120) - (Bearing / 90));
-                robot.Motor2.setPower(((Ry + Rx)/(KP)) +(yaw/120) + (Bearing / 90));
-                robot.Motor3.setPower(((Ry + Rx)/(KP)) - (yaw /120) - (Bearing / 90));
-                robot.Motor4.setPower(((Ry - Rx)/(KP)) + (yaw/120) + (Bearing / 90));
-                if(Math.abs(Ry) < Buffer && Math.abs(Rx) < Buffer){
+                robot.Motor1.setPower(KP - (yaw/150) - (Bearing / 90));
+                robot.Motor2.setPower(KP1 +(yaw/150) + (Bearing / 90));
+                robot.Motor3.setPower(KP1- (yaw /150) - (Bearing / 90));
+                robot.Motor4.setPower(KP + (yaw/150) + (Bearing / 90));
+                if(Math.abs(Ry) < Buffer && Math.abs(Rx) < Buffer && Math.abs(yaw) < 6){
 
                     robot.Motor1.setPower(0);
                     robot.Motor2.setPower(0);

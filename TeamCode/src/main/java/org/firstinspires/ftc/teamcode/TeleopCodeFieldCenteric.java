@@ -153,10 +153,10 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (targetFound) {
                 yaw = super.robot.desiredTag.ftcPose.yaw;
                 ARX = super.robot.desiredTag.ftcPose.x;
-                ARY = super.robot.desiredTag.ftcPose.y -10;
+                ARY = super.robot.desiredTag.ftcPose.y -7;
                 Bearing = super.robot.desiredTag.ftcPose.bearing;
                 KP = Math.abs(ARX) + Math.abs(ARY);
-                KP = Math.max(15,KP);
+                KP = Math.max(12,KP);
 
 
             } else {
@@ -260,10 +260,10 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             wheelspeed[1] = -rx*.5 + (-PowerY - PowerX + (angleDistance / 90 ));
             wheelspeed[2] = rx*.5 + (-PowerY - PowerX - (angleDistance / 90 ));
             wheelspeed[3] = -rx*.5 + (-PowerY + PowerX + (angleDistance / 90 ));
-            wheelspeed[8] = .4*((ARY - ARX)/KP) - ((Bearing) / 90 ) - (yaw / 120);
-            wheelspeed[9] = .4*((ARY + ARX)/KP) + ((Bearing) / 90) + (yaw / 120);
-            wheelspeed[10] = .4*((ARY + ARX)/KP) - ((Bearing) / 90) - (yaw / 120);
-            wheelspeed[11] = .4*((ARY - ARX)/KP) + ((Bearing) / 90) + (yaw / 120);
+            wheelspeed[8] = .4*((ARY - ARX)/KP) - ((Bearing) / 90 ) - (yaw / 150);
+            wheelspeed[9] = .4*((ARY + ARX)/KP) + ((Bearing) / 90) + (yaw / 150);
+            wheelspeed[10] = .4*((ARY + ARX)/KP) - ((Bearing) / 90) - (yaw / 150);
+            wheelspeed[11] = .4*((ARY - ARX)/KP) + ((Bearing) / 90) + (yaw / 150);
 
             /*wheelspeed[4] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
             wheelspeed[5] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);
@@ -302,7 +302,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 telemetry.addData("Y Pressed: ",gamepad1.y);
             }
             else if (gamepad2.a) {
-                super.robot.intake.setPower(.5);
+                super.robot.intake.setPower(1);
                 telemetry.addData("A Pressed: ",gamepad1.a);
             }
             else {

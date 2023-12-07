@@ -190,7 +190,7 @@ public class AutoTests extends Autonomous_Base {
         //AprilTagNav(.3,0,8,12,0,.5,-1, 7000);
 
 
-        AprilTagNav(.6,0,6,10,0,1,-1,5000);
+        AprilTagNav(.6,0,5,10,0,1,-1,7000);
         telemetry.update();
         sleep(1000);
     }
