@@ -112,8 +112,8 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
         //super.robot.liftArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //super.robot.liftArmL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        if (super.robot.USE_WEBCAM)
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+       // if (super.robot.USE_WEBCAM)
+         //   setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -183,14 +183,14 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             stickMod = Double.min(stickRuntimeMod, 1);
 
 
-            if (!checkDistance(6)) {
-                DistanceTime.reset();
+            //if (!checkDistance(6)) {
+               // DistanceTime.reset();
 
-            }
-            if(DistanceTime.milliseconds() > 350){
-                speedMod = stickMod*(getDistance()/9);
-            }
-            else if(gamepad1.b) {
+            //}
+            //if(DistanceTime.milliseconds() > 350){
+               // speedMod = stickMod*(getDistance()/9);
+            //}
+            if(gamepad1.b) {
                 speedMod = .5*stickMod;
             }
             else {
@@ -331,7 +331,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             else if (gamepad2.right_trigger > .3){
                 super.robot.clawR.setPosition(.5);
             }
-            if (gamepad2.dpad_up){
+            if (gamepad1.right_bumper && gamepad1.left_bumper){
                 super.robot.Launch.setPosition(0);
             }
 

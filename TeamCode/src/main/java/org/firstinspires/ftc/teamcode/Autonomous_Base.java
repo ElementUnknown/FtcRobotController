@@ -20,9 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class Autonomous_Base extends LinearOpMode {
     HardwareMap robot = new HardwareMap();
     private ElapsedTime runtime = new ElapsedTime();
-    public double vertical_ticks_perinch = 44.0771349;
-    public double horizontal_ticks_perinch = 50.7936507;
-    private int checkNum = 0;
+    public final double vertical_ticks_perinch = 44.0771349;
+    public final double horizontal_ticks_perinch = 50.7936507;
     public boolean spikeFound = false;
 
 
@@ -296,6 +295,11 @@ public class Autonomous_Base extends LinearOpMode {
     }
 
     public void verticalMove(int time, double speed) {
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         robot.Motor1.setPower(speed);
         robot.Motor2.setPower(speed);
         robot.Motor3.setPower(speed);
@@ -308,6 +312,10 @@ public class Autonomous_Base extends LinearOpMode {
     }
 
     public void horizontalMove(int time, double speed) {
+        robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor1.setPower(-speed);
         robot.Motor2.setPower(speed);
         robot.Motor3.setPower(speed);
@@ -644,16 +652,19 @@ public class Autonomous_Base extends LinearOpMode {
 
     }
     public void dropPixel() {
-        robot.intake.setPower(-.3);
+        robot.intake.setPower(-.7);
         sleep(1500);
         robot.intake.setPower(0);
     }
-    public boolean AprilTagNav(double p, double a, int ID, double RyB, int RxB, double Buffer, float BR, int milis){
+    public boolean AprilTagNav(double p, double a, int ID, double RyB, double RxB, double Buffer, float BR, int milis){
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor2.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor3.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.Motor4.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         boolean targetFound     = false;
         boolean SomethingFound;
         double Rx =0;
@@ -670,12 +681,18 @@ public class Autonomous_Base extends LinearOpMode {
         if(AngleD > 180) AngleD -= 180;
         if(AngleD < -180) AngleD += 180;
         float Direction;
+        int[] Distance = new int[4];
         robot.DESIRED_TAG_ID = ID;
         ElapsedTime Time = new ElapsedTime();
         ElapsedTime NotFound = new ElapsedTime();
         NotFound.reset();
         Time.reset();
         Nav: while (opModeIsActive() && Time.milliseconds() < milis){
+            Distance[0]= robot.Motor1.getCurrentPosition();
+            Distance[1]= robot.Motor2.getCurrentPosition();
+            Distance[2]= robot.Motor3.getCurrentPosition();
+            Distance[3]= robot.Motor4.getCurrentPosition();
+
             targetFound = false;
             robot.desiredTag = null;
             SomethingFound = false;
@@ -713,38 +730,33 @@ public class Autonomous_Base extends LinearOpMode {
                 NotFound.reset();
             }
 
-            Found: if ((targetFound || NotFound.milliseconds() < 500) && TimesFound > 0) {
+            Found: if ((targetFound || NotFound.milliseconds() < 1000) && TimesFound > 0) {
                 if(targetFound){
-                    if(TimesFound == 1){
-                        initRy = robot.desiredTag.ftcPose.y;
-                        initRx = robot.desiredTag.ftcPose.x;
-                        initD =(Math.abs(initRy) + Math.abs(initRx));
-                    }
 
-                    telemetry.addData("", "TargetFound");
-                    telemetry.addData("Target", "ID %d (%s)", robot.desiredTag.id, robot.desiredTag.metadata.name);
-                    telemetry.addData("Range", "%5.1f inches", robot.desiredTag.ftcPose.range);
-                    telemetry.addData("Bearing", "%3.0f degrees", robot.desiredTag.ftcPose.bearing);
-                    telemetry.addData("Yaw", robot.desiredTag.ftcPose.yaw);
-                    double Range = robot.desiredTag.ftcPose.range;
-                    Bearing =  robot.desiredTag.ftcPose.bearing;
-                    yaw = robot.desiredTag.ftcPose.yaw;
-                    Rx = robot.desiredTag.ftcPose.x;
-                    Ry = robot.desiredTag.ftcPose.y;
-                    //if(Ry < RyB + Buffer && Ry > RyB - Buffer) Ry =0;
-                    //if(Rx < RxB + Buffer && Rx > RxB - Buffer) Rx =0;
-                    Ry -= RyB;
-                    Rx += RxB;
-                    KP = Math.min(Math.abs((Ry - Rx)/(20)) , 1) * Math.signum(Ry - Rx) * p;
-                    KP1 = Math.min(Math.abs((Ry + Rx)/(20)), 1) * Math.signum(Ry+Rx) * p;
+                    //telemetry.addData("", "TargetFound");
+                    //telemetry.addData("Target", "ID %d (%s)", robot.desiredTag.id, robot.desiredTag.metadata.name);
+                    //telemetry.addData("Range", "%5.1f inches", robot.desiredTag.ftcPose.range);
+                    //telemetry.addData("Bearing", "%3.0f degrees", robot.desiredTag.ftcPose.bearing);
+                    //telemetry.addData("Yaw", robot.desiredTag.ftcPose.yaw);
+                    //double Range = robot.desiredTag.ftcPose.range;
+                    AprilB =  robot.desiredTag.ftcPose.bearing;
+                    AprilYaw = robot.desiredTag.ftcPose.yaw;
+                    AprilX = robot.desiredTag.ftcPose.x;
+                    AprilY = robot.desiredTag.ftcPose.y;
+
+                    AprilY -= RyB;
+                    AprilX += RxB;
+                }
+                    KP = Math.min(Math.abs((AprilY - AprilX)/(20)) , 1) * Math.signum(AprilY - AprilX) * p;
+                    KP1 = Math.min(Math.abs((AprilY + AprilX)/(20)), 1) * Math.signum(AprilY+AprilX) * p;
                     KP = Math.max(Math.abs(KP), .2)  * Math.signum(KP);
                     KP1 = Math.max(Math.abs(KP1), .2) * Math.signum(KP1);
-                }
-                robot.Motor1.setPower(KP - (yaw/150) - (Bearing / 90));
-                robot.Motor2.setPower(KP1 +(yaw/150) + (Bearing / 90));
-                robot.Motor3.setPower(KP1- (yaw /150) - (Bearing / 90));
-                robot.Motor4.setPower(KP + (yaw/150) + (Bearing / 90));
-                if(Math.abs(Ry) < Buffer && Math.abs(Rx) < Buffer && Math.abs(yaw) < 6){
+
+                robot.Motor1.setPower(KP - (AprilYaw/150) - (AprilB / 90));
+                robot.Motor2.setPower(KP1 +(AprilYaw/150) + (AprilB / 90));
+                robot.Motor3.setPower(KP1- (AprilYaw/150) - (AprilB / 90));
+                robot.Motor4.setPower(KP + (AprilYaw/150) + (AprilB / 90));
+                if(Math.abs(AprilY) < Buffer && Math.abs(AprilX) < Buffer && Math.abs(AprilYaw) < 6){
 
                     robot.Motor1.setPower(0);
                     robot.Motor2.setPower(0);
@@ -757,17 +769,14 @@ public class Autonomous_Base extends LinearOpMode {
             else {
                 if(SomethingFound){
                 telemetry.addData(">", "Correct Target Not Found Moving" + Direction);
-                robot.Motor1.setPower(-p*Direction - (AngleD/60));
-                robot.Motor2.setPower(p*Direction + (AngleD/60));
-                robot.Motor3.setPower(p*Direction -(AngleD/60));
-                robot.Motor4.setPower(-p*Direction + (AngleD/60));
+                robot.Motor1.setPower(-p*Direction - (AprilYaw/60));
+                robot.Motor2.setPower(p*Direction + (AprilYaw/60));
+                robot.Motor3.setPower(p*Direction -(AprilYaw/60));
+                robot.Motor4.setPower(-p*Direction + (AprilYaw/60));
                 }
                 else{
                     telemetry.addData(">", "Nothing was Found" + BR);
-                    robot.Motor1.setPower((-p*.75 + p*BR*.75) - (AngleD/40));
-                    robot.Motor2.setPower((-p*.75 - p*BR*.75) +(AngleD/40));
-                    robot.Motor3.setPower((-p*.75 - p*BR*.75) -(AngleD/40));
-                    robot.Motor4.setPower((-p*.75 + p*BR*.75) + (AngleD/40));
+
 
                 }
 
@@ -785,6 +794,10 @@ public class Autonomous_Base extends LinearOpMode {
         telemetry.update();
         return targetFound;
     }
+    double AprilX = 0;
+    double AprilY = 0;
+    double AprilB = 0;
+    double AprilYaw = 0;
 
     public int LocateTag(double p, double a, float D, double Bound){
         robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
@@ -795,7 +808,10 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        AprilX = 0;
+        AprilY = 0;
+        AprilB = 0;
+        AprilYaw = 0;
         boolean SomethingFound = false;
         double AngleD = getHeading() - a;
         int BoundTicks = (int)(Bound * horizontal_ticks_perinch);
@@ -812,6 +828,10 @@ public class Autonomous_Base extends LinearOpMode {
                 if (detection.metadata != null) {
                     SomethingFound =true;
                     ret = detection.id;
+                    AprilX = detection.ftcPose.x;
+                    AprilY = detection.ftcPose.y;
+                    AprilB = detection.ftcPose.bearing;
+                    AprilYaw = detection.ftcPose.yaw;
                     break move;
                 } else {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -826,7 +846,6 @@ public class Autonomous_Base extends LinearOpMode {
             KP =  Math.abs(BoundTicks - robot.Motor2.getCurrentPosition())/400;
             KP = Math.min(1,KP);
             KP = Math.max(.3,KP);
-            KP *= Math.signum(BoundTicks - robot.Motor2.getCurrentPosition());
             robot.Motor1.setPower((p*-D*(KP)) - (AngleD/60));
             robot.Motor2.setPower((p*D* (KP)) +(AngleD/60));
             robot.Motor3.setPower((p*D* (KP)) -(AngleD/60));
@@ -851,7 +870,7 @@ public class Autonomous_Base extends LinearOpMode {
             telemetry.addData("Camera", "Waiting");
             telemetry.update();
             while (!isStopRequested() && (robot.visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
+                sleep(10);
             }
             telemetry.addData("Camera", "Ready");
             telemetry.update();
