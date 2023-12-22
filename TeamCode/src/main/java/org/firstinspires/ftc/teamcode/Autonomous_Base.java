@@ -69,7 +69,7 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //set motors to run
         //waitforfinish();
-        StraightWait(InitHeading, M1Speed, M2Speed, M3Speed, M4Speed);
+        StraightWait(InitHeading, power);
         //go to straight wait with the heading set at the beginning of method, and motor speeds
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);
@@ -81,7 +81,58 @@ public class Autonomous_Base extends LinearOpMode {
         if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
         TurnByGyro(AngleDistance, .3,2,5);*/
     }
+    public void StraightWait(double InitHeading, double power) { //To be Tested
+        ElapsedTime Time = new ElapsedTime();
+        double Motor1Power = 0;
+        double Motor2Power = 0;
+        double Motor3Power = 0;
+        double Motor4Power = 0;
+        double AngleDistance = 0;
+        double[] kp = new double[4];
+        boolean continueloop = true;
+        double TickDistance;
+        //I don't even know how this works, I drank coffee and then the next day this was here
+        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop) {
+            AngleDistance = getHeading() - InitHeading;
 
+            double accceleratioon_ctl = Math.min(Time.seconds() * 2, 1);
+            if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
+            if (AngleDistance <= -180) AngleDistance = AngleDistance + 360;
+
+            kp[0] = (robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition()) / 850.0;
+            kp[1] = (robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition()) / 850.0;
+            kp[2] = (robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition()) / 850.0;
+            kp[3] = (robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()) / 850.0;
+            kp[0] = Math.max(Math.min(kp[0], 1) , -1);
+            kp[1] = Math.max(Math.min(Math.abs(kp[1]), 1), -1);
+            kp[2] = Math.max(Math.min(Math.abs(kp[2]), 1), -1);
+            kp[3] = Math.max(Math.min(Math.abs(kp[3]), 1) , -1);
+
+            Motor1Power = power * accceleratioon_ctl * (kp[0] - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 270)));
+            Motor2Power = power * accceleratioon_ctl * (kp[1] + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 270)));
+            Motor3Power = power * accceleratioon_ctl * (kp[2] - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 270)));
+            Motor4Power = power * accceleratioon_ctl * (kp[3] + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 270)));
+
+
+            robot.Motor1.setPower(Motor1Power);
+            robot.Motor2.setPower(Motor2Power);
+            robot.Motor3.setPower(Motor3Power);
+            robot.Motor4.setPower(Motor4Power);
+
+            telemetry.addData("M1", kp[0]);
+            telemetry.addData("M2", kp[1]);
+            telemetry.addData("M3", kp[2]);
+            telemetry.addData("M4", kp[3]);
+            telemetry.update();
+
+            TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
+            //All I know is that this really long line of code just calculates the total error between the four motors
+            continueloop = (Math.abs(TickDistance) >= 200);
+
+
+        }
+
+    }
     public void CentricMove(double Power, double Y,double X){
         robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -355,53 +406,7 @@ public class Autonomous_Base extends LinearOpMode {
         }
     }
 
-    public void StraightWait(double InitHeading, double M1Speed, double M2Speed, double M3Speed, double M4Speed) { //To be Tested
-        ElapsedTime Time = new ElapsedTime();
-        double Motor1Power = 0;
-        double Motor2Power = 0;
-        double Motor3Power = 0;
-        double Motor4Power = 0;
-        double AngleDistance = 0;
-        boolean continueloop = true;
-        double TickDistance;
-        //I don't even know how this works, I drank coffee and then the next day this was here
-        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop) {
-            AngleDistance = getHeading() - InitHeading;
 
-            double accceleratioon_ctl = Math.min(Time.milliseconds() / 1000.0, 1.0);
-            if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
-            if (AngleDistance <= -180) AngleDistance = AngleDistance + 360;
-
-            Motor1Power = accceleratioon_ctl * (M1Speed - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 270)));
-            Motor2Power = accceleratioon_ctl * (M2Speed + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 270)));
-            Motor3Power = accceleratioon_ctl * (M3Speed - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 270)));
-            Motor4Power = accceleratioon_ctl * (M4Speed + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 270)));
-
-
-            robot.Motor1.setPower(Motor1Power);
-            robot.Motor2.setPower(Motor2Power);
-            robot.Motor3.setPower(Motor3Power);
-            robot.Motor4.setPower(Motor4Power);
-
-            telemetry.addData("M1", String.valueOf(robot.Motor1.getPower()));
-            telemetry.addData("M2", String.valueOf(robot.Motor2.getPower()));
-            telemetry.addData("M3", String.valueOf(robot.Motor3.getPower()));
-            telemetry.addData("M4", String.valueOf(robot.Motor4.getPower()));
-            telemetry.update();
-
-            TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
-            //All I know is that this really long line of code just calculates the total error between the four motors
-            continueloop = (Math.abs(TickDistance) >= 200);
-
-            telemetry.addData("", String.valueOf(InitHeading));
-            telemetry.update();
-        }
-        robot.Motor1.setPower(Motor1Power);
-        robot.Motor2.setPower(Motor2Power);
-        robot.Motor3.setPower(Motor3Power);
-        robot.Motor4.setPower(Motor4Power);
-        waitforfinish();
-    }
 
 
     public void TurnByGyro(double target, double speed, double buffer) {//quotiant is the degree from the target with which you want to begin decelaeration
@@ -882,7 +887,7 @@ public class Autonomous_Base extends LinearOpMode {
             ExposureControl exposureControl = robot.visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(50);
+                sleep(20);
             }
             exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
             sleep(20);
