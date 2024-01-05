@@ -52,11 +52,8 @@ import java.util.List;
 @TeleOp(name="Field Centric", group="Robot")
 public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
-    HardwareMap robot = new HardwareMap();
-
     @Override
     public void runOpMode() {
-
 
         double wheelspeed[] = new double[12];
 
@@ -309,9 +306,15 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.intake.setPower(0);
             }
 
-
-
-
+            if (gamepad2.x) {
+                super.robot.winch.setPower(1);
+            }
+            else if (gamepad2.a) {
+                super.robot.winch.setPower(-1);
+            }
+            else {
+                super.robot.winch.setPower(0);
+            }
 
             if (Math.abs(ry2) < .1){
                ry2 = 0;
@@ -319,18 +322,19 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             super.robot.PivotArm.setPower(ry2*.5);
 
             if (gamepad2.left_bumper){
-                super.robot.clawL.setPosition(0);
+                super.robot.claw.setPosition(0);
             }
             else if (gamepad2.left_trigger > .3){
-                super.robot.clawL.setPosition(.3);
+                super.robot.claw.setPosition(.3);
             }
 
             if (gamepad2.right_bumper){
-                super.robot.clawR.setPosition(.8);
+                super.robot.elbow.setPosition(.8);
             }
             else if (gamepad2.right_trigger > .3){
-                super.robot.clawR.setPosition(.5);
+                super.robot.elbow.setPosition(.5);
             }
+
             if (gamepad1.right_bumper && gamepad1.left_bumper){
                 super.robot.Launch.setPosition(0);
             }
