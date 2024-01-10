@@ -25,22 +25,16 @@ public class Autonomous_Base extends LinearOpMode {
     public boolean spikeFound = false;
 
 
-    boolean turn[] = new boolean[3];
 
 
     public void Move(double power, double distanceforward, double distancelateral) {
         double InitHeading = getHeading();
         ElapsedTime Time = new ElapsedTime();
-        double M1Speed;
-        double M2Speed;
-        double M3Speed;
-        double M4Speed;
-        //Speed Variables are used to calculate the needed adjustments for straight line
+
         robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
         robot.Motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,15 +48,7 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor3.setTargetPosition((Target_ticks_Vertical + Target_tick_Horizontal));
         robot.Motor4.setTargetPosition((Target_ticks_Vertical - Target_tick_Horizontal));
-        //robot.Motor1.setPower(power);
-        //robot.Motor2.setPower(power);
-        //robot.Motor3.setPower(power);
-        //robot.Motor4.setPower(power);
-        M1Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
-        M2Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
-        M3Speed = (Math.abs(power * ((distanceforward + distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
-        M4Speed = (Math.abs(power * ((distanceforward - distancelateral) / (Math.abs(distanceforward) + Math.abs(distancelateral)))));
-        //Calculating motor speeds based off of imputed power and target averages (basically a percent error calculation
+
         robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -75,59 +61,80 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setPower(0);
         robot.Motor3.setPower(0);
         robot.Motor4.setPower(0);
-        // Final Correction values for Gyro Turn
-        /*AngleDistance = getHeading() - InitHeading;
-        if (AngleDistance > 180)            AngleDistance = AngleDistance - 360;
-        if (AngleDistance < -180)           AngleDistance = AngleDistance + 360;
-        TurnByGyro(AngleDistance, .3,2,5);*/
+
     }
     public void StraightWait(double InitHeading, double power) { //To be Tested
         ElapsedTime Time = new ElapsedTime();
-        double Motor1Power = 0;
-        double Motor2Power = 0;
-        double Motor3Power = 0;
-        double Motor4Power = 0;
+
         double AngleDistance = 0;
-        double[] kp = new double[4];
-        boolean continueloop = true;
-        double TickDistance;
-        //I don't even know how this works, I drank coffee and then the next day this was here
-        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy()) && continueloop) {
+        ElapsedTime PidTime = new ElapsedTime();
+        double[] Error = new double[4];
+        double[] LastError = {0, 0, 0, 0};
+        double[] DeltaError = {0, 0, 0, 0};
+        double[] ErrorSum = {0, 0, 0, 0};
+
+        double KP = .0004;
+        double KI = .00;
+        double KD = .00;
+
+        PidTime.reset();
+        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy())) {
             AngleDistance = getHeading() - InitHeading;
 
             double accceleratioon_ctl = Math.min(Time.seconds() * 2, 1);
             if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
             if (AngleDistance <= -180) AngleDistance = AngleDistance + 360;
 
-            kp[0] = (robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition()) / 850.0;
-            kp[1] = (robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition()) / 850.0;
-            kp[2] = (robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition()) / 850.0;
-            kp[3] = (robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()) / 850.0;
-            kp[0] = Math.max(Math.min(kp[0], 1) , -1);
-            kp[1] = Math.max(Math.min(Math.abs(kp[1]), 1), -1);
-            kp[2] = Math.max(Math.min(Math.abs(kp[2]), 1), -1);
-            kp[3] = Math.max(Math.min(Math.abs(kp[3]), 1) , -1);
+            Error[0] = (robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition());
+            Error[1] = (robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition());
+            Error[2] = (robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition());
+            Error[3] = (robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition());
 
-            Motor1Power = power * accceleratioon_ctl * (kp[0] - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 270)));
-            Motor2Power = power * accceleratioon_ctl * (kp[1] + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 270)));
-            Motor3Power = power * accceleratioon_ctl * (kp[2] - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 270)));
-            Motor4Power = power * accceleratioon_ctl * (kp[3] + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 270)));
+            DeltaError[0] = (Error[0] - LastError[0]) / Time.seconds();
+            DeltaError[1] = (Error[1] - LastError[1]) / Time.seconds();
+            DeltaError[2] = (Error[2] - LastError[2]) / Time.seconds();
+            DeltaError[3] = (Error[3] - LastError[3]) / Time.seconds();
+
+            ErrorSum[0] += Error[0] * Time.seconds();
+            ErrorSum[1] += Error[1] * Time.seconds();
+            ErrorSum[2] += Error[2] * Time.seconds();
+            ErrorSum[3] += Error[3] * Time.seconds();
+
+            //kp[0] = Math.max(Math.min(kp[0], 1) , -1);
+            //kp[1] = Math.max(Math.min(Math.abs(kp[1]), 1), -1);
+            //kp[2] = Math.max(Math.min(Math.abs(kp[2]), 1), -1);
+            //kp[3] = Math.max(Math.min(Math.abs(kp[3]), 1) , -1);
+
+            //Motor1Power = power * accceleratioon_ctl * (kp[0] - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 270)));
+            //Motor2Power = power * accceleratioon_ctl * (kp[1] + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 270)));
+            //Motor3Power = power * accceleratioon_ctl * (kp[2] - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 270)));
+            //Motor4Power = power * accceleratioon_ctl * (kp[3] + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 270)));
 
 
-            robot.Motor1.setPower(Motor1Power);
-            robot.Motor2.setPower(Motor2Power);
-            robot.Motor3.setPower(Motor3Power);
-            robot.Motor4.setPower(Motor4Power);
+            robot.Motor1.setPower(Error[0] * KP + DeltaError[0] * KD + ErrorSum[0] * KI);
+            robot.Motor2.setPower(Error[1] * KP + DeltaError[1] * KD + ErrorSum[1] * KI);
+            robot.Motor3.setPower(Error[2] * KP + DeltaError[2] * KD + ErrorSum[2] * KI);
+            robot.Motor4.setPower(Error[3] * KP + DeltaError[3] * KD + ErrorSum[3] * KI);
 
-            telemetry.addData("M1", kp[0]);
-            telemetry.addData("M2", kp[1]);
-            telemetry.addData("M3", kp[2]);
-            telemetry.addData("M4", kp[3]);
+            LastError[0] = Error[0];
+            LastError[1] = Error[1];
+            LastError[2] = Error[2];
+            LastError[3] = Error[3];
+
+            telemetry.addData("Error 0", Error[0]);
+            telemetry.addData("Error 1", Error[1]);
+            telemetry.addData("Error 2", Error[2]);
+            telemetry.addData("Error 3", Error[3]);
+
+            PidTime.reset();
+            //telemetry.addData("M1", kp[0]);
+            //telemetry.addData("M2", kp[1]);
+            //telemetry.addData("M3", kp[2]);
+            //telemetry.addData("M4", kp[3]);
             telemetry.update();
 
-            TickDistance = Math.abs((robot.Motor1.getTargetPosition() - robot.Motor1.getCurrentPosition())) + Math.abs((robot.Motor2.getTargetPosition() - robot.Motor2.getCurrentPosition())) + Math.abs((robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition())) + Math.abs((robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition()));
             //All I know is that this really long line of code just calculates the total error between the four motors
-            continueloop = (Math.abs(TickDistance) >= 200);
+
 
 
         }
@@ -431,15 +438,21 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         currentHeading = getHeading();
         offset = getHeading();
+
         truetarget = offset + target;
+
         while (truetarget > 180) truetarget = truetarget - 360;
         while (truetarget < -180) truetarget = truetarget + 360;
+
         angledistance = currentHeading - truetarget;
         if (angledistance > 180) angledistance = angledistance - 360;
         if (angledistance < -180) angledistance = angledistance + 360;
+
         continueangleloop = (Math.abs(angledistance) >= buffer);
+
         while (opModeIsActive() && continueangleloop) {
             currentHeading = getHeading();
             //TimeTarget = Math.signum(truetarget) * Math.min(AngleInc * NotReset.seconds(), Math.abs(truetarget));
@@ -460,7 +473,7 @@ public class Autonomous_Base extends LinearOpMode {
             robot.Motor2.setPower(-speed * (P));
             robot.Motor3.setPower(speed * (P));
             robot.Motor4.setPower(-speed * (P));
-             continueangleloop = (Math.abs(angledistance) >= buffer);
+            continueangleloop = (Math.abs(angledistance) >= buffer);
             telemetry.addData("Heading", String.valueOf(currentHeading));
             telemetry.addData("Error", String.valueOf(angledistance));
             telemetry.addData("TT", truetarget);
@@ -666,27 +679,30 @@ public class Autonomous_Base extends LinearOpMode {
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         robot.Motor1.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         robot.Motor2.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         robot.Motor3.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         robot.Motor4.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+
         boolean targetFound     = false;
         boolean SomethingFound;
         double Rx =0;
         double Ry =0;
-        double Bearing = 0;
-        double yaw = 0;
-        double initRx =0;
-        double initRy = 0;
-        double initD = 0;
+
         int TimesFound =0;
-        double KP = 0;
-        double KP1 = 0;
+        double Prop = 0;
+        double Prop1 = 0;
+        double KP = .05;
         double AngleD = getHeading() - a;
-        if(AngleD > 180) AngleD -= 180;
-        if(AngleD < -180) AngleD += 180;
+
+        if(AngleD > 180) AngleD -= 360;
+        if(AngleD < -180) AngleD += 360;
+
         float Direction;
+
         int[] Distance = new int[4];
+
         robot.DESIRED_TAG_ID = ID;
         ElapsedTime Time = new ElapsedTime();
         ElapsedTime NotFound = new ElapsedTime();
@@ -703,14 +719,12 @@ public class Autonomous_Base extends LinearOpMode {
             SomethingFound = false;
             Direction = 0;
             AngleD = getHeading() - a;
-            if(AngleD > 180) AngleD -= 180;
-            if(AngleD < -180) AngleD += 180;
+            if(AngleD > 180) AngleD -= 360;
+            if(AngleD < -180) AngleD += 360;
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = robot.aprilTag.getDetections();
-            //ArrayList<Integer> DectectedIDs = new ArrayList<Integer>();
             for (AprilTagDetection detection : currentDetections) {
-                //DectectedIDs.add(detection.id);
                 if ((detection.metadata != null) &&
                         ((robot.DESIRED_TAG_ID < 0) || (detection.id == robot.DESIRED_TAG_ID))) {
                     targetFound = true;
@@ -730,47 +744,49 @@ public class Autonomous_Base extends LinearOpMode {
                 }
             }
 
-            // Tell the driver what we see, and what to do.
             if(targetFound){
                 NotFound.reset();
             }
 
-            Found: if ((targetFound || NotFound.milliseconds() < 1000) && TimesFound > 0) {
-                if(targetFound){
+            Found: if (targetFound) {
 
-                    //telemetry.addData("", "TargetFound");
-                    //telemetry.addData("Target", "ID %d (%s)", robot.desiredTag.id, robot.desiredTag.metadata.name);
-                    //telemetry.addData("Range", "%5.1f inches", robot.desiredTag.ftcPose.range);
-                    //telemetry.addData("Bearing", "%3.0f degrees", robot.desiredTag.ftcPose.bearing);
-                    //telemetry.addData("Yaw", robot.desiredTag.ftcPose.yaw);
-                    //double Range = robot.desiredTag.ftcPose.range;
-                    AprilB =  robot.desiredTag.ftcPose.bearing;
-                    AprilYaw = robot.desiredTag.ftcPose.yaw;
-                    AprilX = robot.desiredTag.ftcPose.x;
-                    AprilY = robot.desiredTag.ftcPose.y;
+                AprilB =  robot.desiredTag.ftcPose.bearing;
+                AprilYaw = robot.desiredTag.ftcPose.yaw;
+                AprilX = robot.desiredTag.ftcPose.x;
+                AprilY = robot.desiredTag.ftcPose.y;
 
-                    AprilY -= RyB;
-                    AprilX += RxB;
-                }
-                    KP = Math.min(Math.abs((AprilY - AprilX)/(20)) , 1) * Math.signum(AprilY - AprilX) * p;
-                    KP1 = Math.min(Math.abs((AprilY + AprilX)/(20)), 1) * Math.signum(AprilY+AprilX) * p;
-                    KP = Math.max(Math.abs(KP), .2)  * Math.signum(KP);
-                    KP1 = Math.max(Math.abs(KP1), .2) * Math.signum(KP1);
+                AprilY -= RyB;
+                AprilX += RxB;
 
-                robot.Motor1.setPower(KP - (AprilYaw/150) - (AprilB / 90));
-                robot.Motor2.setPower(KP1 +(AprilYaw/150) + (AprilB / 90));
-                robot.Motor3.setPower(KP1- (AprilYaw/150) - (AprilB / 90));
-                robot.Motor4.setPower(KP + (AprilYaw/150) + (AprilB / 90));
                 if(Math.abs(AprilY) < Buffer && Math.abs(AprilX) < Buffer && Math.abs(AprilYaw) < 6){
-
                     robot.Motor1.setPower(0);
                     robot.Motor2.setPower(0);
                     robot.Motor3.setPower(0);
                     robot.Motor4.setPower(0);
                     break Nav;
                 }
-
+                // if it outside of a certain range move using pid and given april dectections
+                if(Math.abs(AprilX) > 1 && Math.abs(AprilYaw) > 5){
+                    TurnByGyro(-AprilYaw, -.9*Math.signum(AprilYaw), 3);
+                    Move(.9, -AprilY, AprilX);
+                }
+                else { //if within the range navigate using proporions of dectection values
+                    Prop = Math.max(Math.min((AprilY - AprilX)*(KP) , 1), -1);
+                    Prop1 = Math.max(Math.min((AprilY + AprilX)*(KP), 1), -1);
+                    if(Math.abs(Prop) < .2){
+                        KP = Math.signum(Prop) * .2;
+                    }
+                    if(Math.abs(Prop1) < .2){
+                        KP = Math.signum(Prop1) * .2;
+                    }
+                    robot.Motor1.setPower(Prop - (AprilYaw/150));
+                    robot.Motor2.setPower(Prop1 +(AprilYaw/150));
+                    robot.Motor3.setPower(Prop1- (AprilYaw/150));
+                    robot.Motor4.setPower(Prop + (AprilYaw/150));
+                }
             }
+            //if it is not found set to navigate using potentially correct poses while using motor encoders and gyro sensor to adjust the pose as if seen
+            
             else {
                 if(SomethingFound){
                 telemetry.addData(">", "Correct Target Not Found Moving" + Direction);
@@ -826,8 +842,8 @@ public class Autonomous_Base extends LinearOpMode {
         Time.reset();
         move: while(opModeIsActive() && Time.seconds() < 5){
             AngleD = getHeading() - a;
-            if(AngleD > 180) AngleD -= 180;
-            if(AngleD < -180) AngleD += 180;
+            if(AngleD > 180) AngleD -= 360;
+            if(AngleD < -180) AngleD += 360;
             List<AprilTagDetection> currentDetections = robot.aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
@@ -848,7 +864,7 @@ public class Autonomous_Base extends LinearOpMode {
                 ret = 0;
                 break move;
             }
-            KP =  Math.abs(BoundTicks - robot.Motor2.getCurrentPosition())/400;
+            KP =  Math.abs(BoundTicks - robot.Motor2.getCurrentPosition())/400.0;
             KP = Math.min(1,KP);
             KP = Math.max(.3,KP);
             robot.Motor1.setPower((p*-D*(KP)) - (AngleD/60));
