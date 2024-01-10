@@ -24,17 +24,14 @@ public class HardwareMap {
     public DcMotor Motor2       = null;
     public DcMotor Motor3       = null;
     public DcMotor Motor4       = null;
-    public DcMotor intake     = null;
+    public DcMotor intake       = null;
     public DcMotor PivotArm     = null;
-    //public DcMotor intake1      = null;
-    //public DcMotor intake2      = null;
-    public DcMotor liftArm     = null;
-    //public DcMotor liftArmR     = null;
-    public Servo   clawL         = null;
-    public Servo   clawR         = null;
-
+    public DcMotor liftArm      = null;
+    public DcMotor winch         = null;
+    public Servo   elbow        = null;
+    public Servo   claw         = null;
     public Servo   Launch       = null;
-    public BNO055IMU       imu;
+    public BNO055IMU imu;
     public Orientation angles;
     public double initAngle;
     public DistanceSensor ods;
@@ -65,23 +62,20 @@ public class HardwareMap {
         Motor3          = hwMap.get(DcMotor.class, "Motor3");
         Motor4          = hwMap.get(DcMotor.class, "Motor4");
         PivotArm        = hwMap.get(DcMotor.class, "PivotArm");
-        intake        = hwMap.get(DcMotor.class, "intake");
-        liftArm        = hwMap.get(DcMotor.class, "liftArm");
-        //intake1        = hwMap.get(DcMotor.class, "intake1");
-        //intake2        = hwMap.get(DcMotor.class, "intake2");
-        //initialize IMU
-       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-       parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
-       imu = hwMap.get(BNO055IMU.class, "imu");
-       imu.initialize(parameters);
-       angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        intake          = hwMap.get(DcMotor.class, "intake");
+        liftArm         = hwMap.get(DcMotor.class, "liftArm");
+        winch           = hwMap.get(DcMotor.class, "winch");
 
-       ods = hwMap.get(DistanceSensor.class, "ods");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+        ods = hwMap.get(DistanceSensor.class, "ods");
 
-
-       Motor1.setDirection(DcMotor.Direction.REVERSE);
-       Motor3.setDirection(DcMotor.Direction.REVERSE);
+        Motor1.setDirection(DcMotor.Direction.REVERSE);
+        Motor3.setDirection(DcMotor.Direction.REVERSE);
 
         //Set all motors to zero power
         Motor1.setPower(0);
@@ -91,8 +85,7 @@ public class HardwareMap {
         PivotArm.setPower(0);
         intake.setPower(0);
         liftArm.setPower(0);
-        //intake1.setPower(0);
-        //intake2.setPower(0);
+        winch.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -103,8 +96,8 @@ public class HardwareMap {
         PivotArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         PivotArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -113,17 +106,14 @@ public class HardwareMap {
         PivotArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //intake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        clawL = hwMap.get(Servo.class, "clawL");
-        clawR = hwMap.get(Servo.class, "clawR");
+        elbow = hwMap.get(Servo.class, "elbow");
+        claw = hwMap.get(Servo.class, "claw");
         Launch = hwMap.get(Servo.class, "Launch");
-        clawL.setPosition(0);
-        clawR.setPosition(.8);
+        elbow.setPosition(0);
+        claw.setPosition(.8);
         Launch.setPosition(1);
-        //PivotClaw = hwMap.get(Servo.class, "PivotClaw");
-        //PivotClaw.setPosition(.5);
         initAngle = angles.firstAngle;
     }
     public void AprilInit(com.qualcomm.robotcore.hardware.HardwareMap ahwMap) {
