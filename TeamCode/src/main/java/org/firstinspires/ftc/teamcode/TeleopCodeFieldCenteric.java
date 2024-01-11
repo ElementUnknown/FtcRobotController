@@ -233,6 +233,9 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (angleDistance < -180) {
                 angleDistance = angleDistance + 360;
             }
+
+
+
             totPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
             AngleJ = Math.toDegrees((Math.atan2(-lx, -ly)));
             Pheta = AngleJ - (getHeading() - super.robot.initAngle);
@@ -306,10 +309,10 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.intake.setPower(0);
             }
 
-            if (gamepad2.x) {
+            if (gamepad2.dpad_left){
                 super.robot.winch.setPower(1);
             }
-            else if (gamepad2.a) {
+            else if (gamepad2.dpad_right) {
                 super.robot.winch.setPower(-1);
             }
             else {
@@ -322,17 +325,17 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             super.robot.PivotArm.setPower(ry2*.5);
 
             if (gamepad2.left_bumper){
-                super.robot.claw.setPosition(0);
+                openClaw();
             }
             else if (gamepad2.left_trigger > .3){
-                super.robot.claw.setPosition(.3);
+                closeClaw();
             }
 
             if (gamepad2.right_bumper){
-                super.robot.elbow.setPosition(.8);
+                MovetoPlace();
             }
             else if (gamepad2.right_trigger > .3){
-                super.robot.elbow.setPosition(.5);
+                MovetoGrab();
             }
 
             if (gamepad1.right_bumper && gamepad1.left_bumper){

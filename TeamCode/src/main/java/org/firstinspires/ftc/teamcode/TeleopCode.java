@@ -257,20 +257,20 @@ public class TeleopCode extends Autonomous_Base {
             super.robot.PivotArm.setPower(ry2);
 
             if (gamepad2.left_bumper && lBumperSwap) {
-                super.robot.clawL.setPosition(.7);
+                //super.robot.clawL.setPosition(.7);
                 lBumperSwap = false;
             }
             else if (gamepad2.left_bumper) {
-                super.robot.clawL.setPosition(.3);
+               // super.robot.clawL.setPosition(.3);
                 lBumperSwap = true;
             }
 
             if (gamepad2.right_bumper && rBumperSwap) {
-                super.robot.clawR.setPosition(.7);
+                //super.robot.clawR.setPosition(.7);
                 rBumperSwap = false;
             }
             else if (gamepad2.right_bumper) {
-                super.robot.clawR.setPosition(.3);
+                //super.robot.clawR.setPosition(.3);
                 rBumperSwap = true;
             }
 

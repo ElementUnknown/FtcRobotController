@@ -56,7 +56,6 @@ public class RedSideLeftODS extends Autonomous_Base {
 
         if (read[0] && read[1] && read[2] && read[3]) {
             MoveArm(500, -.5);
-            releaseClawR();
             Move(.5,11,0);
             MoveArm(500,.5);
             Move(.2, 0, 87);
@@ -76,7 +75,6 @@ public class RedSideLeftODS extends Autonomous_Base {
             if (read[0] && read[1] && read[2] && read[3]) {
                 Move(.5,5,0);
                 MoveArm(500,-.5);
-                releaseClawR();
                 Move(.5,6,0);
                 MoveArm(500,.5);
                 Move(.5,0,97);

@@ -491,25 +491,31 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArm.setPower(0);
     }
 
-    public void releaseClawL() {
-        robot.clawL.setPosition(.2);
-        sleep(500);
+    public void closeClaw(){
+        robot.claw.setPosition(.5);
+    }
+    public void openClaw(){
+        robot.claw.setPosition(0);
     }
 
-    public void closeClawL() {
-        robot.clawL.setPosition(0);
-        sleep(500);
-    }
-    public void releaseClawR() {
-        robot.clawR.setPosition(.6);
-        sleep(500);
-    }
+    public void MovetoGrab(){
+        robot.PivotArm.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.PivotArm.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
+        robot.elbow.setPosition(.9);
+        robot.PivotArm.setTargetPosition(10);
+        robot.PivotArm.setPower(1);
+        robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    public void closeClawR() {
-        robot.clawR.setPosition(.8);
-        sleep(500);
     }
-
+    public void MovetoPlace(){
+        robot.PivotArm.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        robot.PivotArm.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
+        robot.PivotArm.setTargetPosition(1500);
+        robot.PivotArm.setPower(1);
+        robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep(200);
+        robot.elbow.setPosition(0);
+    }
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = -robot.angles.firstAngle;

@@ -54,7 +54,6 @@ public class BlueLeft extends Autonomous_Base {
             //TurnByGyro(180,.7,3);
             //Move(.5,3,0);
             //dropPixel();
-            releaseClawL();
             PivotTick(3200, 1);
             sleep(400);
             // Move(.5,15,0);
@@ -74,7 +73,6 @@ public class BlueLeft extends Autonomous_Base {
                 PivotWaitFinish();
                 //Move(.3,0,0);
                 //May bring this back
-                releaseClawL();
                 PivotTick(3200, 1);
                 sleep(200);
                 TurnByGyro(-90,-.7,2);
@@ -94,7 +92,6 @@ public class BlueLeft extends Autonomous_Base {
                 Move(.7,-5.5,7);
                 //PivotWaitFinish();
                 //Move(.3,-,0);
-                releaseClawL();
                 Move(.7,17,0);
                 PivotTick(3200,1);
                 //Move(.7,0,20);
@@ -107,7 +104,6 @@ public class BlueLeft extends Autonomous_Base {
         //Move(.7,-16,0);
         //Move(.9,0,-10);
         // Move(.8,0,28);
-        closeClawL(); //Close left to conserve space on the board
         /*switch(Spike){
             case(0):
                 Move(.5,0,4);
@@ -131,7 +127,7 @@ public class BlueLeft extends Autonomous_Base {
             Move(.5,0,3);
             // Move(.5,-2,0);
         }
-        releaseClawR();
+
         sleep(400);
         Move(.7,4,0); // Move back to allow the pixel to fall
         PivotTick(20,1);//close arm to final position

@@ -111,8 +111,8 @@ public class HardwareMap {
         elbow = hwMap.get(Servo.class, "elbow");
         claw = hwMap.get(Servo.class, "claw");
         Launch = hwMap.get(Servo.class, "Launch");
-        elbow.setPosition(0);
-        claw.setPosition(.8);
+        elbow.setPosition(.2);
+        claw.setPosition(.7);
         Launch.setPosition(1);
         initAngle = angles.firstAngle;
     }

@@ -51,7 +51,6 @@ public class BlueRight extends Autonomous_Base {
             Move(.8, 7, 0);
             PivotWaitFinish();
             Move(.3, -5, 0);
-            releaseClawL();
             PivotTick(200, 1);
             Move(.8, 11, 0);
             sleep(500);
@@ -71,7 +70,6 @@ public class BlueRight extends Autonomous_Base {
                 PivotWaitFinish();
                 //Move(.3,0,0);
                 //May bring this back
-                releaseClawL();
                 PivotTick(200, 1);
                 TurnByGyro(-90, -.8, 2);
                 Move(.8,-12,0);
@@ -90,7 +88,6 @@ public class BlueRight extends Autonomous_Base {
                 PivotWaitFinish();
                 Move(.8, -6.5, -6);
                 //Move(.3,-,0);
-                releaseClawL();
                 PivotTick(100, 1);
 
                 sleep(300);
@@ -105,11 +102,9 @@ public class BlueRight extends Autonomous_Base {
         }
         Move(.9, -75, 0);
         PivotTick(3200,1);
-        closeClawL(); //Close left to conserve space on the board
         LocateTag(.6,-90,1,-20);
         AprilTagNav(.6,-90,Spike,7,0,.5,-1,6000);
         PivotWaitFinish();
-        releaseClawR();
         sleep(100);
         Move(.7, 4, 0); // Move back to allow the pixel to fall
         PivotTick(10, 1);//close arm to final position
