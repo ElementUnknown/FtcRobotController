@@ -188,10 +188,18 @@ public class AutoTests extends Autonomous_Base {
         sleep(5000);*/
         //TurnByGyro(90,.7,2);
         //AprilTagNav(.3,0,8,12,0,.5,-1, 7000);
+        /*super.robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-       Move(.7,30,0);
-        telemetry.update();
-        sleep(1000);
+        super.robot.liftArm.setTargetPosition(-500);
+        super.robot.liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        super.robot.liftArm.setPower(-.7);
+        while(super.robot.liftArm.isBusy()){
+            telemetry.addData("Ticks", super.robot.liftArm.getCurrentPosition());
+            telemetry.update();
+        }
+        super.robot.liftArm.setPower(0);*/
+        //Move(.6,50,0);
+        //Move(.6,-50,0);
+        AprilTagNav(.8,0,5,13,0,.5,-1,10000);
     }
 }

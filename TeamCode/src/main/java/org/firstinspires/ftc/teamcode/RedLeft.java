@@ -43,67 +43,49 @@ public class RedLeft extends Autonomous_Base {
         if (super.robot.USE_WEBCAM)
             setManualExposure(6, 250);
         int Spike;
+        int Case =1;
         waitForStart();
-        Move(.8, -23, 0);
+
+        //MAson do what ever detection Code for the thing here as we start
+        //Move(1, -23, 0);
         //Check if found in center
-        if (checkDistance(10)) {
-            PivotTick(4300, 1);
-            Move(.8, 7, 0);
-            PivotWaitFinish();
-            Move(.3, -5, 0);
-            PivotTick(200, 1);
-            Move(.8, 11, 0);
-            sleep(500);
-            TurnByGyro(85, .8, 2);
-            Move(.8,0,-7.5);
+        if (Case == 1) {
+            Move(1, -48, 0);
+            dropPixel();
+            Move(1.25, -7, 0);
+            TurnByGyro(87,.8,1);
+            Move(1,-75,0);
            // Move(.8,0,3);
-            PivotWaitFinish();
             //Located facing board
             Spike = 5;
-        } else {
-            //if not in the center check the left
-            Move(.8, 2.5, 12);
-            if (checkDistance(10)) {
-                //if in left
-                PivotTick(4300, 1);
-                Move(.8, 10, -1.5);
-                PivotWaitFinish();
-                //Move(.3,0,0);
-                //May bring this back
-                PivotTick(200, 1);
-                TurnByGyro(90, .8, 2);
-                Move(.8,-12,0);
-                horizontalMove(850, .6);
-                PivotWaitFinish();
-                //Move(.8, 0, -13.5);
-                Move(.8,0,6);
-                //finish facing the board
-                Spike = 6;
-            } else {
-                //if not in center or left move to right
+        }
+        if(Case == 3){
 
-                PivotTick(3900, 1);
-                TurnByGyro(85, .8, 3);
-                PivotTick(4300, 1);
-                PivotWaitFinish();
-                Move(.8, -4.75, 6.5);
-                //Move(.3,-,0);
-                PivotTick(100, 1);
-
-                    
-                //Move(.6, 0, -30);
-                Move(.8,0,-12);
-                Move(.8,-7,0);
-                horizontalMove(850, .7);
-                Move(.8,0,5);
-                Spike = 4;
+            Move(1, -45, 6);
+            dropPixel();
+            Move(1,7,0);
+            TurnByGyro(90, .8, 2);
+            Move(1,-90,0);
+            //finish facing the board
+            Spike = 4;
+        }
+        else {
+            //if not in center or left move to right
+            Move(1,-27,0);
+            TurnByGyro(85, .8, 1);
+            Move(1, -29, 0);
+            dropPixel();
+            Move(1, 4, 0);
+            Move(1,0,-30);
+            Move(.8,-90,0);
+            Spike = 6;
                 //finish facing board
             }
-        }
-        Move(.9, -75, 0);
-        PivotTick(3200,1);
-        LocateTag(.6,90,-1,-20);
-        AprilTagNav(.6,90,Spike,7,0,.5,1,6000);
+
+        MovetoPlace();
+
+        Move(1,0,-20);
+        AprilTagNav(.6,getHeading(),Spike,7,0,.5,1,6000);
         sleep(100);
         Move(.7, 4, 0); // Move back to allow the pixel to fall
         PivotTick(10, 1);//close arm to final position

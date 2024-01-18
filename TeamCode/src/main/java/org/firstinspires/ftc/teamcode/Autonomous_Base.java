@@ -68,20 +68,24 @@ public class Autonomous_Base extends LinearOpMode {
 
         double AngleDistance = 0;
         ElapsedTime PidTime = new ElapsedTime();
-        double[] Error = new double[4];
+        double[] Error = {robot.Motor1.getTargetPosition(), robot.Motor2.getTargetPosition(), robot.Motor3.getTargetPosition(), robot.Motor4.getTargetPosition()};
         double[] LastError = {0, 0, 0, 0};
         double[] DeltaError = {0, 0, 0, 0};
         double[] ErrorSum = {0, 0, 0, 0};
 
-        double KP = .0004;
-        double KI = .00;
+        double[] totPower={0,0,0,0};
+        double KP = .00045;
+        double KI = .00015;
         double KD = .00;
 
         PidTime.reset();
-        while ((robot.Motor1.isBusy() && robot.Motor2.isBusy() && robot.Motor3.isBusy() && robot.Motor4.isBusy())) {
+        Time.reset();
+        while (Math.abs(Error[0]) > 1 && Math.abs(Error[1]) > 1 && Math.abs(Error[2]) > 1 && Math.abs(Error[3]) > 1) {
             AngleDistance = getHeading() - InitHeading;
 
-            double accceleratioon_ctl = Math.min(Time.seconds() * 2, 1);
+            double accceleratioon_ctl = Math.min(Time.seconds() * 2.5, 1);
+
+            double applyPower = accceleratioon_ctl * power; //increase power by time for steady acceloration
             if (AngleDistance > 180) AngleDistance = AngleDistance - 360;
             if (AngleDistance <= -180) AngleDistance = AngleDistance + 360;
 
@@ -90,31 +94,32 @@ public class Autonomous_Base extends LinearOpMode {
             Error[2] = (robot.Motor3.getTargetPosition() - robot.Motor3.getCurrentPosition());
             Error[3] = (robot.Motor4.getTargetPosition() - robot.Motor4.getCurrentPosition());
 
-            DeltaError[0] = (Error[0] - LastError[0]) / Time.seconds();
-            DeltaError[1] = (Error[1] - LastError[1]) / Time.seconds();
-            DeltaError[2] = (Error[2] - LastError[2]) / Time.seconds();
-            DeltaError[3] = (Error[3] - LastError[3]) / Time.seconds();
+            DeltaError[0] = (Error[0] - LastError[0]) / PidTime.seconds();
+            DeltaError[1] = (Error[1] - LastError[1]) / PidTime.seconds();
+            DeltaError[2] = (Error[2] - LastError[2]) / PidTime.seconds();
+            DeltaError[3] = (Error[3] - LastError[3]) / PidTime.seconds();
 
-            ErrorSum[0] += Error[0] * Time.seconds();
-            ErrorSum[1] += Error[1] * Time.seconds();
-            ErrorSum[2] += Error[2] * Time.seconds();
-            ErrorSum[3] += Error[3] * Time.seconds();
-
-            //kp[0] = Math.max(Math.min(kp[0], 1) , -1);
-            //kp[1] = Math.max(Math.min(Math.abs(kp[1]), 1), -1);
-            //kp[2] = Math.max(Math.min(Math.abs(kp[2]), 1), -1);
-            //kp[3] = Math.max(Math.min(Math.abs(kp[3]), 1) , -1);
+            ErrorSum[0] += Error[0] * PidTime.seconds();
+            ErrorSum[1] += Error[1] * PidTime.seconds();
+            ErrorSum[2] += Error[2] * PidTime.seconds();
+            ErrorSum[3] += Error[3] * PidTime.seconds();
 
             //Motor1Power = power * accceleratioon_ctl * (kp[0] - (Math.signum(robot.Motor1.getTargetPosition()) * (AngleDistance / 270)));
             //Motor2Power = power * accceleratioon_ctl * (kp[1] + (Math.signum(robot.Motor2.getTargetPosition()) * (AngleDistance / 270)));
             //Motor3Power = power * accceleratioon_ctl * (kp[2] - (Math.signum(robot.Motor3.getTargetPosition()) * (AngleDistance / 270)));
             //Motor4Power = power * accceleratioon_ctl * (kp[3] + (Math.signum(robot.Motor4.getTargetPosition()) * (AngleDistance / 270)));
 
+            // add all factors up and min max them to a -1 to 1 range
+            totPower[0] = Math.max(Math.min(Error[0] * KP + DeltaError[0] * KD + ErrorSum[0] * KI, 1), -1);
+            totPower[1] = Math.max(Math.min(Error[1] * KP + DeltaError[1] * KD + ErrorSum[1] * KI, 1), -1);
+            totPower[2] = Math.max(Math.min(Error[2] * KP + DeltaError[2] * KD + ErrorSum[2] * KI, 1), -1);
+            totPower[3] = Math.max(Math.min(Error[3] * KP + DeltaError[3] * KD + ErrorSum[3] * KI, 1), -1);
 
-            robot.Motor1.setPower(Error[0] * KP + DeltaError[0] * KD + ErrorSum[0] * KI);
-            robot.Motor2.setPower(Error[1] * KP + DeltaError[1] * KD + ErrorSum[1] * KI);
-            robot.Motor3.setPower(Error[2] * KP + DeltaError[2] * KD + ErrorSum[2] * KI);
-            robot.Motor4.setPower(Error[3] * KP + DeltaError[3] * KD + ErrorSum[3] * KI);
+
+            robot.Motor1.setPower((totPower[0] * applyPower));
+            robot.Motor2.setPower((totPower[1] * applyPower));
+            robot.Motor3.setPower((totPower[2] * applyPower));
+            robot.Motor4.setPower((totPower[3] * applyPower));
 
             LastError[0] = Error[0];
             LastError[1] = Error[1];
@@ -122,19 +127,14 @@ public class Autonomous_Base extends LinearOpMode {
             LastError[3] = Error[3];
 
             telemetry.addData("Error 0", Error[0]);
-            telemetry.addData("Error 1", Error[1]);
-            telemetry.addData("Error 2", Error[2]);
-            telemetry.addData("Error 3", Error[3]);
+            telemetry.addData("Error 1", totPower[1]);
+            telemetry.addData("Error 2", Error[2] * KP);
+            telemetry.addData("applied power", applyPower);
+            telemetry.addData("Time", Time.seconds());
+            telemetry.addData("accel", accceleratioon_ctl);
 
             PidTime.reset();
-            //telemetry.addData("M1", kp[0]);
-            //telemetry.addData("M2", kp[1]);
-            //telemetry.addData("M3", kp[2]);
-            //telemetry.addData("M4", kp[3]);
             telemetry.update();
-
-            //All I know is that this really long line of code just calculates the total error between the four motors
-
 
 
         }
@@ -492,29 +492,33 @@ public class Autonomous_Base extends LinearOpMode {
     }
 
     public void closeClaw(){
-        robot.claw.setPosition(.5);
+        robot.claw.setPosition(1);
     }
     public void openClaw(){
-        robot.claw.setPosition(0);
+        robot.claw.setPosition(.6);
     }
 
     public void MovetoGrab(){
-        robot.PivotArm.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-        robot.PivotArm.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
-        robot.elbow.setPosition(.9);
-        robot.PivotArm.setTargetPosition(10);
-        robot.PivotArm.setPower(1);
-        robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.elbow.setPosition(.4);
+        moveLift(0);
+        PivotTick(10,1);
+
+    }
+    public void moveLift(int tick){
+        //robot.liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftArm.setPower(1);
+        robot.liftArm.setTargetPosition(tick);
+        robot.liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
     }
     public void MovetoPlace(){
-        robot.PivotArm.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-        robot.PivotArm.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
-        robot.PivotArm.setTargetPosition(1500);
-        robot.PivotArm.setPower(1);
-        robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        moveLift(1250);
         sleep(200);
-        robot.elbow.setPosition(0);
+        PivotTick(2000,1);
+        sleep(500);
+        robot.elbow.setPosition(1);
     }
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -523,7 +527,13 @@ public class Autonomous_Base extends LinearOpMode {
         while (heading < -180) heading = heading + 360;
         return heading;
     }
-
+    public double getTilt(){
+        robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = robot.angles.secondAngle;
+        while(heading > 180) heading -= 360;
+        while(heading < -180) heading += 360;
+        return heading;
+    }
 
     public void PivotTick(int target, double power){
 
@@ -541,11 +551,14 @@ public class Autonomous_Base extends LinearOpMode {
         robot.PivotArm.setPower(0);
 
     }
-    public void EmergencyCorrectionForward(){
+    public void ANTITIP(){
+        robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.PivotArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("FORWARD TILT CORRECTION", "");
         telemetry.update();
-        //robot.liftArmL.setPower(-1);
-        //robot.liftArmR.setPower(-1);
+        moveLift(1000);
+        PivotTick(0,1);
+        robot.elbow.setPosition(.55); //to the most closed
         robot.Motor1.setPower(.75);
         robot.Motor2.setPower(.75);
         robot.Motor3.setPower(.75);
@@ -677,9 +690,10 @@ public class Autonomous_Base extends LinearOpMode {
     }
     public void dropPixel() {
         robot.intake.setPower(-.7);
-        sleep(1500);
+        sleep(500);
         robot.intake.setPower(0);
     }
+
     public boolean AprilTagNav(double p, double a, int ID, double RyB, double RxB, double Buffer, float BR, int milis){
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -758,8 +772,8 @@ public class Autonomous_Base extends LinearOpMode {
 
                 AprilB =  robot.desiredTag.ftcPose.bearing;
                 AprilYaw = robot.desiredTag.ftcPose.yaw;
-                AprilX = robot.desiredTag.ftcPose.x;
-                AprilY = robot.desiredTag.ftcPose.y;
+                AprilX = robot.desiredTag.ftcPose.range * Math.sin(Math.toRadians(robot.desiredTag.ftcPose.yaw));
+                AprilY = robot.desiredTag.ftcPose.range * Math.cos(Math.toRadians(robot.desiredTag.ftcPose.yaw));
 
                 AprilY -= RyB;
                 AprilX += RxB;
@@ -774,7 +788,7 @@ public class Autonomous_Base extends LinearOpMode {
                 // if it outside of a certain range move using pid and given april dectections
                 if(Math.abs(AprilX) > 1 && Math.abs(AprilYaw) > 5){
                     TurnByGyro(-AprilYaw, -.9*Math.signum(AprilYaw), 3);
-                    Move(.9, -AprilY, AprilX);
+                    Move(1, -AprilY, -AprilX);
                 }
                 else { //if within the range navigate using proporions of dectection values
                     Prop = Math.max(Math.min((AprilY - AprilX)*(KP) , 1), -1);
@@ -897,25 +911,44 @@ public class Autonomous_Base extends LinearOpMode {
             telemetry.addData("Camera", "Waiting");
             telemetry.update();
             while (!isStopRequested() && (robot.visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(10);
+                sleep(5);
             }
             telemetry.addData("Camera", "Ready");
             telemetry.update();
         }
-
+        //if (robot.visionPortal2.getCameraState() != VisionPortal.CameraState.STREAMING) {
+         //   telemetry.addData("Camera", "Waiting");
+         //   telemetry.update();
+         //   while (!isStopRequested() && (robot.visionPortal2.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+         //       sleep(5);
+          //  }
+          //  telemetry.addData("Camera", "Ready");
+          //  telemetry.update();
+        //}
         // Set camera controls unless we are stopping.
         if (!isStopRequested())
         {
             ExposureControl exposureControl = robot.visionPortal.getCameraControl(ExposureControl.class);
+            //ExposureControl exposureControl2 = robot.visionPortal2.getCameraControl(ExposureControl.class);
+
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(20);
+                sleep(10);
             }
+            //if (exposureControl2.getMode() != ExposureControl.Mode.Manual) {
+              //  exposureControl2.setMode(ExposureControl.Mode.Manual);
+                //sleep(10);
+            //}
             exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            //exposureControl2.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+
             sleep(20);
             GainControl gainControl = robot.visionPortal.getCameraControl(GainControl.class);
+            //GainControl gainControl2 = robot.visionPortal2.getCameraControl(GainControl.class);
+
             gainControl.setGain(gain);
-            sleep(20);
+            //gainControl2.setGain(gain);
+            sleep(10);
         }
     }
 

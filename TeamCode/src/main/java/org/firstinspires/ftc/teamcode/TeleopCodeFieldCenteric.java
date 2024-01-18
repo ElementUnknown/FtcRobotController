@@ -98,6 +98,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         super.robot.init(super.hardwareMap);
         super.robot.AprilInit(super.hardwareMap);
 
+
         super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -239,6 +240,8 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             totPower = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
             AngleJ = Math.toDegrees((Math.atan2(-lx, -ly)));
             Pheta = AngleJ - (getHeading() - super.robot.initAngle);
+            if(!opModeIsActive()) break;
+            telemetry.addData("Pivot position", super.robot.PivotArm.getCurrentPosition());
             /*telemetry.addData("Angle of joystick", AngleJ);
             telemetry.addData("Angle of Robot", getHeading());
             telemetry.addData("Angle of adjustment", Pheta);
@@ -319,16 +322,17 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.winch.setPower(0);
             }
 
-            if (Math.abs(ry2) < .1){
+            if (Math.abs(ry2) < .1 ){
                ry2 = 0;
             }
-            super.robot.PivotArm.setPower(ry2*.5);
-
+            if(!gamepad2.right_bumper && gamepad2.right_trigger < .3) {
+                super.robot.PivotArm.setPower(ry2 * .5);
+            }
             if (gamepad2.left_bumper){
-                openClaw();
+                closeClaw();
             }
             else if (gamepad2.left_trigger > .3){
-                closeClaw();
+                openClaw();
             }
 
             if (gamepad2.right_bumper){
@@ -337,98 +341,31 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             else if (gamepad2.right_trigger > .3){
                 MovetoGrab();
             }
+            else {
 
+                super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
             if (gamepad1.right_bumper && gamepad1.left_bumper){
                 super.robot.Launch.setPosition(0);
             }
 
             if (gamepad2.dpad_up) {
+                super.robot.liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 super.robot.liftArm.setPower(1);
             }
             else if (gamepad2.dpad_down) {
+                super.robot.liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 super.robot.liftArm.setPower(-1);
             }
             else {
                 super.robot.liftArm.setPower(0);
             }
-
-            /*if (gamepad2.x && lastButton.equals("X")) {
-                super.robot.Claw.setPosition(.35);
+            if(getTilt() < -72 || super.robot.liftArm.getCurrentPosition() > 1000){
+                TILT.reset();
             }
-            else if (!gamepad2.x && lastButton.equals("X")) {
-                super.robot.Claw.setPosition(.0);
+            if(TILT.milliseconds() > 200){
+                ANTITIP();
             }
-
-            if (gamepad2.y && lastButton.equals("Y")) {
-                super.robot.Claw.setPosition(.0);
-            }
-            else if (!gamepad2.y && lastButton.equals("Y")) {
-                super.robot.Claw.setPosition(.35);
-            }*/
-
-            /*if (gamepad2.dpad_left && ly2 == 0.0) {
-                multiplier = (double)(760 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
-                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
-                if (liftpower > 1){
-                    liftpower =1;
-                }
-                if (liftpower < -1){
-                    liftpower = -1;
-                }
-                super.robot.liftArmR.setPower(liftpower);
-                super.robot.liftArmL.setPower(liftpower);
-            }
-            else if (gamepad2.dpad_up && ly2 == 0.0) {
-                multiplier = (double)(1250 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
-                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
-                if (liftpower > 1){
-                    liftpower =1;
-                }
-                if (liftpower < -1){
-                    liftpower = -1;
-                }
-                super.robot.liftArmR.setPower(liftpower);
-                super.robot.liftArmL.setPower(liftpower);
-            }
-            else if (gamepad2.dpad_right && ly2 == 0.0) {
-                multiplier = (double)(550 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
-                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
-                if (liftpower > 1){
-                    liftpower =1;
-                }
-                if (liftpower < -1){
-                    liftpower = -1;
-                }
-                super.robot.liftArmR.setPower(liftpower);
-                super.robot.liftArmL.setPower(liftpower);
-            }
-            else if (gamepad2.dpad_down && ly2 == 0.0){
-                multiplier = (double)(1 - super.robot.liftArmL.getCurrentPosition()) / 200.0;
-                liftpower = multiplier; //200 is the constant multipication variable, this determines the acceleration at start and stop
-                if (liftpower > 1){
-                    liftpower =1;
-
-                }
-                if (liftpower < -1){
-                    liftpower = -1;
-                }
-                super.robot.liftArmR.setPower(liftpower);
-                super.robot.liftArmL.setPower(liftpower);
-            }
-            super.robot.angles = super.robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            if (super.robot.angles.secondAngle > 10 && TILT.milliseconds() > 150 && super.robot.liftArmL.getCurrentPosition() > 1000){
-                EmergencyCorrectionForward();
-            }
-            if (super.robot.angles.secondAngle < -10 && TILT.milliseconds() > 150 && super.robot.liftArmL.getCurrentPosition() > 1000){
-                EmergencyCorrectionBackwards();
-            }
-            if (Math.abs(super.robot.angles.secondAngle) < 15 ) TILT.reset();
-            telemetry.addData("", super.robot.angles.secondAngle);
-            telemetry.addData("Distance", super.robot.ods.getDistance(DistanceUnit.INCH));
-            if(super.robot.ods.getDistance(DistanceUnit.INCH) < 7){
-                telemetry.addData("Goal Aligned", "");
-            }*/
-
             telemetry.update();
         }
     }

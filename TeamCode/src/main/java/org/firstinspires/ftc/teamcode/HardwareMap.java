@@ -37,8 +37,11 @@ public class HardwareMap {
     public DistanceSensor ods;
     public static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     public int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    public VisionPortal visionPortal;               // Used to manage the video source.
-    public AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    public VisionPortal visionPortal;
+    //public VisionPortal visionPortal2;// Used to manage the video source.
+    public AprilTagProcessor aprilTag;
+    //public AprilTagProcessor aprilTag2;              // Used for managing the AprilTag detection process.
+    // Used for managing the AprilTag detection process.
     public AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
     //public DistanceSensor ods;
@@ -111,8 +114,8 @@ public class HardwareMap {
         elbow = hwMap.get(Servo.class, "elbow");
         claw = hwMap.get(Servo.class, "claw");
         Launch = hwMap.get(Servo.class, "Launch");
-        elbow.setPosition(.2);
-        claw.setPosition(.7);
+        elbow.setPosition(.4);
+        claw.setPosition(1);
         Launch.setPosition(1);
         initAngle = angles.firstAngle;
     }
@@ -121,20 +124,24 @@ public class HardwareMap {
         aprilTag = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .build();
-
+        //aprilTag2 = new AprilTagProcessor.Builder()
+        //        .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+        //        .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
+        //VisionPortal.Builder builder2 = new VisionPortal.Builder();
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
             builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
+            //builder2.setCamera(hwMap.get(WebcamName.class, "Webcam 2"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-
+        //builder2.addProcessor(aprilTag2);
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-
+        //visionPortal2 = builder2.build();
     }
 }
