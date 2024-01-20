@@ -499,26 +499,25 @@ public class Autonomous_Base extends LinearOpMode {
     }
 
     public void MovetoGrab(){
-        robot.elbow.setPosition(.4);
-        moveLift(0);
-        PivotTick(10,1);
+        moveLift(200, 1);
+        PivotTick(0,1);
+        robot.elbow.setPosition(.3);
+
 
     }
-    public void moveLift(int tick){
+    public void moveLift(int tick, double p){
         //robot.liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.liftArm.setPower(1);
+        robot.liftArm.setPower(p);
         robot.liftArm.setTargetPosition(tick);
         robot.liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
     }
     public void MovetoPlace(){
-        moveLift(1250);
-        sleep(200);
-        PivotTick(2000,1);
-        sleep(500);
-        robot.elbow.setPosition(1);
+        moveLift(1500, 1);
+        PivotTick(2200,1);
+        //robot.elbow.setPosition(1);
     }
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -556,13 +555,13 @@ public class Autonomous_Base extends LinearOpMode {
         robot.PivotArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("FORWARD TILT CORRECTION", "");
         telemetry.update();
-        moveLift(1000);
+        moveLift(200, 1);
         PivotTick(0,1);
-        robot.elbow.setPosition(.55); //to the most closed
-        robot.Motor1.setPower(.75);
-        robot.Motor2.setPower(.75);
-        robot.Motor3.setPower(.75);
-        robot.Motor4.setPower(.75);
+        robot.elbow.setPosition(.3); //to the most closed
+        robot.Motor1.setPower(1);
+        robot.Motor2.setPower(1);
+        robot.Motor3.setPower(1);
+        robot.Motor4.setPower(1);
         sleep(350);
         robot.Motor1.setPower(0);
         robot.Motor2.setPower(0);

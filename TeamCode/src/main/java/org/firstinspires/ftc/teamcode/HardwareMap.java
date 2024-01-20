@@ -102,6 +102,7 @@ public class HardwareMap {
         winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         PivotArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -114,7 +115,7 @@ public class HardwareMap {
         elbow = hwMap.get(Servo.class, "elbow");
         claw = hwMap.get(Servo.class, "claw");
         Launch = hwMap.get(Servo.class, "Launch");
-        elbow.setPosition(.4);
+        elbow.setPosition(.35);
         claw.setPosition(1);
         Launch.setPosition(1);
         initAngle = angles.firstAngle;

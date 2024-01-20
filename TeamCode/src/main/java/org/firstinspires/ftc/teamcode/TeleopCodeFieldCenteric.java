@@ -85,6 +85,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         double yaw = 0;
         double Bearing;
         double KP;
+        double rx2;
         int TargetID = -1;
         String lastButton = "None";
         ElapsedTime stickRuntime = new ElapsedTime();
@@ -128,10 +129,12 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             ly = -gamepad1.left_stick_y;
             lx = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
-            ly2 = gamepad2.left_stick_y * -1.0;
+
+            ly2 = gamepad2.right_stick_y;
             ry2 = gamepad2.left_stick_y;
             if (gamepad1.dpad_left) TargetID = 4;
             if (gamepad1.dpad_up) TargetID = 5;
+            if(Math.abs(ly2) < .2) ly2 =0;
             if (gamepad1.dpad_right) TargetID = 6;
             gamepadCheck = (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right);
             if (gamepadCheck) {
@@ -194,15 +197,14 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             else {
                 speedMod = 1*stickMod;
             }
-
-            
+            if(ly2 < 0) super.robot.elbow.setPosition(1);
+            else if(ly2 > .5)super.robot.elbow.setPosition(.6);
+            else if(ly2 > 0) super.robot.elbow.setPosition(.35);
+            //else super.robot.elbow.setPosition(super.robot.elbow.getPosition());
             if (rx > -.2 && rx < .2) {
                 rx = 0;
             }
 
-            if (ly2 > -.2 && ly2 < .2) {
-                ly2 = 0;
-            }
 
 
 
@@ -241,7 +243,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             AngleJ = Math.toDegrees((Math.atan2(-lx, -ly)));
             Pheta = AngleJ - (getHeading() - super.robot.initAngle);
             if(!opModeIsActive()) break;
-            telemetry.addData("Pivot position", super.robot.PivotArm.getCurrentPosition());
+            telemetry.addData("lift position", super.robot.liftArm.getCurrentPosition());
             /*telemetry.addData("Angle of joystick", AngleJ);
             telemetry.addData("Angle of Robot", getHeading());
             telemetry.addData("Angle of adjustment", Pheta);
@@ -326,8 +328,9 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                ry2 = 0;
             }
             if(!gamepad2.right_bumper && gamepad2.right_trigger < .3) {
-                super.robot.PivotArm.setPower(ry2 * .5);
+                super.robot.PivotArm.setPower(ry2 * .75);
             }
+
             if (gamepad2.left_bumper){
                 closeClaw();
             }
@@ -357,13 +360,13 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 super.robot.liftArm.setPower(-1);
             }
-            else {
+            else if(!gamepad2.right_bumper && !(gamepad2.right_trigger > .2)){
                 super.robot.liftArm.setPower(0);
             }
-            if(getTilt() < -72 || super.robot.liftArm.getCurrentPosition() > 1000){
+            if(getTilt() < -72 || super.robot.liftArm.getCurrentPosition() < 1000){
                 TILT.reset();
             }
-            if(TILT.milliseconds() > 200){
+            if(TILT.milliseconds() > 150){
                 ANTITIP();
             }
             telemetry.update();
