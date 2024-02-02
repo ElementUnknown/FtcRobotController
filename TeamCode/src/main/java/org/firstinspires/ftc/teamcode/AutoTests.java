@@ -200,6 +200,10 @@ public class AutoTests extends Autonomous_Base {
         super.robot.liftArm.setPower(0);*/
         //Move(.6,50,0);
         //Move(.6,-50,0);
-        AprilTagNav(.8,0,5,13,0,.5,-1,10000);
+        //AprilTagNav(.8,0,5,13,0,.5,-1,10000);
+        //Move(1,-12,0);
+        //Move(1,0,-30);
+        AprilTagNav(.6,getHeading(),5,12,0,1.5,1,20000);
+
     }
 }

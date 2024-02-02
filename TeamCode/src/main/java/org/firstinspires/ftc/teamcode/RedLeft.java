@@ -31,6 +31,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+
+import java.util.List;
+
 
 @Autonomous(name="RedLeft", group="Robot")
 
@@ -39,58 +43,103 @@ public class RedLeft extends Autonomous_Base {
     public void runOpMode() {
 
         super.robot.init(super.hardwareMap);
+        //super.robot.initTfod(super.hardwareMap);
         super.robot.AprilInit(super.hardwareMap);
-        if (super.robot.USE_WEBCAM)
-            setManualExposure(6, 250);
+        setManualExposure(6, 250);
         int Spike;
-        int Case =1;
+        int Case = 0;
+        boolean found = false;
         waitForStart();
 
         //MAson do what ever detection Code for the thing here as we start
         //Move(1, -23, 0);
         //Check if found in center
-        if (Case == 1) {
-            Move(1, -48, 0);
+        Move(1.25,-16,0);
+        List<Recognition> currentRecognitions;
+        for (int i = 0; i < 10; i++) {
+            currentRecognitions = super.robot.tfod.getRecognitions();
+            if(!currentRecognitions.isEmpty()){
+                Case = 2;
+                found= true;
+                break;
+            }
+            else sleep(75);
+        }
+        if(!found) {
+            Move(1, 0, 14);
+            for (int i = 0; i < 10; i++) {
+                currentRecognitions = super.robot.tfod.getRecognitions();
+                if (!currentRecognitions.isEmpty()) {
+                    Case = 1;
+                    found = true;
+                    break;
+                } else sleep(75);
+            }
+            if (!found) {
+                Case = 3;
+            }
+        }
+
+        telemetry.addData("case", Case);
+        telemetry.addData("was found", found);
+        telemetry.update();
+        //sleep(3000);
+        if(Case == 2){
+            Move(.7, 0, 12);
+            Move(1,-31,0);
+            Move(1,0,-12);
             dropPixel();
-            Move(1.25, -7, 0);
-            TurnByGyro(87,.8,1);
-            Move(1,-75,0);
-           // Move(.8,0,3);
-            //Located facing board
+            Move(1,-5,0);
+            TurnByGyro(85, .8, 2);
+            Move(1,-78,0);
+            //finish facing the board
             Spike = 5;
         }
-        if(Case == 3){
-
-            Move(1, -45, 6);
+        else if(Case == 1){
+            Move(1,0,-12);
+            Move(1,-30.5,0);
+            Move(1,0,13.5);
             dropPixel();
-            Move(1,7,0);
-            TurnByGyro(90, .8, 2);
-            Move(1,-90,0);
-            //finish facing the board
-            Spike = 4;
+            Move(1,-5,0);
+            TurnByGyro(89,.8,2);
+            Move(1,-86,0);
+            Spike =4;
         }
         else {
             //if not in center or left move to right
-            Move(1,-27,0);
-            TurnByGyro(85, .8, 1);
-            Move(1, -29, 0);
+            Move(1,-10.5,0);
+            TurnByGyro(93, .8, 2);
+            Move(1, -32, 0);
             dropPixel();
-            Move(1, 4, 0);
-            Move(1,0,-30);
-            Move(.8,-90,0);
+            Move(1,-3,0);
+            Move(1, 0, 30);
+            TurnByGyro(10,.8,3);
+            //may need to correct with a turn
+            Move(1,-60,0);
             Spike = 6;
                 //finish facing board
             }
+        Move(1,0,-12);
+        PivotTick(3000,1);
+        Move(1,0,-25 - (3*(Spike-5)));
+        super.robot.elbow.setPosition(1);
+        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000)){
+            sleep(100);
+            //Move(.7, -2, 0);
+            sleep(200);
+            super.robot.elbow.setPosition(.3);
+            Move(1,7,0);// Move back to allow the pixel to fall
+            PivotTick(10, 1);//close arm to final position
+            moveLift(0,1);
+            Move(.8, -10, 24);
 
-        MovetoPlace();
-
-        Move(1,0,-20);
-        AprilTagNav(.6,getHeading(),Spike,7,0,.5,1,6000);
-        sleep(100);
-        Move(.7, 4, 0); // Move back to allow the pixel to fall
-        PivotTick(10, 1);//close arm to final position
-        Move(.3, -3, -24);
-        PivotWaitFinish();//final move to park
+            PivotWaitFinish();//final move to park
+        }
+        else{
+            super.robot.elbow.setPosition(.3);
+            PivotWaitFinish();
+        }
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
+        super.robot.visionPortal.close();
     }
 }

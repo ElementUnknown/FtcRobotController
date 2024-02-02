@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -55,17 +56,29 @@ public class TfAutoTest extends Autonomous_Base {
     private VisionPortal visionPortal;
 
     public void runOpMode() {
-
+        ElapsedTime time = new ElapsedTime();
+        boolean found  =false;
         initTfod();
         super.robot.init(super.hardwareMap);
+        setManualExposure(6, 250);
+
         waitForStart();
-        Move(.8, -23, 0);
+        Move(1, -16, 0);
         //Check if found in center
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        while (currentRecognitions.isEmpty()) {
+        time.reset();
+        while (opModeIsActive()) {
             currentRecognitions = tfod.getRecognitions();
+            if(time.milliseconds() > 5500) break;
+            if(!currentRecognitions.isEmpty()){
+                found = true;
+                break;
+            }
         }
-        Move(.5,0,12);
+        telemetry.addData("was found", found);
+        telemetry.addData("detections", currentRecognitions);
+        telemetry.update();
+        sleep(10000);
         visionPortal.close();
     }
 

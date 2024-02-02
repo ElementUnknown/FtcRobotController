@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -74,13 +75,13 @@ public class Autonomous_Base extends LinearOpMode {
         double[] ErrorSum = {0, 0, 0, 0};
 
         double[] totPower={0,0,0,0};
-        double KP = .00045;
-        double KI = .00015;
-        double KD = .00;
+        double KP = .00008;
+        double KI = .0075;
+        double KD = .0003;
 
         PidTime.reset();
         Time.reset();
-        while (Math.abs(Error[0]) > 1 && Math.abs(Error[1]) > 1 && Math.abs(Error[2]) > 1 && Math.abs(Error[3]) > 1) {
+        while (Math.abs(Error[0]) > 4 || Math.abs(Error[1]) > 4 || Math.abs(Error[2]) > 4 || Math.abs(Error[3]) > 4) {
             AngleDistance = getHeading() - InitHeading;
 
             double accceleratioon_ctl = Math.min(Time.seconds() * 2.5, 1);
@@ -116,10 +117,10 @@ public class Autonomous_Base extends LinearOpMode {
             totPower[3] = Math.max(Math.min(Error[3] * KP + DeltaError[3] * KD + ErrorSum[3] * KI, 1), -1);
 
 
-            robot.Motor1.setPower((totPower[0] * applyPower));
-            robot.Motor2.setPower((totPower[1] * applyPower));
-            robot.Motor3.setPower((totPower[2] * applyPower));
-            robot.Motor4.setPower((totPower[3] * applyPower));
+            robot.Motor1.setPower((totPower[0] * applyPower) - (AngleDistance / 120 ));
+            robot.Motor2.setPower((totPower[1] * applyPower) + (AngleDistance / 120 ));
+            robot.Motor3.setPower((totPower[2] * applyPower) - (AngleDistance / 120 ));
+            robot.Motor4.setPower((totPower[3] * applyPower) + (AngleDistance / 120 ));
 
             LastError[0] = Error[0];
             LastError[1] = Error[1];
@@ -491,20 +492,16 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArm.setPower(0);
     }
 
-    public void closeClaw(){
-        robot.claw.setPosition(1);
+    public void closeClawR(){
+        robot.clawR.setPosition(1);
     }
-    public void openClaw(){
-        robot.claw.setPosition(.6);
+    public void openClawR(){
+        robot.clawR.setPosition(0);
     }
-
-    public void MovetoGrab(){
-        moveLift(200, 1);
-        PivotTick(0,1);
-        robot.elbow.setPosition(.3);
+    public void closeClawL(){robot.clawL.setPosition(0);}
+    public void openClawL(){robot.clawL.setPosition(1);}
 
 
-    }
     public void moveLift(int tick, double p){
         //robot.liftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -512,12 +509,6 @@ public class Autonomous_Base extends LinearOpMode {
         robot.liftArm.setTargetPosition(tick);
         robot.liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
-    }
-    public void MovetoPlace(){
-        moveLift(1500, 1);
-        PivotTick(2200,1);
-        //robot.elbow.setPosition(1);
     }
     public double getHeading() {
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -525,6 +516,11 @@ public class Autonomous_Base extends LinearOpMode {
         while (heading > 180) heading = heading - 360;
         while (heading < -180) heading = heading + 360;
         return heading;
+    }
+    public double getArmAngle(){
+        robot.armAccel = robot.armIMU.getGravity();
+        return Math.toDegrees(Math.atan2(-robot.armAccel.zAccel,-robot.armAccel.yAccel));
+
     }
     public double getTilt(){
         robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -712,7 +708,7 @@ public class Autonomous_Base extends LinearOpMode {
         int TimesFound =0;
         double Prop = 0;
         double Prop1 = 0;
-        double KP = .05;
+        double KP = .03;
         double AngleD = getHeading() - a;
 
         if(AngleD > 180) AngleD -= 360;
@@ -766,8 +762,8 @@ public class Autonomous_Base extends LinearOpMode {
             if(targetFound){
                 NotFound.reset();
             }
-
-            Found: if (targetFound) {
+            if(NotFound.milliseconds() > 2500) break Nav;
+            Found: if (NotFound.milliseconds() < 200 && targetFound) {
 
                 AprilB =  robot.desiredTag.ftcPose.bearing;
                 AprilYaw = robot.desiredTag.ftcPose.yaw;
@@ -786,17 +782,21 @@ public class Autonomous_Base extends LinearOpMode {
                 }
                 // if it outside of a certain range move using pid and given april dectections
                 if(Math.abs(AprilX) > 1 && Math.abs(AprilYaw) > 5){
-                    TurnByGyro(-AprilYaw, -.9*Math.signum(AprilYaw), 3);
-                    Move(1, -AprilY, -AprilX);
+                    TurnByGyro(-AprilYaw, -.7*Math.signum(AprilYaw), 3);
+                    Move(.8, -AprilY, -AprilX);
                 }
                 else { //if within the range navigate using proporions of dectection values
+                    robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     Prop = Math.max(Math.min((AprilY - AprilX)*(KP) , 1), -1);
                     Prop1 = Math.max(Math.min((AprilY + AprilX)*(KP), 1), -1);
                     if(Math.abs(Prop) < .2){
-                        KP = Math.signum(Prop) * .2;
+                        Prop = Math.signum(Prop) * .2;
                     }
                     if(Math.abs(Prop1) < .2){
-                        KP = Math.signum(Prop1) * .2;
+                        Prop1 = Math.signum(Prop1) * .2;
                     }
                     robot.Motor1.setPower(Prop - (AprilYaw/150));
                     robot.Motor2.setPower(Prop1 +(AprilYaw/150));
@@ -808,15 +808,26 @@ public class Autonomous_Base extends LinearOpMode {
             
             else {
                 if(SomethingFound){
+                    robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 telemetry.addData(">", "Correct Target Not Found Moving" + Direction);
-                robot.Motor1.setPower(-p*Direction - (AprilYaw/60));
-                robot.Motor2.setPower(p*Direction + (AprilYaw/60));
-                robot.Motor3.setPower(p*Direction -(AprilYaw/60));
-                robot.Motor4.setPower(-p*Direction + (AprilYaw/60));
+                robot.Motor1.setPower(-.3*Direction - (AprilYaw/60));
+                robot.Motor2.setPower(.3*Direction + (AprilYaw/60));
+                robot.Motor3.setPower(.3*Direction - (AprilYaw/60));
+                robot.Motor4.setPower(-.3*Direction + (AprilYaw/60));
                 }
                 else{
                     telemetry.addData(">", "Nothing was Found" + BR);
-
+                    robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.Motor1.setPower(-.5*BR);
+                    robot.Motor2.setPower(.5*BR);
+                    robot.Motor3.setPower(.5*BR);
+                    robot.Motor4.setPower(-.5*BR);
 
                 }
 
@@ -950,7 +961,18 @@ public class Autonomous_Base extends LinearOpMode {
             sleep(10);
         }
     }
+    public boolean checkTFOD(){
+        List<Recognition> currentRecognitions;
+        for (int i = 0; i < 30; i++) {
+            currentRecognitions = robot.tfod.getRecognitions();
+            if (!currentRecognitions.isEmpty()) {
+                return true;
 
+            } else sleep(45);
+        }
+        return false;
+
+    }
     @Override
    public void runOpMode()  {
 
