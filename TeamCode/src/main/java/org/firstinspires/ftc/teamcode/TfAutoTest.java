@@ -47,7 +47,7 @@ public class TfAutoTest extends Autonomous_Base {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    private static final String TFOD_MODEL_ASSET = "balls.tflite";
+    private static final String TFOD_MODEL_ASSET = "ballsmk2.tflite";
     private static final String[] LABELS = {
             "BlueBall",
             "RedBall",
