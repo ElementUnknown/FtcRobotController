@@ -762,7 +762,32 @@ public class Autonomous_Base extends LinearOpMode {
             if(targetFound){
                 NotFound.reset();
             }
-            if(NotFound.milliseconds() > 2500) break Nav;
+
+            if(NotFound.milliseconds() > 2500 || Distance[0] > 500 || Distance[1] > 500){
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                robot.Motor1.setTargetPosition(0);
+                robot.Motor2.setTargetPosition(0);
+                robot.Motor3.setTargetPosition(0);
+                robot.Motor4.setTargetPosition(0);
+
+                robot.Motor1.setPower(.7);
+                robot.Motor2.setPower(.7);
+                robot.Motor3.setPower(.7);
+                robot.Motor4.setPower(.7);
+
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                waitforfinish();
+
+                break Nav;
+            }
             Found: if (NotFound.milliseconds() < 200 && targetFound) {
 
                 AprilB =  robot.desiredTag.ftcPose.bearing;

@@ -54,7 +54,7 @@ public class RedLeft extends Autonomous_Base {
         //MAson do what ever detection Code for the thing here as we start
         //Move(1, -23, 0);
         //Check if found in center
-        Move(1.25,-16,0);
+       /* Move(1.25,-16,0);
         List<Recognition> currentRecognitions;
         for (int i = 0; i < 10; i++) {
             currentRecognitions = super.robot.tfod.getRecognitions();
@@ -78,18 +78,22 @@ public class RedLeft extends Autonomous_Base {
             if (!found) {
                 Case = 3;
             }
-        }
+        }*/
 
         telemetry.addData("case", Case);
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
+        Case =2;
         if(Case == 2){
-            Move(.7, 0, 12);
+            PivotTick(1500,1);
+            Move(.7, -27, 0);
+            PivotWaitFinish();
+            Move(.5,-7,0);
+            //Move(1,0,-12);
+            openClawL();
+            Move(1,4,20);
             Move(1,-31,0);
-            Move(1,0,-12);
-            dropPixel();
-            Move(1,-5,0);
             TurnByGyro(85, .8, 2);
             Move(1,-78,0);
             //finish facing the board
