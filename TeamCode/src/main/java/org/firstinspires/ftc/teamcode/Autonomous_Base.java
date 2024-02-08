@@ -496,10 +496,10 @@ public class Autonomous_Base extends LinearOpMode {
         robot.clawR.setPosition(1);
     }
     public void openClawR(){
-        robot.clawR.setPosition(0);
+        robot.clawR.setPosition(.3);
     }
     public void closeClawL(){robot.clawL.setPosition(0);}
-    public void openClawL(){robot.clawL.setPosition(1);}
+    public void openClawL(){robot.clawL.setPosition(.7);}
 
 
     public void moveLift(int tick, double p){
@@ -543,7 +543,7 @@ public class Autonomous_Base extends LinearOpMode {
         while(robot.PivotArm.isBusy()){
 
         }
-        robot.PivotArm.setPower(0);
+       // robot.PivotArm.setPower(0);
 
     }
     public void ANTITIP(){

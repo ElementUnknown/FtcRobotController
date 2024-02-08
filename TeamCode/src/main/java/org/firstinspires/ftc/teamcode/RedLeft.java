@@ -84,49 +84,58 @@ public class RedLeft extends Autonomous_Base {
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
-        Case =2;
+        Case =3;
         if(Case == 2){
-            PivotTick(1500,1);
-            Move(.7, -27, 0);
+            PivotTick(750,.3);
+            Move(.7, -14, 0);
             PivotWaitFinish();
+            PivotTick(925,.2);
             Move(.5,-7,0);
             //Move(1,0,-12);
             openClawL();
+            sleep(100);
             Move(1,4,20);
-            Move(1,-31,0);
+            Move(1,-33,0);
             TurnByGyro(85, .8, 2);
-            Move(1,-78,0);
+            Move(1,-89,0);
             //finish facing the board
             Spike = 5;
         }
         else if(Case == 1){
-            Move(1,0,-12);
-            Move(1,-30.5,0);
-            Move(1,0,13.5);
-            dropPixel();
-            Move(1,-5,0);
+            PivotTick(750,.3);
+            Move(.8,-3,10.5);
+            PivotWaitFinish();
+            PivotTick(925,.2);
+            Move(.8,-9,0);
+            openClawL();
+            Move(1,0,-11.5);
+            TurnByGyro(-4,-.7,1);
+            Move(1,-36,0);
             TurnByGyro(89,.8,2);
-            Move(1,-86,0);
+            Move(1,-78,0);
             Spike =4;
         }
         else {
             //if not in center or left move to right
-            Move(1,-10.5,0);
-            TurnByGyro(93, .8, 2);
-            Move(1, -32, 0);
-            dropPixel();
-            Move(1,-3,0);
-            Move(1, 0, 30);
-            TurnByGyro(10,.8,3);
+            Move(1,-26,12);
+            PivotTick(750,.3);
+            PivotWaitFinish();
+            TurnByGyro(85, .8, 2);
+            PivotTick(925,.2);
+            Move(1, -4, 0);
+            openClawL();
+            Move(1,12,0);
+            Move(1, 0, 28);
+            TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
-            Move(1,-60,0);
+            Move(1,-86,0);
             Spike = 6;
                 //finish facing board
             }
         Move(1,0,-12);
-        PivotTick(3000,1);
+        PivotTick(600,1);
         Move(1,0,-25 - (3*(Spike-5)));
-        super.robot.elbow.setPosition(1);
+        super.robot.elbow.setPosition(.3);
         if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000)){
             sleep(100);
             //Move(.7, -2, 0);

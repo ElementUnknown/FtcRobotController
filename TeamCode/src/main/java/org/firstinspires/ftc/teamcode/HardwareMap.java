@@ -142,9 +142,9 @@ public class HardwareMap {
         clawR = hwMap.get(Servo.class, "clawR");
         clawL = hwMap.get(Servo.class, "clawL");
         Launch = hwMap.get(Servo.class, "Launch");
-        elbow.setPosition(.3);
-        clawR.setPosition(0);
-        clawL.setPosition(1);
+        elbow.setPosition(.9);
+        clawR.setPosition(1);
+        clawL.setPosition(0);
         Launch.setPosition(1);
         initAngle = angles.firstAngle;
     }
@@ -158,10 +158,10 @@ public class HardwareMap {
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
+                //.setModelAssetName(TFOD_MODEL_ASSET)
                 //.setModelFileName(TFOD_MODEL_FILE)
 
-                .setModelLabels(LABELS)
+                //.setModelLabels(LABELS)
                 //.setIsModelTensorFlow2(true)
                 //.setIsModelQuantized(true)
                 //.setModelInputSize(300)

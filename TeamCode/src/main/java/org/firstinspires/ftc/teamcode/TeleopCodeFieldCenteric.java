@@ -96,7 +96,6 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         ElapsedTime TILT = new ElapsedTime();
         boolean Centric = true;
         boolean DoubleButton = false;
-
         boolean ManualElbow = false;
         boolean XB2 = false;
         super.robot.init(super.hardwareMap);
@@ -108,7 +107,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         super.robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //super.robot.liftArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //super.robot.liftArmL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -119,6 +118,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
         // Wait for the game to start (driver presses PLAY)
         super.robot.PivotArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        super.robot.winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        super.robot.winch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        super.robot.winch.setTargetPosition(0);
+        super.robot.winch.setPower(1);
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
@@ -190,7 +194,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (!leftStickIsActive && !rightstickisactive) {
                 stickRuntime.reset();
             }
-            stickRuntimeMod = Double.max(stickRuntime.seconds() * 1.7, .3);
+            stickRuntimeMod = Double.max(stickRuntime.seconds() * 2.1, .3);
             stickMod = Double.min(stickRuntimeMod, 1);
 
 
@@ -289,7 +293,13 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             telemetry.addData("angledistance", angleDistance);
             telemetry.addData("Leftsitckactive", leftStickIsActive);
             telemetry.addData("RightStickisActive", rightstickisactive); */
+            if (gamepad1.right_trigger > .5){
+                rx = 1.5;
+            }
+            else if (gamepad1.left_trigger > .5){
+                rx = -1.5;
 
+            }
             PowerX = totPower * Math.sin(Math.toRadians(Pheta));
             PowerY = totPower * Math.cos(Math.toRadians(Pheta));
             wheelspeed[0] = rx*.5 + (-PowerY + PowerX - (angleDistance / 90 ));
@@ -319,19 +329,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.Motor4.setPower(wheelspeed[11]);
             }
 
-            if (gamepad1.right_trigger > .5){
-                super.robot.Motor1.setPower(.75);
-                super.robot.Motor2.setPower(-.75);
-                super.robot.Motor3.setPower(.75);
-                super.robot.Motor4.setPower(-.75);
-            }
-            else if (gamepad1.left_trigger > .5){
-                super.robot.Motor1.setPower(-.75);
-                super.robot.Motor2.setPower(.75);
-                super.robot.Motor3.setPower(-.75);
-                super.robot.Motor4.setPower(.75);
 
-            }
 
             if (gamepad2.y) {
                 super.robot.intake.setPower(-1);
@@ -346,13 +344,13 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             }
 
             if (gamepad2.dpad_left){
-                super.robot.winch.setPower(1);
+                super.robot.winch.setPower(super.robot.winch.getCurrentPosition() + 35);
             }
             else if (gamepad2.dpad_right) {
-                super.robot.winch.setPower(-1);
+                super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition() - 35);
             }
             else {
-                super.robot.winch.setPower(0);
+                super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition());
             }
 
             if (Math.abs(ry2) < .1 ){
@@ -383,18 +381,17 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if (gamepad2.dpad_up) {
                 super.robot.liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 super.robot.liftArm.setPower(1);
-                super.robot.winch.setPower(1);
+                super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition() + 35);
             }
             else if (gamepad2.dpad_down) {
                 super.robot.liftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 super.robot.liftArm.setPower(-1);
-                super.robot.winch.setPower(-1);
-
+                super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition() - 35);
             }
             else if(!gamepad2.right_bumper && !(gamepad2.right_trigger > .2)){
                 super.robot.liftArm.setPower(0);
             }
-            if(getTilt() < -72 || super.robot.liftArm.getCurrentPosition() < 1000){
+            if(getTilt() < -72 || super.robot.liftArm.getCurrentPosition() < 1000 || super.robot.winch.isBusy()){
                 TILT.reset();
             }
             if(TILT.milliseconds() > 150){

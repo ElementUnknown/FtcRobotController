@@ -203,8 +203,8 @@ public class AutoTests extends Autonomous_Base {
         //AprilTagNav(.8,0,5,13,0,.5,-1,10000);
         //Move(1,-12,0);
         //Move(1,0,-30);
-        AprilTagNav(.6,getHeading(),5,12,0,1.5,1,20000);
-        //PivotTick(500,1);
-
+        //AprilTagNav(.6,getHeading(),5,12,0,1.5,1,20000);
+        PivotTick(900,1);
+        PivotWaitFinish();;
     }
 }
