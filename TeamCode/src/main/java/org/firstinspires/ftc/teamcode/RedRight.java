@@ -131,7 +131,7 @@ public class RedRight extends Autonomous_Base {
             sleep(200);
             super.robot.elbow.setPosition(.3);
             Move(1,7,0);// Move back to allow the pixel to fall
-            PivotTick(10, 1);//close arm to final position
+            //PivotTick(10, 1);//close arm to final position
             moveLift(0,1);
             Move(.8, -10, 24);
 

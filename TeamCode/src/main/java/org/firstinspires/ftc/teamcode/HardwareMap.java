@@ -55,7 +55,7 @@ public class HardwareMap {
     //public AprilTagProcessor aprilTag2;              // Used for managing the AprilTag detection process.
     // Used for managing the AprilTag detection process.
     public AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-    private static final String TFOD_MODEL_ASSET = "balls.tflite";
+    private static final String TFOD_MODEL_ASSET = "ballsmk2.tflite";
     private static final String[] LABELS = {
             "BlueBall",
             "RedBall",
@@ -158,10 +158,10 @@ public class HardwareMap {
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelAssetName(TFOD_MODEL_ASSET)
                 //.setModelFileName(TFOD_MODEL_FILE)
 
-                //.setModelLabels(LABELS)
+                .setModelLabels(LABELS)
                 //.setIsModelTensorFlow2(true)
                 //.setIsModelQuantized(true)
                 //.setModelInputSize(300)
