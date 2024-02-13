@@ -689,7 +689,7 @@ public class Autonomous_Base extends LinearOpMode {
         robot.intake.setPower(0);
     }
 
-    public boolean AprilTagNav(double p, double a, int ID, double RyB, double RxB, double Buffer, float BR, int milis){
+    public int AprilTagNav(double p, double a, int ID, double RyB, double RxB, double Buffer, int BR, int milis){
         robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -702,19 +702,16 @@ public class Autonomous_Base extends LinearOpMode {
 
         boolean targetFound     = false;
         boolean SomethingFound;
-        double Rx =0;
-        double Ry =0;
+
 
         int TimesFound =0;
-        double Prop = 0;
-        double Prop1 = 0;
-        double KP = .03;
-        double AngleD = getHeading() - a;
 
-        if(AngleD > 180) AngleD -= 360;
-        if(AngleD < -180) AngleD += 360;
+        double KP = .018;
+        double [] Proportion = new double[4];
 
-        float Direction;
+        double AngleD;
+
+        int Direction;
 
         int[] Distance = new int[4];
 
@@ -723,7 +720,8 @@ public class Autonomous_Base extends LinearOpMode {
         ElapsedTime NotFound = new ElapsedTime();
         NotFound.reset();
         Time.reset();
-        Nav: while (opModeIsActive() && Time.milliseconds() < milis){
+        Nav: while (opModeIsActive()){
+
             Distance[0]= robot.Motor1.getCurrentPosition();
             Distance[1]= robot.Motor2.getCurrentPosition();
             Distance[2]= robot.Motor3.getCurrentPosition();
@@ -751,49 +749,25 @@ public class Autonomous_Base extends LinearOpMode {
 
                 }
                 else if (detection.metadata != null) {
-                    Direction = Math.signum(robot.DESIRED_TAG_ID - detection.id);
+                    Direction = (int) Math.signum(robot.DESIRED_TAG_ID - detection.id);
                     SomethingFound =true;
+                    robot.desiredTag = detection;
                 }
                 else {
                     telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
             }
 
-            if(targetFound){
+            if(!targetFound){
                 NotFound.reset();
             }
 
-            if(NotFound.milliseconds() > 2500 || Distance[0] > 500 || Distance[1] > 500){
-                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                robot.Motor1.setTargetPosition(0);
-                robot.Motor2.setTargetPosition(0);
-                robot.Motor3.setTargetPosition(0);
-                robot.Motor4.setTargetPosition(0);
-
-                robot.Motor1.setPower(.7);
-                robot.Motor2.setPower(.7);
-                robot.Motor3.setPower(.7);
-                robot.Motor4.setPower(.7);
-
-                robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                waitforfinish();
-
-                break Nav;
-            }
-            Found: if (NotFound.milliseconds() < 200 && targetFound) {
+            Found: if (NotFound.milliseconds() > 200) {
 
                 AprilB =  robot.desiredTag.ftcPose.bearing;
                 AprilYaw = robot.desiredTag.ftcPose.yaw;
-                AprilX = robot.desiredTag.ftcPose.range * Math.sin(Math.toRadians(robot.desiredTag.ftcPose.yaw));
-                AprilY = robot.desiredTag.ftcPose.range * Math.cos(Math.toRadians(robot.desiredTag.ftcPose.yaw));
+                AprilX = robot.desiredTag.ftcPose.range * Math.sin(Math.toRadians(AprilYaw - AprilB));
+                AprilY = robot.desiredTag.ftcPose.range * Math.cos(Math.toRadians(AprilYaw-AprilB));
 
                 AprilY -= RyB;
                 AprilX += RxB;
@@ -805,32 +779,59 @@ public class Autonomous_Base extends LinearOpMode {
                     robot.Motor4.setPower(0);
                     break Nav;
                 }
+
+                telemetry.addData("Detected X", AprilX);
+                telemetry.addData("detected y", AprilY);
+                telemetry.addData("Detected Yaw", AprilYaw);
+                telemetry.addData("Detected Bearing", AprilB);
+                telemetry.addData("Range", robot.desiredTag.ftcPose.range);
+                telemetry.update();
                 // if it outside of a certain range move using pid and given april dectections
-                if(Math.abs(AprilX) > 1 && Math.abs(AprilYaw) > 5){
+               if(AprilX > 5){
+                   telemetry.addData("Detected X", AprilX);
+                   telemetry.addData("detected y", AprilY);
+                   telemetry.addData("Detected Yaw", AprilYaw);
+                   telemetry.addData("Detected Bearing", AprilB);
+                   telemetry.addData("Range", robot.desiredTag.ftcPose.range);
+                   telemetry.addData("Running pidmove", "");
+                   telemetry.update();
+
+                   robot.Motor1.setPower(0);
+                   robot.Motor2.setPower(0);
+                   robot.Motor3.setPower(0);
+                   robot.Motor4.setPower(0);
+
+                   sleep(1500);
                     TurnByGyro(-AprilYaw, -.7*Math.signum(AprilYaw), 3);
-                    Move(.8, -AprilY, -AprilX);
+                    Move(.6, 0, -AprilX);
                 }
                 else { //if within the range navigate using proporions of dectection values
+
                     robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    Prop = Math.max(Math.min((AprilY - AprilX)*(KP) , 1), -1);
-                    Prop1 = Math.max(Math.min((AprilY + AprilX)*(KP), 1), -1);
-                    if(Math.abs(Prop) < .2){
-                        Prop = Math.signum(Prop) * .2;
+
+                    Proportion[0] = Math.max(Math.min((AprilY - AprilX)*(KP) , .75), -.75)  - (AprilYaw/150);
+                    Proportion[1] = Math.max(Math.min((AprilY + AprilX)*(KP), .75), -.75)  + (AprilYaw/150);
+                    Proportion[2] = Math.max(Math.min((AprilY + AprilX)*(KP), .75), -.75) - (AprilYaw/150);
+                    Proportion[3] = Math.max(Math.min((AprilY - AprilX)*(KP) , .75), -.75) + (AprilYaw/150);
+
+                    for (int i = 0; i < 4; i ++){
+                        if(Math.abs(Proportion[i]) < .15){
+                            Proportion[i] = .15*Math.signum(Proportion[i]);
+                        }
                     }
-                    if(Math.abs(Prop1) < .2){
-                        Prop1 = Math.signum(Prop1) * .2;
-                    }
-                    robot.Motor1.setPower(Prop - (AprilYaw/150));
-                    robot.Motor2.setPower(Prop1 +(AprilYaw/150));
-                    robot.Motor3.setPower(Prop1- (AprilYaw/150));
-                    robot.Motor4.setPower(Prop + (AprilYaw/150));
+
+                    robot.Motor1.setPower(Proportion[0]);
+                    robot.Motor2.setPower(Proportion[1]);
+                    robot.Motor3.setPower(Proportion[2]);
+                    robot.Motor4.setPower(Proportion[3]);
                 }
+
             }
             //if it is not found set to navigate using potentially correct poses while using motor encoders and gyro sensor to adjust the pose as if seen
-            
+
             else {
                 if(SomethingFound){
                     robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -849,26 +850,55 @@ public class Autonomous_Base extends LinearOpMode {
                     robot.Motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.Motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.Motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    robot.Motor1.setPower(-.5*BR);
-                    robot.Motor2.setPower(.5*BR);
-                    robot.Motor3.setPower(.5*BR);
-                    robot.Motor4.setPower(-.5*BR);
+                    robot.Motor1.setPower(-.3*BR);
+                    robot.Motor2.setPower(.3*BR);
+                    robot.Motor3.setPower(.3*BR);
+                    robot.Motor4.setPower(-.3*BR);
 
                 }
 
             }
-            telemetry.addData("Angle Distance", AngleD);
-            telemetry.addData("Current Heading", getHeading());
-            telemetry.addData("TargetFound", targetFound);
-            telemetry.addData("Something Found", SomethingFound);
-            telemetry.addData("RY",Ry);
-            telemetry.addData("Rx", Rx);
+            if(Time.milliseconds() > milis &&
+                    Math.abs(Distance[0]) + Math.abs(Distance[1]) +
+                            Math.abs(Distance[2]) + Math.abs(Distance[3]) <= 6500){
+                return TimesFound;
+            }
+            if(Math.abs(Distance[0]) + Math.abs(Distance[1]) + Math.abs(Distance[2]) + Math.abs(Distance[3]) > 6500){
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+                robot.Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                robot.Motor1.setTargetPosition(0);
+                robot.Motor2.setTargetPosition(0);
+                robot.Motor3.setTargetPosition(0);
+                robot.Motor4.setTargetPosition(0);
+
+                robot.Motor1.setPower(.4);
+                robot.Motor2.setPower(.4);
+                robot.Motor3.setPower(.4);
+                robot.Motor4.setPower(.4);
+
+
+                waitforfinish();
+
+                robot.Motor1.setPower(0);
+                robot.Motor2.setPower(0);
+                robot.Motor3.setPower(0);
+                robot.Motor4.setPower(0);
+
+                return -1;
+            }
             telemetry.update();
         }
         telemetry.addData("Target Was Found", TimesFound);
         telemetry.update();
-        return targetFound;
+        return TimesFound;
     }
     double AprilX = 0;
     double AprilY = 0;

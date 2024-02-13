@@ -50,12 +50,11 @@ public class RedLeft extends Autonomous_Base {
         int Case = 0;
         boolean found = false;
         waitForStart();
-        Move(1,-6,0);
         //MAson do what ever detection Code for the thing here as we start
         //Move(1, -23, 0);
         //Check if found in center
 
-        List<Recognition> currentRecognitions;
+        /*List<Recognition> currentRecognitions;
         for (int i = 0; i < 10; i++) {
             currentRecognitions = super.robot.tfod.getRecognitions();
             if(!currentRecognitions.isEmpty()){
@@ -78,22 +77,23 @@ public class RedLeft extends Autonomous_Base {
             if (!found) {
                 Case = 3;
             }
-        }
-
+        }*/
+        Case = 1;
         telemetry.addData("case", Case);
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
         if(Case == 2){
             PivotTick(750,.3);
-            Move(.7, -14, 0);
+            Move(.7, -13, -3);
             PivotWaitFinish();
-            PivotTick(925,.2);
+            PivotTick(935,.2);
             Move(.5,-7,0);
             //Move(1,0,-12);
             openClawL();
             sleep(100);
-            Move(1,4,20);
+            Move(1,4,16);
+            PivotTick(920,.2);
             Move(1,-33,0);
             TurnByGyro(85, .8, 2);
             Move(1,-89,0);
@@ -102,29 +102,32 @@ public class RedLeft extends Autonomous_Base {
         }
         else if(Case == 1){
             PivotTick(750,.3);
-            Move(.8,-3,10.5);
+            Move(.8,-5,6);
             PivotWaitFinish();
-            PivotTick(925,.2);
-            Move(.8,-9,0);
+            PivotTick(935,.2);
+            Move(.6,-6,0);
             openClawL();
             Move(1,0,-11.5);
+            PivotTick(920,.2);
             TurnByGyro(-4,-.7,1);
             Move(1,-36,0);
             TurnByGyro(89,.8,2);
-            Move(1,-78,0);
+            Move(1,-74,0);
             Spike =4;
         }
         else {
             //if not in center or left move to right
-            Move(1,-26,12);
+            Move(1,-26,8);
             PivotTick(750,.3);
             PivotWaitFinish();
             TurnByGyro(85, .8, 2);
-            PivotTick(925,.2);
+            PivotTick(935,.2);
             Move(1, -4, 0);
             openClawL();
             Move(1,12,0);
-            Move(1, 0, 24);
+            PivotTick(920,.2);
+
+            Move(1, 0, 21);
             TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
             Move(1,-86,0);
@@ -134,12 +137,12 @@ public class RedLeft extends Autonomous_Base {
         Move(1,0,-12);
         PivotTick(600,1);
         Move(1,0,-25 - (3*(Spike-5)));
-        super.robot.elbow.setPosition(.3);
-        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000)){
+       // super.robot.elbow.setPosition(.3);
+        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000) > 45){
             sleep(100);
             //Move(.7, -2, 0);
             sleep(200);
-            super.robot.elbow.setPosition(.3);
+            super.robot.elbow.setPosition(.6);
             Move(1,7,0);// Move back to allow the pixel to fall
            //PivotTick(10, 1);//close arm to final position
             moveLift(0,1);

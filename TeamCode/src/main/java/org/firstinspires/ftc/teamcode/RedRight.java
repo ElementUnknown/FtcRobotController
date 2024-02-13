@@ -125,7 +125,7 @@ public class RedRight extends Autonomous_Base {
         }
         PivotTick(600,1);
         super.robot.elbow.setPosition(.3);
-        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000)){
+        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000) > 45){
             sleep(100);
             //Move(.7, -2, 0);
             sleep(200);

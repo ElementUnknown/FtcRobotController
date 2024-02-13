@@ -91,18 +91,21 @@ public class BlueRight extends Autonomous_Base {
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
-        Case =3;
+        Case =1;
         if(Case == 2){
             PivotTick(750,.3);
-            Move(.7, -14, 0);
+            Move(.7, -14, 3);
             PivotWaitFinish();
             PivotTick(925,.2);
-            Move(.5,-7,0);
+            Move(.5,-6,0);
             //Move(1,0,-12);
-            openClawL();
+            openClawR();
+            super.robot.elbow.setPosition(.8);
             sleep(100);
-            Move(1,4,-20);
+            PivotTick(300,.5);
+            Move(1,3.5,-16);
             Move(1,-33,0);
+            PivotTick(920,.2);
             TurnByGyro(-93, -.8, 2);
             Move(1,-89,0);
             //finish facing the board
@@ -110,44 +113,45 @@ public class BlueRight extends Autonomous_Base {
         }
         else if(Case == 3){
             PivotTick(750,.3);
-            Move(.8,-3,-10.5);
+            Move(.8,-7,-6.5);
             PivotWaitFinish();
             PivotTick(925,.2);
-            Move(.8,-9,0);
-            openClawL();
+            Move(.8,-5,0);
+            openClawR();
+            super.robot.elbow.setPosition(.8);
             Move(1,0,11.5);
-            TurnByGyro(5,.7,1);
+            PivotTick(300,.5);
             Move(1,-36,0);
-            TurnByGyro(-91,-.8,2);
+            PivotTick(920,.2);
+            TurnByGyro(-95,-.8,2);
             Move(1,-78,0);
             Spike =4;
         }
         else {
             //if not in center or left move to right
-            Move(1,-26,-12);
+            Move(1,-26,-8);
             PivotTick(750,.3);
             PivotWaitFinish();
-            TurnByGyro(-91, -.8, 2);
+            TurnByGyro(-93, -.8, 2);
             PivotTick(925,.2);
             Move(1, -4, 0);
-            openClawL();
-            Move(1,12,0);
+            openClawR();
+            super.robot.elbow.setPosition(.8);
+            Move(1,7,0);
             Move(1, 0, -28);
-            TurnByGyro(6,.8,3);
+            TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
-            Move(1,-86,0);
+            Move(1,-91,0);
             Spike = 6;
             //finish facing board
         }
-        Move(1,0,-12);
+        //Move(1,0,-12);
         PivotTick(600,1);
         Move(1,0,25 - (3*(Spike-5)));
-        super.robot.elbow.setPosition(.3);
-        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000)){
+        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,-1,6000) >45){
             sleep(100);
             //Move(.7, -2, 0);
             sleep(200);
-            super.robot.elbow.setPosition(.3);
             Move(1,7,0);// Move back to allow the pixel to fall
             //PivotTick(10, 1);//close arm to final position
             moveLift(0,1);
@@ -156,7 +160,6 @@ public class BlueRight extends Autonomous_Base {
             PivotWaitFinish();//final move to park
         }
         else{
-            super.robot.elbow.setPosition(.3);
             PivotWaitFinish();
         }
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
