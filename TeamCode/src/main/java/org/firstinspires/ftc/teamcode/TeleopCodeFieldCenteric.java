@@ -193,11 +193,12 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 lastButton = "B";
             }
 
-            if (!leftStickIsActive && !rightstickisactive) {
+            /*if (!leftStickIsActive && !rightstickisactive) {
                 stickRuntime.reset();
             }
             stickRuntimeMod = Double.max(stickRuntime.seconds() * 2.1, .3);
-            stickMod = Double.min(stickRuntimeMod, 1);
+            stickMod = Double.min(stickRuntimeMod, 1);*/
+            stickMod = 1;
 
 
             if(!checkDistance(6)) {
@@ -302,10 +303,10 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             telemetry.addData("Leftsitckactive", leftStickIsActive);
             telemetry.addData("RightStickisActive", rightstickisactive); */
             if (gamepad1.right_trigger > .5){
-                rx = 1.5;
+                rx = 2;
             }
             else if (gamepad1.left_trigger > .5){
-                rx = -1.5;
+                rx = -2;
 
             }
             PowerX = totPower * Math.sin(Math.toRadians(Pheta));
