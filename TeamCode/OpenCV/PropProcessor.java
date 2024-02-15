@@ -24,23 +24,31 @@ public class PropProcessor implements VisionProcessor {
 
     private Scalar purpleColor = new Scalar(50,50,3);
 
-    public Scalar blueLower = new Scalar(75.2,53.9,126.2);
-    public Scalar blueUpper = new Scalar(110.9, 207.3, 255.0);
+    public Scalar blueLower = new Scalar(94.9, 85, 43.9);
+    public Scalar blueUpper = new Scalar(106.3, 255.0, 255.0);
 
-    public Scalar redLower = new Scalar(150.1, 85, 84.8);
-    public Scalar redUpper = new Scalar(201.2, 232.5, 255);
+    public Scalar redLower = new Scalar(0, 119, 82.2);
+    public Scalar redUpper = new Scalar(46.8, 255, 255);
 
     public Rect leftROIBox;
     public Rect centerROIBox;
     public Rect rightROIBox;
 
-    public Rect blueBD_redW_LeftROIBox = new Rect(140, 40, 30, 25);
-    public Rect blueBD_redWCenterROIBox = new Rect(395, 45, 30, 25);
-    public Rect blueBD_redWRightROIBox = new Rect(0, 265, 30, 25);
+    public Rect blueLEFT_LeftROIBox = new Rect(130, 340, 230, 210);
+    public Rect blueLEFT_CenterROIBox = new Rect(700, 350, 190, 200);
+    public Rect blueLEFT_RightROIBox = new Rect(900, 690, 5, 5);
 
-    public Rect redBD_blueWLeftROIBox = new Rect(0,265,30,25);
-    public Rect redBD_BlueWCenterROIBox = new Rect(220, 40, 30, 25);
-    public Rect redBD_blueWRightROIBox = new Rect(475, 60, 30, 25);
+    public Rect blueRIGHT_LeftROIBox = new Rect(140, 40, 30, 25);
+    public Rect blueRIGHT_CenterROIBox = new Rect(395, 45, 30, 25);
+    public Rect blueRIGHT_RightROIBox = new Rect(0, 265, 30, 25);
+
+    public Rect redLEFT_LeftROIBox = new Rect(140, 40, 30, 25);
+    public Rect redLEFT_CenterROIBox = new Rect(395, 45, 30, 25);
+    public Rect redLEFT_RightROIBox = new Rect(0, 265, 30, 25);
+
+    public Rect redRIGHT_LeftROIBox = new Rect(0,265,30,25);
+    public Rect redRIGHT_CenterROIBox = new Rect(220, 40, 30, 25);
+    public Rect redRIGHT_RightROIBox = new Rect(475, 60, 30, 25);
 
     public Mat leftMat = new Mat();
     public Mat centerMat = new Mat();
@@ -52,7 +60,7 @@ public class PropProcessor implements VisionProcessor {
 
     public Alliance alliance;
 
-    public boolean tuneBlue = false;
+    public boolean tuneBlue = true;
     public boolean tuneRed = false;
 
     /*public PropProcessor(Alliance alliance) {
@@ -84,9 +92,9 @@ public class PropProcessor implements VisionProcessor {
             Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
             Core.inRange(input, blueLower, blueUpper, input);
 
-            leftROIBox = blueBD_redW_LeftROIBox;
-            centerROIBox = blueBD_redWCenterROIBox;
-            rightROIBox = blueBD_redWRightROIBox;
+            leftROIBox = blueLEFT_LeftROIBox;
+            centerROIBox = blueLEFT_CenterROIBox;
+            rightROIBox = blueLEFT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(input, leftROIBox);
@@ -96,61 +104,61 @@ public class PropProcessor implements VisionProcessor {
             Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
             Core.inRange(input, redLower, redUpper, input);
 
-            leftROIBox = redBD_blueWLeftROIBox;
-            centerROIBox = redBD_BlueWCenterROIBox;
-            rightROIBox = redBD_blueWRightROIBox;
+            leftROIBox = redRIGHT_LeftROIBox;
+            centerROIBox = redRIGHT_CenterROIBox;
+            rightROIBox = redRIGHT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(input, leftROIBox);
             centerMat = new Mat(input, centerROIBox);
             rightMat = new Mat(input, rightROIBox);
-        } else if (alliance == Alliance.BLUE || alliance == Alliance.BLUE_BD) {
+        } else if (alliance == Alliance.BLUE || alliance == Alliance.BLUE_LEFT) {
             //filter to blue
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             Core.inRange(hsv, blueLower, blueUpper, blueThresh);
 
-            leftROIBox = blueBD_redW_LeftROIBox;
-            centerROIBox = blueBD_redWCenterROIBox;
-            rightROIBox = blueBD_redWRightROIBox;
+            leftROIBox = blueLEFT_LeftROIBox;
+            centerROIBox = blueLEFT_CenterROIBox;
+            rightROIBox = blueLEFT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(blueThresh, leftROIBox);
             centerMat = new Mat(blueThresh, centerROIBox);
             rightMat = new Mat(blueThresh, rightROIBox);
-        } else if (alliance == Alliance.BLUE_W) {
+        } else if (alliance == Alliance.BLUE_RIGHT) {
             //filter to blue
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             Core.inRange(hsv, blueLower, blueUpper, blueThresh);
 
-            leftROIBox = redBD_blueWLeftROIBox;
-            centerROIBox = redBD_BlueWCenterROIBox;
-            rightROIBox = redBD_blueWRightROIBox;
+            leftROIBox = blueRIGHT_LeftROIBox;
+            centerROIBox = blueRIGHT_CenterROIBox;
+            rightROIBox = blueRIGHT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(blueThresh, leftROIBox);
             centerMat = new Mat(blueThresh, centerROIBox);
             rightMat = new Mat(blueThresh, rightROIBox);
-        } else if (alliance == Alliance.RED || alliance == Alliance.RED_BD) {
+        } else if (alliance == Alliance.RED || alliance == Alliance.RED_RIGHT) {
             //filter to red
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             Core.inRange(hsv, redLower, redUpper, redThresh);
 
-            leftROIBox = redBD_blueWLeftROIBox;
-            centerROIBox = redBD_BlueWCenterROIBox;
-            rightROIBox = redBD_blueWRightROIBox;
+            leftROIBox = redRIGHT_LeftROIBox;
+            centerROIBox = redRIGHT_CenterROIBox;
+            rightROIBox = redRIGHT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(redThresh, leftROIBox);
             centerMat = new Mat(redThresh, centerROIBox);
             rightMat = new Mat(redThresh, rightROIBox);
-        } else if (alliance == Alliance.RED_W) {
+        } else if (alliance == Alliance.RED_LEFT) {
             //filter to red
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             Core.inRange(hsv, redLower, redUpper, redThresh);
 
-            leftROIBox = blueBD_redW_LeftROIBox;
-            centerROIBox = blueBD_redWCenterROIBox;
-            rightROIBox = blueBD_redWRightROIBox;
+            leftROIBox = redLEFT_LeftROIBox;
+            centerROIBox = redLEFT_CenterROIBox;
+            rightROIBox = redLEFT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(redThresh, leftROIBox);
@@ -268,9 +276,9 @@ public class PropProcessor implements VisionProcessor {
     }
 
     public int getSpike() {
-        if (spike == 0 && (alliance == Alliance.BLUE_BD || alliance == Alliance.RED_W)) {
+        if (spike == 0 && (alliance == Alliance.BLUE_LEFT || alliance == Alliance.RED_LEFT)) {
             return 3;
-        } else if (spike == 0 && (alliance == Alliance.RED_BD || alliance == Alliance.BLUE_W)) {
+        } else if (spike == 0 && (alliance == Alliance.RED_RIGHT || alliance == Alliance.BLUE_RIGHT)) {
             return 1;
         } else {
             return spike;
