@@ -142,7 +142,7 @@ public class HardwareMap {
         clawR = hwMap.get(Servo.class, "clawR");
         clawL = hwMap.get(Servo.class, "clawL");
         Launch = hwMap.get(Servo.class, "Launch");
-        elbow.setPosition(.9);
+        elbow.setPosition(.8);
         clawR.setPosition(1);
         clawL.setPosition(0);
         Launch.setPosition(1);

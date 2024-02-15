@@ -86,7 +86,7 @@ public class BlueRight extends Autonomous_Base {
                 Case = 3;
             }
         }*/
-
+        double Rxb;
         telemetry.addData("case", Case);
         telemetry.addData("was found", found);
         telemetry.update();
@@ -109,7 +109,8 @@ public class BlueRight extends Autonomous_Base {
             TurnByGyro(-93, -.8, 2);
             Move(1,-89,0);
             //finish facing the board
-            Spike = 5;
+            Spike = 2;
+            Rxb = -.5;
         }
         else if(Case == 3){
             PivotTick(750,.3);
@@ -125,12 +126,13 @@ public class BlueRight extends Autonomous_Base {
             PivotTick(920,.2);
             TurnByGyro(-95,-.8,2);
             Move(1,-78,0);
-            Spike =4;
+            Spike =1;
+            Rxb = -1.5;
         }
         else {
             //if not in center or left move to right
-            Move(1,-26,-8);
             PivotTick(750,.3);
+            Move(1,-26,-8);
             PivotWaitFinish();
             TurnByGyro(-93, -.8, 2);
             PivotTick(925,.2);
@@ -138,29 +140,46 @@ public class BlueRight extends Autonomous_Base {
             openClawR();
             super.robot.elbow.setPosition(.8);
             Move(1,7,0);
-            Move(1, 0, -28);
+            Move(1, 0, -27);
             TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
-            Move(1,-91,0);
-            Spike = 6;
+            Move(1,-95,0);
+            Spike = 3;
+            Rxb = -.5;
             //finish facing board
         }
-        //Move(1,0,-12);
-        PivotTick(600,1);
-        Move(1,0,25 - (3*(Spike-5)));
-        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,-1,6000) >45){
+        PivotTick(730,1);
+        super.robot.elbow.setPosition(.6);
+        if(Case == 3){
+        Move(1,0,18);
+        }
+        else {
+            Move(1,0,24);
+        }
+        int Nav = AprilTagNav(.6,getHeading(),Spike,13,Rxb,1,-1,5000);
+        if(Nav >45){
             sleep(100);
-            //Move(.7, -2, 0);
+            Move(.7, -6, 0);
             sleep(200);
+            openClawL();
             Move(1,7,0);// Move back to allow the pixel to fall
-            //PivotTick(10, 1);//close arm to final position
+            PivotTick(75, .2);//close arm to final position
             moveLift(0,1);
-            Move(.8, -10, -24);
+            Move(.8, -10, -22);
 
             PivotWaitFinish();//final move to park
         }
-        else{
+        else if (Nav > 0){
+            openClawL();
+            PivotTick(75,.2);
+            Move(.3,-6,7);
             PivotWaitFinish();
+        }
+        else{
+            openClawL();
+            PivotTick(75,.2);
+            Move(.4,-6,30);
+
         }
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
         super.robot.visionPortal.close();

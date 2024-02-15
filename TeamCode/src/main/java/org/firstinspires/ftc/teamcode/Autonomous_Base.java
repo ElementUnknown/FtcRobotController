@@ -801,7 +801,7 @@ public class Autonomous_Base extends LinearOpMode {
                    robot.Motor3.setPower(0);
                    robot.Motor4.setPower(0);
 
-                   sleep(1500);
+
                     TurnByGyro(-AprilYaw, -.7*Math.signum(AprilYaw), 3);
                     Move(.6, 0, -AprilX);
                 }

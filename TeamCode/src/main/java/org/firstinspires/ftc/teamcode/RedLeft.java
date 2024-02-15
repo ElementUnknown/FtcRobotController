@@ -78,7 +78,8 @@ public class RedLeft extends Autonomous_Base {
                 Case = 3;
             }
         }*/
-        Case = 1;
+        double Rxb;
+        Case = 3;
         telemetry.addData("case", Case);
         telemetry.addData("was found", found);
         telemetry.update();
@@ -87,72 +88,94 @@ public class RedLeft extends Autonomous_Base {
             PivotTick(750,.3);
             Move(.7, -13, -3);
             PivotWaitFinish();
-            PivotTick(935,.2);
+            PivotTick(925,.2);
             Move(.5,-7,0);
             //Move(1,0,-12);
             openClawL();
+            PivotTick(400,.4);
             sleep(100);
+
             Move(1,4,16);
-            PivotTick(920,.2);
-            Move(1,-33,0);
+            Move(1,-31,0);
+            PivotTick(850, .2);
             TurnByGyro(85, .8, 2);
             Move(1,-89,0);
             //finish facing the board
             Spike = 5;
+            Rxb = -.5;
         }
         else if(Case == 1){
             PivotTick(750,.3);
             Move(.8,-5,6);
             PivotWaitFinish();
-            PivotTick(935,.2);
+            PivotTick(915,.2);
             Move(.6,-6,0);
             openClawL();
+            PivotTick(400,.4);
             Move(1,0,-11.5);
-            PivotTick(920,.2);
+
             TurnByGyro(-4,-.7,1);
-            Move(1,-36,0);
-            TurnByGyro(89,.8,2);
+            Move(1,-39.5,0);
+            PivotTick(850,.2);
+            TurnByGyro(87,.8,2);
             Move(1,-74,0);
             Spike =4;
+            Rxb = -1.5;
         }
         else {
             //if not in center or left move to right
-            Move(1,-26,8);
             PivotTick(750,.3);
+            Move(1,-26,8);
             PivotWaitFinish();
             TurnByGyro(85, .8, 2);
-            PivotTick(935,.2);
+            PivotTick(915,.2);
             Move(1, -4, 0);
             openClawL();
+            PivotTick(825,.2);
             Move(1,12,0);
-            PivotTick(920,.2);
 
             Move(1, 0, 21);
             TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
             Move(1,-86,0);
             Spike = 6;
+            Rxb = -.5;
                 //finish facing board
             }
-        Move(1,0,-12);
-        PivotTick(600,1);
-        Move(1,0,-25 - (3*(Spike-5)));
+
+        PivotTick(730,1);
+        super.robot.elbow.setPosition(.6);
+        if(Case == 1){
+        Move(1,0,-18);
+        }
+        else {
+            Move(1,0,-24);
+        }
        // super.robot.elbow.setPosition(.3);
-        if(AprilTagNav(.6,getHeading(),Spike,13,-.5,1,1,6000) > 45){
+        int Nav = AprilTagNav(.6,getHeading(),Spike,11,Rxb,1,1,5000);
+        if(Nav >45){
             sleep(100);
-            //Move(.7, -2, 0);
+            Move(.7, -5, 0);
             sleep(200);
-            super.robot.elbow.setPosition(.6);
+            openClawR();
             Move(1,7,0);// Move back to allow the pixel to fall
-           //PivotTick(10, 1);//close arm to final position
+            PivotTick(75, .2);//close arm to final position
             moveLift(0,1);
-            Move(.8, -10, 24);
+            Move(.8, -10, -24);
 
             PivotWaitFinish();//final move to park
         }
-        else{
-            super.robot.elbow.setPosition(.3);
+        else if (Nav > 0){
+            openClawR();
+            PivotTick(75,.2);
+            Move(.3,-6,7);
             PivotWaitFinish();
+        }
+        else{
+            openClawL();
+            PivotTick(72,.2);
+            Move(.4,-6,30);
+
         }
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
         super.robot.visionPortal.close();
