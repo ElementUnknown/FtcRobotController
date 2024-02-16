@@ -788,20 +788,6 @@ public class Autonomous_Base extends LinearOpMode {
                 telemetry.update();
                 // if it outside of a certain range move using pid and given april dectections
                if(AprilX > 5){
-                   telemetry.addData("Detected X", AprilX);
-                   telemetry.addData("detected y", AprilY);
-                   telemetry.addData("Detected Yaw", AprilYaw);
-                   telemetry.addData("Detected Bearing", AprilB);
-                   telemetry.addData("Range", robot.desiredTag.ftcPose.range);
-                   telemetry.addData("Running pidmove", "");
-                   telemetry.update();
-
-                   robot.Motor1.setPower(0);
-                   robot.Motor2.setPower(0);
-                   robot.Motor3.setPower(0);
-                   robot.Motor4.setPower(0);
-
-
                     TurnByGyro(-AprilYaw, -.7*Math.signum(AprilYaw), 3);
                     Move(.6, 0, -AprilX);
                 }

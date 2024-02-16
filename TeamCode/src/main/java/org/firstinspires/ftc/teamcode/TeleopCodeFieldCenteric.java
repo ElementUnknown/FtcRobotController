@@ -142,8 +142,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
 
             ly2 = gamepad2.right_stick_y;
             ry2 = -gamepad2.left_stick_y;
-            if (gamepad1.dpad_left) TargetID = 4;
-            if (gamepad1.dpad_up) TargetID = 5;
+
 
 
             if(Math.abs(ry2) < .2) ry2 =0;
@@ -151,7 +150,6 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             super.robot.PivotArm.setTargetPosition(PivotTarget);
             super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             super.robot.PivotArm.setPower(1);
-            if (gamepad1.dpad_right) TargetID = 6;
             gamepadCheck = (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right);
             if (gamepadCheck) {
                 telemetry.addData("Checking for tags", "");
@@ -193,12 +191,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 lastButton = "B";
             }
 
-            /*if (!leftStickIsActive && !rightstickisactive) {
+            if (!leftStickIsActive && !rightstickisactive) {
                 stickRuntime.reset();
             }
-            stickRuntimeMod = Double.max(stickRuntime.seconds() * 2.1, .3);
-            stickMod = Double.min(stickRuntimeMod, 1);*/
-            stickMod = 1;
+            stickRuntimeMod = Double.max(stickRuntime.seconds() * 3, .3);
+            stickMod = Double.min(stickRuntimeMod, 1);
 
 
             if(!checkDistance(6)) {
@@ -220,7 +217,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             rightstickisactive = (rx != 0);
             leftStickIsActive = (lx != 0 || ly != 0);
 
-            if (!leftStickIsActive || rightstickisactive) {
+            if (!leftStickIsActive || rightstickisactive || gamepad1.left_trigger > .1 || gamepad1.right_trigger > .1) {
                 initHeading = getHeading();
             }
             if(gamepad1.x && gamepad1.b && !DoubleButton && Centric){
@@ -352,15 +349,15 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.intake.setPower(0);
             }
 
-            if (gamepad2.dpad_left){
+            if (gamepad1.dpad_down){
                 super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition() + 500);
                 winched = true;
             }
-            else if (gamepad2.dpad_right) {
+            else if (gamepad1.dpad_up) {
                 super.robot.winch.setTargetPosition(super.robot.winch.getCurrentPosition() - 500);
                 winched = true;
             }
-            else if(!gamepad2.dpad_up && !gamepad2.dpad_down){
+            else if(!gamepad1.dpad_up && !gamepad2.dpad_down){
                 super.robot.winch.setTargetPosition(super.robot.winch.getTargetPosition()/2 + super.robot.winch.getCurrentPosition()/2);
             }
 

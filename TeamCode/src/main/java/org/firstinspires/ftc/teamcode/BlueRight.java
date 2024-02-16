@@ -91,7 +91,7 @@ public class BlueRight extends Autonomous_Base {
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
-        Case =1;
+        Case =2;
         if(Case == 2){
             PivotTick(750,.3);
             Move(.7, -14, 3);
@@ -103,11 +103,11 @@ public class BlueRight extends Autonomous_Base {
             super.robot.elbow.setPosition(.8);
             sleep(100);
             PivotTick(300,.5);
-            Move(1,3.5,-16);
-            Move(1,-33,0);
+            Move(.7,3.5,-14);
+            Move(.7,-33,0);
             PivotTick(920,.2);
-            TurnByGyro(-93, -.8, 2);
-            Move(1,-89,0);
+            TurnByGyro(-96, -.8, 2);
+            Move(1,-96,0);
             //finish facing the board
             Spike = 2;
             Rxb = -.5;
@@ -143,13 +143,13 @@ public class BlueRight extends Autonomous_Base {
             Move(1, 0, -27);
             TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
-            Move(1,-95,0);
+            Move(1,-98,0);
             Spike = 3;
             Rxb = -.5;
             //finish facing board
         }
-        PivotTick(730,1);
-        super.robot.elbow.setPosition(.6);
+        PivotTick(700,1);
+        super.robot.elbow.setPosition(.7);
         if(Case == 3){
         Move(1,0,18);
         }
@@ -159,13 +159,13 @@ public class BlueRight extends Autonomous_Base {
         int Nav = AprilTagNav(.6,getHeading(),Spike,13,Rxb,1,-1,5000);
         if(Nav >45){
             sleep(100);
-            Move(.7, -6, 0);
+            Move(.7, -5, 0);
             sleep(200);
             openClawL();
             Move(1,7,0);// Move back to allow the pixel to fall
             PivotTick(75, .2);//close arm to final position
             moveLift(0,1);
-            Move(.8, -10, -22);
+            Move(.8, -10, -18);
 
             PivotWaitFinish();//final move to park
         }
