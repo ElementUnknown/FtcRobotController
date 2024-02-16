@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
+import org.firstinspires.ftc.teamcode.opencv.PropProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -154,7 +156,9 @@ public class HardwareMap {
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .build();
 
-        tfod = new TfodProcessor.Builder()
+        PropProcessor propProccesor = new PropProcessor(Alliance.BLUE_RIGHT);
+
+        /*tfod = new TfodProcessor.Builder()
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
@@ -167,7 +171,7 @@ public class HardwareMap {
                 //.setModelInputSize(300)
                 //.setModelAspectRatio(16.0 / 9.0)
 
-                .build();
+                .build();*/
         //aprilTag2 = new AprilTagProcessor.Builder()
         //        .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
         //        .build();
@@ -183,7 +187,7 @@ public class HardwareMap {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        builder.addProcessor(tfod);
+        builder.addProcessor(propProccesor);
         //builder2.addProcessor(aprilTag2);
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();

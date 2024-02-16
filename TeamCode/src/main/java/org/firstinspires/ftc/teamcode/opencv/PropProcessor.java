@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.poofyutils.processors;
+package org.firstinspires.ftc.teamcode.opencv;
 
 import android.graphics.Canvas;
 
@@ -24,8 +24,8 @@ public class PropProcessor implements VisionProcessor {
 
     private Scalar purpleColor = new Scalar(50,50,3);
 
-    public Scalar blueLower = new Scalar(94.9, 85, 43.9);
-    public Scalar blueUpper = new Scalar(106.3, 255.0, 255.0);
+    public Scalar blueLower = new Scalar(94.9, 103.4, 43.9);
+    public Scalar blueUpper = new Scalar(144.5, 255.0, 255.0);
 
     public Scalar redLower = new Scalar(0, 119, 82.2);
     public Scalar redUpper = new Scalar(46.8, 255, 255);
@@ -34,21 +34,21 @@ public class PropProcessor implements VisionProcessor {
     public Rect centerROIBox;
     public Rect rightROIBox;
 
-    public Rect blueLEFT_LeftROIBox = new Rect(130, 340, 230, 210);
-    public Rect blueLEFT_CenterROIBox = new Rect(700, 350, 190, 200);
+    public Rect blueLEFT_LeftROIBox = new Rect(130, 340, 230, 180);
+    public Rect blueLEFT_CenterROIBox = new Rect(700, 350, 190, 165);
     public Rect blueLEFT_RightROIBox = new Rect(900, 690, 5, 5);
 
-    public Rect blueRIGHT_LeftROIBox = new Rect(140, 40, 30, 25);
-    public Rect blueRIGHT_CenterROIBox = new Rect(395, 45, 30, 25);
-    public Rect blueRIGHT_RightROIBox = new Rect(0, 265, 30, 25);
+    public Rect blueRIGHT_LeftROIBox = new Rect(900, 690, 5, 5);
+    public Rect blueRIGHT_CenterROIBox = new Rect(390, 340, 180, 160);
+    public Rect blueRIGHT_RightROIBox = new Rect(960, 350, 240, 160);
 
-    public Rect redLEFT_LeftROIBox = new Rect(140, 40, 30, 25);
-    public Rect redLEFT_CenterROIBox = new Rect(395, 45, 30, 25);
-    public Rect redLEFT_RightROIBox = new Rect(0, 265, 30, 25);
+    public Rect redLEFT_LeftROIBox = new Rect(130, 340, 260, 200);
+    public Rect redLEFT_CenterROIBox = new Rect(680, 350, 200, 170);
+    public Rect redLEFT_RightROIBox = new Rect(900, 690, 5, 5);
 
-    public Rect redRIGHT_LeftROIBox = new Rect(0,265,30,25);
-    public Rect redRIGHT_CenterROIBox = new Rect(220, 40, 30, 25);
-    public Rect redRIGHT_RightROIBox = new Rect(475, 60, 30, 25);
+    public Rect redRIGHT_LeftROIBox = new Rect(900, 690, 5, 5);
+    public Rect redRIGHT_CenterROIBox = new Rect(430, 350, 180, 160);
+    public Rect redRIGHT_RightROIBox = new Rect(920, 360, 230, 180);
 
     public Mat leftMat = new Mat();
     public Mat centerMat = new Mat();
@@ -60,22 +60,22 @@ public class PropProcessor implements VisionProcessor {
 
     public Alliance alliance;
 
-    public boolean tuneBlue = true;
+    public boolean tuneBlue = false;
     public boolean tuneRed = false;
 
-    /*public PropProcessor(Alliance alliance) {
+    public PropProcessor(Alliance alliance) {
         this.alliance = alliance;
-    }*/
+    }
 
-    public PropProcessor() {
+    /*public PropProcessor() {
         if (tuneBlue) {
-            this.alliance = Alliance.BLUE;
+            this.alliance = Alliance.BLUE_RIGHT;
         } else if (tuneRed) {
             this.alliance = Alliance.RED;
         } else {
             this.alliance = Alliance.BLUE;
         }
-    }
+    }*/
 
 
     @Override
@@ -92,9 +92,9 @@ public class PropProcessor implements VisionProcessor {
             Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
             Core.inRange(input, blueLower, blueUpper, input);
 
-            leftROIBox = blueLEFT_LeftROIBox;
-            centerROIBox = blueLEFT_CenterROIBox;
-            rightROIBox = blueLEFT_RightROIBox;
+            leftROIBox = blueRIGHT_LeftROIBox;
+            centerROIBox = blueRIGHT_CenterROIBox;
+            rightROIBox = blueRIGHT_RightROIBox;
 
             //create ROIs
             leftMat = new Mat(input, leftROIBox);
