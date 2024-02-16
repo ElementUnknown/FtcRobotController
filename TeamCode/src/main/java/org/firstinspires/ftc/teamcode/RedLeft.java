@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
 
 import java.util.List;
 
@@ -44,13 +45,17 @@ public class RedLeft extends Autonomous_Base {
 
         super.robot.init(super.hardwareMap);
         //super.robot.initTfod(super.hardwareMap);
-        super.robot.AprilInit(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap, Alliance.RED_LEFT);
         setManualExposure(6, 250);
         int Spike;
-        int Case = 0;
+        int Case = super.robot.getSpike();
         boolean found = false;
         waitForStart();
-        //MAson do what ever detection Code for the thing here as we start
+        telemetry.addData("Spike", Case);
+        telemetry.update();
+        sleep(1000);
+        //MAson do what
+        // ever detection Code for the thing here as we start
         //Move(1, -23, 0);
         //Check if found in center
 
@@ -79,7 +84,7 @@ public class RedLeft extends Autonomous_Base {
             }
         }*/
         double Rxb;
-        Case = 3;
+
         telemetry.addData("case", Case);
         telemetry.addData("was found", found);
         telemetry.update();
@@ -134,8 +139,8 @@ public class RedLeft extends Autonomous_Base {
             PivotTick(825,.2);
             Move(1,12,0);
 
-            Move(1, 0, 21);
-            TurnByGyro(-6,-.8,3);
+            Move(1, 0, 23);
+            TurnByGyro(-8,-.8,3);
             //may need to correct with a turn
             Move(1,-86,0);
             Spike = 6;

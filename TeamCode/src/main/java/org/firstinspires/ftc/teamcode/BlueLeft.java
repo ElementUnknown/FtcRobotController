@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
+
 
 @Autonomous(name="BlueLeft", group="Robot")
 
@@ -39,7 +41,7 @@ public class BlueLeft extends Autonomous_Base {
     public void runOpMode() {
 
         super.robot.init(super.hardwareMap);
-        super.robot.AprilInit(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap, Alliance.BLUE_LEFT);
         int Spike;
         if (super.robot.USE_WEBCAM)
             setManualExposure(6, 250);

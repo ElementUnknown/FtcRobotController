@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -101,7 +102,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         boolean ManualElbow = true;
         boolean XB2 = false;
         super.robot.init(super.hardwareMap);
-        super.robot.AprilInit(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap, Alliance.RED_LEFT);
 
 
         super.robot.Motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -124,6 +125,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
         super.robot.winch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         super.robot.winch.setTargetPosition(0);
         super.robot.winch.setPower(1);
+        setManualExposure(6, 250);
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
@@ -398,8 +400,11 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
                 super.robot.winch.setTargetPosition(super.robot.winch.getTargetPosition() - 1000);
                 winched = false;
             }
-            else if(!gamepad2.right_bumper && !(gamepad2.right_trigger > .2)){
-                super.robot.liftArm.setPower(0);
+            else{
+                super.robot.liftArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                super.robot.liftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                super.robot.liftArm.setTargetPosition(super.robot.liftArm.getCurrentPosition());
+                super.robot.liftArm.setPower(1);
             }
             if(getTilt() < -72 || Math.abs(super.robot.liftArm.getCurrentPosition()) < 1000 || super.robot.winch.isBusy()){
                 TILT.reset();
@@ -407,6 +412,8 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             if(TILT.milliseconds() > 150 && !winched){
                 ANTITIP();
             }
+
+            //telemetry.addData("Spike:", super.robot.getSpike());
             telemetry.update();
         }
     }

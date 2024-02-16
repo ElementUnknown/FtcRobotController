@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
+
 
 @Autonomous(name="RedRight", group="Robot")
 
@@ -40,10 +42,10 @@ public class RedRight extends Autonomous_Base {
 
         super.robot.init(super.hardwareMap);
         //super.robot.initTfod(super.hardwareMap);
-        super.robot.AprilInit(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap, Alliance.RED_RIGHT);
         setManualExposure(6, 250);
         int Spike;
-        int Case = 0;
+        int Case = robot.getSpike();
         boolean found = false;
         waitForStart();
 
@@ -80,7 +82,7 @@ public class RedRight extends Autonomous_Base {
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
-        Case =3;
+
         if(Case == 2){
             PivotTick(750,.3);
             Move(.7, -14, 0);

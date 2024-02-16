@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.opencv.PropProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -1014,8 +1015,35 @@ public class Autonomous_Base extends LinearOpMode {
         return false;
 
     }
-    @Override
-   public void runOpMode()  {
 
-   }
+    /*public int getSpike() {
+        ArrayList<Integer> checks = new ArrayList<Integer>();
+        int[] counts = {0, 0, 0};
+        int spike = 0;
+        for (int i = 0; i < 10; i++) {
+            checks.add(robot.getSpike());
+            sleep(10);
+        }
+
+        for (int j = 0; j < 3; j++) {
+            for (int n : checks) {
+                if (n == j+1) {
+                    counts[j]++;
+                }
+            }
+        }
+
+        for (int k = 0; k < 3; k++) {
+            if (counts[k] > spike) {
+                spike = k+1;
+            }
+        }
+
+        return spike;
+    }*/
+
+    @Override
+    public void runOpMode() {
+
+    }
 }

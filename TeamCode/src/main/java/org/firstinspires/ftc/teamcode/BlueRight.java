@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.opencv.Alliance;
+import org.firstinspires.ftc.teamcode.opencv.PropProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -51,11 +53,12 @@ public class BlueRight extends Autonomous_Base {
 
         super.robot.init(super.hardwareMap);
         //super.robot.initTfod(super.hardwareMap);
-        super.robot.AprilInit(super.hardwareMap);
+        super.robot.AprilInit(super.hardwareMap, Alliance.BLUE_RIGHT);
         setManualExposure(6, 250);
         int Spike;
-        int Case = 0;
+        int Case = robot.getSpike();
         boolean found = false;
+
         waitForStart();
 
         //MAson do what ever detection Code for the thing here as we start
@@ -91,7 +94,7 @@ public class BlueRight extends Autonomous_Base {
         telemetry.addData("was found", found);
         telemetry.update();
         //sleep(3000);
-        Case =2;
+
         if(Case == 2){
             PivotTick(750,.3);
             Move(.7, -14, 3);

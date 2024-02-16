@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+
+
+import android.util.Size;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,6 +29,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HardwareMap {
@@ -63,6 +68,8 @@ public class HardwareMap {
             "RedBall",
     };
     public TfodProcessor tfod;
+
+    PropProcessor propProccesor;
 
     //public DistanceSensor ods;
     /* local OpMode members. */
@@ -150,13 +157,13 @@ public class HardwareMap {
         Launch.setPosition(1);
         initAngle = angles.firstAngle;
     }
-    public void AprilInit(com.qualcomm.robotcore.hardware.HardwareMap ahwMap) {
+    public void AprilInit(com.qualcomm.robotcore.hardware.HardwareMap ahwMap, Alliance a) {
         hwMap = ahwMap;
         aprilTag = new AprilTagProcessor.Builder()
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .build();
 
-        PropProcessor propProccesor = new PropProcessor(Alliance.BLUE_RIGHT);
+        propProccesor = new PropProcessor(a);
 
         /*tfod = new TfodProcessor.Builder()
 
@@ -188,6 +195,7 @@ public class HardwareMap {
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
         builder.addProcessor(propProccesor);
+        builder.setCameraResolution(new Size(1280, 720));
         //builder2.addProcessor(aprilTag2);
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -266,5 +274,9 @@ public class HardwareMap {
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
 
+    }
+
+    public int getSpike() {
+        return propProccesor.getSpike();
     }
 }
