@@ -153,36 +153,7 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             super.robot.PivotArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             super.robot.PivotArm.setPower(1);
             gamepadCheck = (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right);
-            if (gamepadCheck) {
-                telemetry.addData("Checking for tags", "");
-                List<AprilTagDetection> currentDetections = super.robot.aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    if ((detection.metadata != null) &&
-                            ((detection.id == TargetID - 3) || (detection.id == TargetID))) {
-                        targetFound = true;
-                        super.robot.desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-                    }
-                }
-            }
-            if (targetFound) {
-                yaw = super.robot.desiredTag.ftcPose.yaw;
-                ARX = super.robot.desiredTag.ftcPose.x;
-                ARY = super.robot.desiredTag.ftcPose.y -7;
-                Bearing = super.robot.desiredTag.ftcPose.bearing;
-                KP = Math.abs(ARX) + Math.abs(ARY);
-                KP = Math.max(12,KP);
 
-
-            } else {
-                ARX = 0;
-                ARY = 0;
-                yaw = 0;
-                Bearing =0;
-                KP = 10;
-            }
             if (gamepad2.x) {
                 lastButton = "X";
             } else if (gamepad2.y) {
@@ -314,28 +285,12 @@ public class TeleopCodeFieldCenteric extends Autonomous_Base {
             wheelspeed[1] = -rx*.5 + (-PowerY - PowerX + (angleDistance / 90 ));
             wheelspeed[2] = rx*.5 + (-PowerY - PowerX - (angleDistance / 90 ));
             wheelspeed[3] = -rx*.5 + (-PowerY + PowerX + (angleDistance / 90 ));
-            wheelspeed[8] = .4*((ARY - ARX)/KP) - ((Bearing) / 90 ) - (yaw / 150);
-            wheelspeed[9] = .4*((ARY + ARX)/KP) + ((Bearing) / 90) + (yaw / 150);
-            wheelspeed[10] = .4*((ARY + ARX)/KP) - ((Bearing) / 90) - (yaw / 150);
-            wheelspeed[11] = .4*((ARY - ARX)/KP) + ((Bearing) / 90) + (yaw / 150);
 
-            /*wheelspeed[4] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
-            wheelspeed[5] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);
-            wheelspeed[6] = rx*.5 + (-PowerY*lyModifier - PowerX*lxModifier);
-            wheelspeed[7] = -rx*.5 + (-PowerY*lyModifier + PowerX*lxModifier);*/
 
-            if(!gamepadCheck || !targetFound) {
-                super.robot.Motor1.setPower(speedMod * wheelspeed[0]);
-                super.robot.Motor2.setPower(speedMod * wheelspeed[1]);
-                super.robot.Motor3.setPower(speedMod * wheelspeed[2]);
-                super.robot.Motor4.setPower(speedMod * wheelspeed[3]);
-            }
-            else{
-                super.robot.Motor1.setPower(wheelspeed[8]);
-                super.robot.Motor2.setPower(wheelspeed[9]);
-                super.robot.Motor3.setPower(wheelspeed[10]);
-                super.robot.Motor4.setPower(wheelspeed[11]);
-            }
+            super.robot.Motor1.setPower(speedMod * wheelspeed[0]);
+            super.robot.Motor2.setPower(speedMod * wheelspeed[1]);
+            super.robot.Motor3.setPower(speedMod * wheelspeed[2]);
+            super.robot.Motor4.setPower(speedMod * wheelspeed[3]);
 
 
 

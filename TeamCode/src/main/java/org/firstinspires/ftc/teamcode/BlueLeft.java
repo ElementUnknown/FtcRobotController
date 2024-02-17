@@ -43,98 +43,98 @@ public class BlueLeft extends Autonomous_Base {
         super.robot.init(super.hardwareMap);
         super.robot.AprilInit(super.hardwareMap, Alliance.BLUE_LEFT);
         int Spike;
-        if (super.robot.USE_WEBCAM)
-            setManualExposure(6, 250);
+        int Case;
+        setManualExposure(6, 250);
+
         waitForStart();
-        Move(.7,-23,0);
-        //Check if found in center
-        if(checkDistance(10)){
-            PivotTick(4300, 1 );
-            Move(.8,7,0);
+        Case = super.robot.getSpike();
+        telemetry.addData("Spike", Case);
+        telemetry.update();
+        sleep(1000);
+        double Rxb;
+        if(Case == 2){
+            PivotTick(750,.3);
+            Move(.7, -14, -3);
             PivotWaitFinish();
-            Move(.3,-5,0);
-            //TurnByGyro(180,.7,3);
-            //Move(.5,3,0);
-            //dropPixel();
-            PivotTick(3200, 1);
-            sleep(400);
-            // Move(.5,15,0);
-            TurnByGyro(-85,-.7,2);
-            Move(.8,-21,0);
-            PivotWaitFinish();
-            //Located facing board
+            PivotTick(925,.2);
+            Move(.5,-6,0);
+            //Move(1,0,-12);
+            openClawR();
+            super.robot.elbow.setPosition(.8);
+            PivotTick(600,.5);
+            Move(.7,3.5,0);
+            TurnByGyro(-93,-.7,2);
+            Move(1,-20,0);
+            //finish facing the board
             Spike = 2;
+            Rxb = -.5;
+        }
+        else if(Case == 1){
+            PivotTick(750,.3);
+            Move(.8,-5,6);
+            PivotWaitFinish();
+            PivotTick(915,.2);
+            Move(.6,-6,0);
+            openClawL();
+            PivotTick(600,.4);
+            //Move(1,0,-11.5);
+            TurnByGyro(-93,-.7,1);
+            Move(1,-20,0);
+            Move(.7,0,-7);
+            Spike =1;
+            Rxb = -1.5;
         }
         else {
-            //if not in the center check the left
-            Move(.7,3.5,12);
-            if(checkDistance(10)){
-                //if in left
-                PivotTick(4300, 1);
-                Move(.7,9,-1.5);
-                PivotWaitFinish();
-                //Move(.3,0,0);
-                //May bring this back
-                PivotTick(3200, 1);
-                sleep(200);
-                TurnByGyro(-90,-.7,2);
-                Move(.8,-15,0);
-                Move(.8,0,-7);
-                PivotWaitFinish();
-                //finish facing the board
-                Spike = 1;
-            }
-            else {
-                //if not in center or left move to right
-
-                PivotTick(3900, 1);
-                TurnByGyro(90,.7,3);
-                PivotTick(  4300, 1);
-                PivotWaitFinish();
-                Move(.7,-5.5,7);
-                //PivotWaitFinish();
-                //Move(.3,-,0);
-                Move(.7,17,0);
-                PivotTick(3200,1);
-                //Move(.7,0,20);
-
-                TurnByGyro(180,-.7,2);
-                Spike = 3;
-                //finish facing board
-            }
-        }
-        //Move(.7,-16,0);
-        //Move(.9,0,-10);
-        // Move(.8,0,28);
-        /*switch(Spike){
-            case(0):
-                Move(.5,0,4);
-                //Move left and amount
-                break;
-            case(1):
-                Move(.7,-16,0);
-                break;
-            case(2):
-                Move(.5,0,-6);
-                //Move right an amount
-                break;
-        }
-        Move(.5,-2.5,0);
-        sleep(500);//move to board*/
-        //double ry = 7;
-        //if(Spike == 3) ry = 9;
-        LocateTag(.6,-90,1,12);
-        AprilTagNav(.6,-90,Spike,7,0,1,-1,5000);
-        if(Spike == 3){
-            Move(.5,0,3);
-            // Move(.5,-2,0);
+            //if not in center or left move to right
+            PivotTick(750,.3);
+            Move(1,-26,8);
+            PivotWaitFinish();
+            TurnByGyro(-85, -.8, 2);
+            PivotTick(915,.2);
+            Move(1, -4, 0);
+            openClawL();
+            PivotTick(825,.2);
+            Move(1,12,0);
+            TurnByGyro(-180,-.8,3);
+            Move(1,-20,0);
+            Spike = 3;
+            Rxb = -.5;
+            //finish facing board
         }
 
-        sleep(400);
-        Move(.7,4,0); // Move back to allow the pixel to fall
-        PivotTick(20,1);//close arm to final position
-        Move(.6,-3,29);
-        PivotWaitFinish();//final move to park
+        PivotTick(700,1);
+        super.robot.elbow.setPosition(.7);
+        if(Case == 3){
+            Move(1,0,18);
+        }
+        else {
+            Move(1,0,24);
+        }
+        int Nav = AprilTagNav(.6,getHeading(),Spike,13,Rxb,1,-1,4000);
+        if(Nav >45){
+            sleep(100);
+            Move(.7, -5, 0);
+            openClawL();
+            Move(1,7,0);// Move back to allow the pixel to fall
+            PivotTick(75, .2);//close arm to final position
+            moveLift(0,1);
+            Move(.8, -10, 18);
+
+            PivotWaitFinish();//final move to park
+        }
+        else if (Nav > 0){
+            openClawL();
+            PivotTick(75,.2);
+            Move(.3,-6,7);
+            PivotWaitFinish();
+        }
+        else{
+            openClawL();
+            PivotTick(75,.2);
+            Move(.4,-6,30);
+
+        }
+        super.robot.visionPortal.close();
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
     }
 }

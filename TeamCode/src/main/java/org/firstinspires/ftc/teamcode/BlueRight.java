@@ -56,44 +56,16 @@ public class BlueRight extends Autonomous_Base {
         super.robot.AprilInit(super.hardwareMap, Alliance.BLUE_RIGHT);
         setManualExposure(6, 250);
         int Spike;
-        int Case = robot.getSpike();
-        boolean found = false;
+        int Case;
 
         waitForStart();
-
-        //MAson do what ever detection Code for the thing here as we start
-        //Move(1, -23, 0);
-        //Check if found in center
-       /* Move(1.25,-16,0);
-        List<Recognition> currentRecognitions;
-        for (int i = 0; i < 10; i++) {
-            currentRecognitions = super.robot.tfod.getRecognitions();
-            if(!currentRecognitions.isEmpty()){
-                Case = 2;
-                found= true;
-                break;
-            }
-            else sleep(75);
-        }
-        if(!found) {
-            Move(1, 0, 14);
-            for (int i = 0; i < 10; i++) {
-                currentRecognitions = super.robot.tfod.getRecognitions();
-                if (!currentRecognitions.isEmpty()) {
-                    Case = 1;
-                    found = true;
-                    break;
-                } else sleep(75);
-            }
-            if (!found) {
-                Case = 3;
-            }
-        }*/
-        double Rxb;
-        telemetry.addData("case", Case);
-        telemetry.addData("was found", found);
+        sleep(200);
+        Case = super.robot.getSpike();
+        telemetry.addData("Spike", Case);
         telemetry.update();
-        //sleep(3000);
+        sleep(1000);
+
+        double Rxb;
 
         if(Case == 2){
             PivotTick(750,.3);
@@ -129,7 +101,7 @@ public class BlueRight extends Autonomous_Base {
             PivotTick(920,.2);
             TurnByGyro(-95,-.8,2);
             Move(1,-78,0);
-            Spike =1;
+            Spike =3;
             Rxb = -1.5;
         }
         else {
@@ -147,7 +119,7 @@ public class BlueRight extends Autonomous_Base {
             TurnByGyro(-6,-.8,3);
             //may need to correct with a turn
             Move(1,-98,0);
-            Spike = 3;
+            Spike = 1;
             Rxb = -.5;
             //finish facing board
         }

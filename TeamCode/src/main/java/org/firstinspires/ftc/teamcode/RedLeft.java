@@ -48,47 +48,17 @@ public class RedLeft extends Autonomous_Base {
         super.robot.AprilInit(super.hardwareMap, Alliance.RED_LEFT);
         setManualExposure(6, 250);
         int Spike;
-        int Case = super.robot.getSpike();
+
         boolean found = false;
         waitForStart();
+        sleep(200);
+        int Case = super.robot.getSpike();
         telemetry.addData("Spike", Case);
         telemetry.update();
         sleep(1000);
-        //MAson do what
-        // ever detection Code for the thing here as we start
-        //Move(1, -23, 0);
-        //Check if found in center
 
-        /*List<Recognition> currentRecognitions;
-        for (int i = 0; i < 10; i++) {
-            currentRecognitions = super.robot.tfod.getRecognitions();
-            if(!currentRecognitions.isEmpty()){
-                Case = 2;
-                found= true;
-                break;
-            }
-            else sleep(75);
-        }
-        if(!found) {
-            Move(1, 0, 14);
-            for (int i = 0; i < 10; i++) {
-                currentRecognitions = super.robot.tfod.getRecognitions();
-                if (!currentRecognitions.isEmpty()) {
-                    Case = 1;
-                    found = true;
-                    break;
-                } else sleep(75);
-            }
-            if (!found) {
-                Case = 3;
-            }
-        }*/
         double Rxb;
 
-        telemetry.addData("case", Case);
-        telemetry.addData("was found", found);
-        telemetry.update();
-        //sleep(3000);
         if(Case == 2){
             PivotTick(750,.3);
             Move(.7, -13, -3);
@@ -173,13 +143,13 @@ public class RedLeft extends Autonomous_Base {
         else if (Nav > 0){
             openClawR();
             PivotTick(75,.2);
-            Move(.3,-6,7);
+            Move(.3,-6,-7);
             PivotWaitFinish();
         }
         else{
             openClawL();
             PivotTick(72,.2);
-            Move(.4,-6,30);
+            Move(.4,-6,-30);
 
         }
         //in all auto codes we should consider changing final position out of the way of the board, maybe to the middle
